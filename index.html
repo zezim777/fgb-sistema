@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - v8.1</title>
+    <title>FGB Cloud - v8.2</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -12,7 +12,7 @@
         :root { --primary: #2c3e50; --accent: #27ae60; --danger: #e74c3c; --bg: #f4f7f6; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
         
-        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
+        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; z-index: 10; }
         .hidden { display: none !important; }
         
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
@@ -20,18 +20,16 @@
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.85rem; text-decoration: underline; margin-top: 15px; cursor: pointer; }
 
         /* SISTEMA PRINCIPAL */
-        #main-system { display: none; width: 100%; max-width: 900px; padding: 10px; box-sizing: border-box; }
+        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: center; }
         header { text-align: center; padding: 15px; background: var(--primary); color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
-        .btn-sair { position: absolute; right: 15px; top: 15px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
+        .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
 
         .form-cadastro { background: white; padding: 15px; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         @media (min-width: 600px) { .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
         
-        .processo-card { background: white; border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; text-align: left; }
-        .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
+        .processo-card { background: white; border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; }
         .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; }
-        .tag-box { display: block; padding: 8px; border-radius: 8px; font-size: 0.85rem; margin: 8px 0; font-weight: bold; width: fit-content; background: #fef9e7; border: 1px solid #f39c12; color: #d35400; }
-        .detalhes { font-size: 0.85rem; color: #666; margin-top: 5px; }
+        .tag-box { display: inline-block; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; background: #fef9e7; border: 1px solid #f39c12; color: #d35400; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -41,39 +39,39 @@
         <h2>Entrar</h2>
         <input type="text" id="login-user" placeholder="Usuário">
         <input type="password" id="login-pass" placeholder="Senha">
-        <button onclick="fazerLogin()">ACESSAR SISTEMA</button>
-        <button class="btn-link" onclick="alternarTela('cadastro-screen')">Não tem conta? Crie aqui</button>
-        <p id="error-login" style="color:red; display:none; margin-top:10px;">Usuário ou senha incorretos!</p>
+        <button onclick="fazerLogin()">ACESSAR</button>
+        <button class="btn-link" onclick="alternarTela('cadastro-screen')">Criar nova conta</button>
+        <p id="error-login" style="color:red; display:none; margin-top:10px;">Erro no usuário ou senha!</p>
     </div>
 
     <div id="cadastro-screen" class="auth-card hidden">
-        <h2>Criar Usuário</h2>
-        <input type="text" id="reg-user" placeholder="Novo Usuário">
-        <input type="password" id="reg-pass" placeholder="Nova Senha">
-        <button onclick="cadastrarUsuario()" style="background: var(--accent);">CADASTRAR E ENTRAR</button>
-        <button class="btn-link" onclick="alternarTela('login-screen')">Já tenho conta. Voltar</button>
+        <h2>Novo Usuário</h2>
+        <input type="text" id="reg-user" placeholder="Escolha um Usuário">
+        <input type="password" id="reg-pass" placeholder="Escolha uma Senha">
+        <button onclick="cadastrarUsuario()" style="background: var(--accent);">CADASTRAR</button>
+        <button class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</button>
     </div>
 
     <div id="main-system">
         <header>
             <button class="btn-sair" onclick="fazerLogout()">Sair</button>
             <h1>FGB Cloud - Gestão</h1>
-            <p id="user-display" style="font-size: 0.7rem; margin: 0;">Operador: </p>
+            <p id="user-display" style="font-size: 0.7rem; margin: 0;"></p>
         </header>
 
         <div class="form-cadastro">
             <input type="text" id="input-empresa" placeholder="Empresa">
-            <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
+            <input type="text" id="input-data" placeholder="Data" maxlength="10">
             <input type="text" id="input-objeto" placeholder="Objeto" class="full-width">
             <button onclick="adicionarProcesso()" class="full-width" style="background:var(--accent)">SALVAR NA NUVEM</button>
         </div>
 
-        <h3>📦 Processos em Andamento</h3>
-        <div id="lista-ativos">Carregando licitações...</div>
+        <h3>📦 Processos Ativos</h3>
+        <div id="lista-ativos">Carregando...</div>
     </div>
 
 <script>
-    // --- FIREBASE ---
+    // --- FIREBASE CONFIG ---
     const firebaseConfig = {
         apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
         authDomain: "sistema-de-licitacoes.firebaseapp.com",
@@ -86,93 +84,84 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- LOGICA DE ACESSO ---
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
         document.getElementById(id).classList.remove('hidden');
     }
 
+    // CADASTRO CORRIGIDO
     function cadastrarUsuario() {
-        const user = document.getElementById('reg-user').value.toLowerCase().trim();
-        const pass = document.getElementById('reg-pass').value;
-        if (user.length < 3 || pass.length < 3) return alert("Mínimo 3 caracteres!");
+        const u = document.getElementById('reg-user').value.toLowerCase().trim();
+        const p = document.getElementById('reg-pass').value;
+        if (!u || !p) return alert("Preencha tudo!");
 
-        db.ref('usuarios/' + user).once('value', snapshot => {
-            if (snapshot.exists()) {
-                alert("Usuário já existe!");
-            } else {
-                db.ref('usuarios/' + user).set({ usuario: user, senha: pass }).then(() => {
-                    localStorage.setItem('fgb_logado', 'true');
-                    localStorage.setItem('fgb_user', user);
-                    mostrarSistema();
-                });
-            }
-        });
+        db.ref('usuarios/' + u).set({ usuario: u, senha: p }).then(() => {
+            alert("Conta criada! Agora faça seu login.");
+            alternarTela('login-screen');
+        }).catch(e => alert("Erro ao salvar: " + e));
     }
 
+    // LOGIN CORRIGIDO
     function fazerLogin() {
-        const user = document.getElementById('login-user').value.toLowerCase().trim();
-        const pass = document.getElementById('login-pass').value;
-        db.ref('usuarios/' + user).once('value', snapshot => {
+        const u = document.getElementById('login-user').value.toLowerCase().trim();
+        const p = document.getElementById('login-pass').value;
+
+        db.ref('usuarios/' + u).once('value', snapshot => {
             const dados = snapshot.val();
-            if (dados && dados.senha === pass) {
-                localStorage.setItem('fgb_logado', 'true');
-                localStorage.setItem('fgb_user', user);
-                mostrarSistema();
+            if (dados && dados.senha === p) {
+                localStorage.setItem('logado', 'true');
+                localStorage.setItem('user', u);
+                entrarNoSistema();
             } else {
                 document.getElementById('error-login').style.display = 'block';
             }
         });
     }
 
-    function mostrarSistema() {
+    function entrarNoSistema() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
         document.getElementById('main-system').style.display = 'block';
-        document.body.style.justifyContent = 'flex-start';
-        document.getElementById('user-display').innerText = "Operador: " + localStorage.getItem('fgb_user').toUpperCase();
-        carregarProcessos(); // Inicia a listagem
-    }
-
-    function fazerLogout() { localStorage.clear(); location.reload(); }
-
-    // --- SISTEMA DE LICITAÇÕES ---
-    function mascaraData(campo) {
-        let v = campo.value.replace(/\D/g, "");
-        if (v.length > 2) v = v.substring(0,2) + "/" + v.substring(2);
-        if (v.length > 5) v = v.substring(0,5) + "/" + v.substring(5,10);
-        campo.value = v;
+        document.body.style.alignItems = 'flex-start';
+        document.getElementById('user-display').innerText = "Operador: " + localStorage.getItem('user').toUpperCase();
+        
+        // Ativa a escuta dos processos
+        db.ref('processos').on('value', snapshot => {
+            const div = document.getElementById('lista-ativos');
+            div.innerHTML = '';
+            const processos = snapshot.val();
+            if (!processos) { div.innerHTML = 'Nenhum processo.'; return; }
+            Object.values(processos).reverse().forEach(item => {
+                if(!item.excluido){
+                    div.innerHTML += `<div class="processo-card">
+                        <div style="font-size:0.7rem; color:#999">${item.empresa}</div>
+                        <div class="objeto">${item.objeto}</div>
+                        <div class="tag-box">${item.fase}</div>
+                        <div style="font-size:0.8rem; margin-top:5px">📅 ${item.data}</div>
+                    </div>`;
+                }
+            });
+        });
     }
 
     function adicionarProcesso() {
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
-        if (!emp || !obj || dat.length < 10) return alert("Preencha tudo!");
+        if (!emp || !obj) return;
         const id = Date.now();
         db.ref('processos/' + id).set({ id, empresa: emp, objeto: obj, data: dat, fase: "Confecção do QDD", excluido: false });
         document.getElementById('input-empresa').value = ''; 
-        document.getElementById('input-objeto').value = ''; 
-        document.getElementById('input-data').value = '';
+        document.getElementById('input-objeto').value = '';
     }
 
-    function carregarProcessos() {
-        db.ref('processos').on('value', snapshot => {
-            const div = document.getElementById('lista-ativos');
-            div.innerHTML = '';
-            const dados = snapshot.val();
-            if (!dados) { div.innerHTML = 'Nenhum processo.'; return; }
-            Object.values(dados).reverse().forEach(p => {
-                if(!p.excluido){
-                    div.innerHTML += `<div class="processo-card"><div class="empresa">${p.empresa}</div><div class="objeto">${p.objeto}</div><div class="tag-box">📍 ${p.fase}</div><div class="detalhes">📅 Data: ${p.data}</div></div>`;
-                }
-            });
-        });
-    }
+    function fazerLogout() { localStorage.clear(); location.reload(); }
 
-    // Verifica login ao abrir a página
-    if (localStorage.getItem('fgb_logado') === 'true') mostrarSistema();
+    // Verifica se já estava logado
+    if (localStorage.getItem('logado') === 'true') {
+        entrarNoSistema();
+    }
 </script>
 </body>
 </html>
