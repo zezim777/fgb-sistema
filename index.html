@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial</title>
+    <title>FGB Cloud - Gestão Oficial v9.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -56,7 +56,7 @@
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
         <h2>Acesso Restrito</h2>
-        <input type="text" id="login-user" placeholder="Usuário">
+        <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
         <input type="password" id="login-pass" placeholder="Senha">
         <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
@@ -65,7 +65,7 @@
     <div id="cadastro-screen" class="auth-card hidden">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Criar Credencial</h2>
-        <input type="text" id="reg-user" placeholder="Definir Usuário">
+        <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
         <input type="password" id="reg-pass" placeholder="Definir Senha">
         <button id="btn-cadastrar" onclick="cadastrarUsuario()" style="background: var(--accent);">SALVAR E ENTRAR</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
@@ -122,7 +122,7 @@
         "FGB-SGP - Seção de Gestão de Pessoas"
     ];
 
-    // --- 3. LÓGICA DE LOGIN E CADASTRO ---
+    // --- 3. LÓGICA DE LOGIN E CADASTRO (COM TRAVAS DE SEGURANÇA) ---
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
@@ -136,27 +136,51 @@
 
         if (!u || !p) return alert("Preencha Usuário e Senha!");
 
+        // BLOQUEIO DE CARACTERES INVÁLIDOS (O motivo do travamento infinito)
+        const caracteresInvalidos = /[.#$\[\]\/\s]/;
+        if (caracteresInvalidos.test(u)) {
+            return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos. Use apenas letras e números (Ex: jose123).");
+        }
+
         btn.innerText = "SALVANDO...";
         btn.disabled = true;
 
-        db.ref('usuarios/' + u).set({ usuario: u, senha: p })
-        .then(() => {
-            alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
+        // Cronômetro de emergência: se passar 10 segundos, ele destrava.
+        const timeoutEmergencia = setTimeout(() => {
             btn.innerText = "SALVAR E ENTRAR";
             btn.disabled = false;
-            alternarTela('login-screen');
-        })
-        .catch(error => {
+            alert("A conexão falhou ou demorou muito. Verifique sua internet ou as regras do Firebase.");
+        }, 10000);
+
+        try {
+            db.ref('usuarios/' + u).set({ usuario: u, senha: p })
+            .then(() => {
+                clearTimeout(timeoutEmergencia); // Cancela o cronômetro se der certo
+                alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                alternarTela('login-screen');
+            })
+            .catch(error => {
+                clearTimeout(timeoutEmergencia);
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                alert("❌ ERRO DO SERVIDOR: " + error.message);
+            });
+        } catch (erroCritico) {
+            clearTimeout(timeoutEmergencia);
             btn.innerText = "SALVAR E ENTRAR";
             btn.disabled = false;
-            alert("❌ ERRO: O Firebase bloqueou o cadastro. Verifique a aba 'Domínios Autorizados' no console do Google.");
-        });
+            alert("❌ ERRO NO CÓDIGO: " + erroCritico.message);
+        }
     }
 
     function fazerLogin() {
         const u = document.getElementById('login-user').value.toLowerCase().trim();
         const p = document.getElementById('login-pass').value;
         
+        if (!u || !p) return alert("Preencha Usuário e Senha!");
+
         db.ref('usuarios/' + u).once('value', snap => {
             const d = snap.val();
             if (d && d.senha === p) {
@@ -184,10 +208,10 @@
         const nomeOperador = localStorage.getItem('fgb_user').toUpperCase();
         document.getElementById('user-display').innerText = "Operador(a) Logado(a): " + nomeOperador + " | ☁️ Online";
         
-        carregarProcessos(); // Chama as licitações
+        carregarProcessos(); 
     }
 
-    // --- 5. FUNÇÕES DO SISTEMA DE LICITAÇÃO (MÁSCARAS E BOTÕES) ---
+    // --- 5. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
     function mascaraData(campo) {
         let v = campo.value.replace(/\D/g, "");
         if (v.length > 2) v = v.substring(0,2) + "/" + v.substring(2);
@@ -218,12 +242,10 @@
         document.getElementById('input-data').value = '';
     }
 
-    // Função que muda fase, setor ou data em tempo real
     function atualizarCampo(id, campo, valor) {
         db.ref('processos/' + id).update({ [campo]: valor });
     }
 
-    // Função que manda para lixeira ou restaura
     function moverParaLixeira(id, estado) {
         db.ref('processos/' + id).update({ excluido: estado });
     }
@@ -238,7 +260,7 @@
         }
     }
 
-    // --- 6. RENDERIZAÇÃO EM TEMPO REAL (CARDS COMPLETOS) ---
+    // --- 6. RENDERIZAÇÃO EM TEMPO REAL ---
     function carregarProcessos() {
         db.ref('processos').on('value', snapshot => {
             const ativosDiv = document.getElementById('lista-ativos');
@@ -253,15 +275,10 @@
                 return; 
             }
 
-            // Inverte a ordem para os mais novos ficarem no topo
             Object.values(dataSnapshot).reverse().forEach(p => {
-                
-                // Monta as opções do menu de Fases
                 const selectFase = fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
-                // Monta as opções do menu de Setores
                 const selectSetor = setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
                 
-                // HTML completo de cada licitação
                 const htmlCard = `
                     <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
                         <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})" title="${p.excluido ? 'Restaurar' : 'Mover para lixeira'}">
@@ -288,7 +305,6 @@
                     </div>
                 `;
                 
-                // Separa os processos excluídos dos ativos
                 if (p.excluido) {
                     lixeiraDiv.innerHTML += htmlCard;
                 } else {
@@ -298,7 +314,7 @@
         });
     }
 
-    // --- 7. VERIFICAÇÃO INICIAL (Se já estiver logado, pula a tela de senha) ---
+    // --- 7. VERIFICAÇÃO INICIAL ---
     if (localStorage.getItem('fgb_logado') === 'true') {
         abrirPainelCompleto();
     }
