@@ -1,9 +1,17 @@
+Excelente ideia, José! Uma barra de pesquisa vai economizar muito tempo no dia a dia, especialmente quando o sistema estiver lotado com centenas de licitações.
+
+Fiz a implementação exatamente onde você pediu (logo acima da caixa de adicionar novos processos). A pesquisa funciona em tempo real: conforme você vai digitando o nome da empresa, o objeto, ou até mesmo o setor/fase, o sistema já vai filtrando e mostrando apenas os cards corretos (inclusive os que estão na lixeira!).
+
+Mantive 100% da estrutura, do estilo e da linguagem original. Aqui está o Código v9.4 completo:
+
+Código v9.4 - Sistema com Barra de Pesquisa Integrada
+HTML
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v9.3</title>
+    <title>FGB Cloud - Gestão Oficial v9.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -30,6 +38,11 @@
         #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; }
         header { text-align: center; padding: 15px; background: var(--primary); color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
         .btn-sair { position: absolute; right: 15px; top: 15px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+
+        /* BARRA DE PESQUISA */
+        .search-container { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .search-container input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; outline: none; }
+        .search-container input:focus { border-color: var(--accent); }
 
         .form-cadastro { background: white; padding: 15px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 10px; }
         @media (min-width: 600px) { .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
@@ -90,6 +103,10 @@
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
 
+        <div class="search-container">
+            <input type="text" id="input-pesquisa" placeholder="🔍 Pesquisar por empresa, objeto, setor ou fase..." onkeyup="filtrarProcessos()">
+        </div>
+
         <div class="form-cadastro">
             <input type="text" id="input-empresa" placeholder="Nome da Empresa">
             <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
@@ -138,7 +155,7 @@
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
-        document.getElementById('recuperar-screen').classList.add('hidden'); // Nova tela adicionada aqui
+        document.getElementById('recuperar-screen').classList.add('hidden');
         document.getElementById(id).classList.remove('hidden');
     }
 
@@ -292,6 +309,21 @@
         }
     }
 
+    // NOVO: FUNÇÃO DE PESQUISA EM TEMPO REAL
+    function filtrarProcessos() {
+        const termo = document.getElementById('input-pesquisa').value.toLowerCase();
+        const cards = document.querySelectorAll('.processo-card');
+        
+        cards.forEach(card => {
+            const textoCard = card.innerText.toLowerCase(); // Pesquisa por empresa, objeto, data, fase ou setor
+            if (textoCard.includes(termo)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
     // --- 6. RENDERIZAÇÃO EM TEMPO REAL ---
     function carregarProcessos() {
         db.ref('processos').on('value', snapshot => {
@@ -343,6 +375,9 @@
                     ativosDiv.innerHTML += htmlCard;
                 }
             });
+            
+            // Refiltra os cards caso a pessoa estivesse pesquisando algo quando o banco de dados atualizou
+            filtrarProcessos();
         });
     }
 
