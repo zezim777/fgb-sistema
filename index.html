@@ -3,33 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - v8.2</title>
+    <title>FGB Cloud - Sistema Integrado v8.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <style>
-        :root { --primary: #2c3e50; --accent: #27ae60; --danger: #e74c3c; --bg: #f4f7f6; }
+        :root { 
+            --primary: #2c3e50; --accent: #27ae60; --danger: #e74c3c; 
+            --bg: #f4f7f6; --card-bg: #ffffff; 
+        }
+        
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
         
-        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; z-index: 10; }
+        /* TELAS DE ACESSO (LOGIN/CADASTRO) */
+        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
         .hidden { display: none !important; }
         
         input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.85rem; text-decoration: underline; margin-top: 15px; cursor: pointer; }
 
-        /* SISTEMA PRINCIPAL */
-        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: center; }
+        /* SISTEMA PRINCIPAL (PAINEL FGB) */
+        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; }
         header { text-align: center; padding: 15px; background: var(--primary); color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
         .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
 
         .form-cadastro { background: white; padding: 15px; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         @media (min-width: 600px) { .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
         
-        .processo-card { background: white; border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; }
-        .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; }
-        .tag-box { display: inline-block; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; background: #fef9e7; border: 1px solid #f39c12; color: #d35400; font-weight: bold; }
+        .processo-card { background: white; border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; text-align: left; }
+        .btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px; border-radius: 4px; font-size: 0.7rem; }
+        .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
+        .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; line-height: 1.2; }
+        
+        .tag-box { display: block; padding: 8px; border-radius: 8px; font-size: 0.85rem; margin: 8px 0; font-weight: bold; width: fit-content; background: #fef9e7; border: 1px solid #f39c12; color: #d35400; }
+        select, .input-card { border: none; background: none; font-weight: bold; color: inherit; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
+        .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; }
+        
+        .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -40,14 +52,14 @@
         <input type="text" id="login-user" placeholder="Usuário">
         <input type="password" id="login-pass" placeholder="Senha">
         <button onclick="fazerLogin()">ACESSAR</button>
-        <button class="btn-link" onclick="alternarTela('cadastro-screen')">Criar nova conta</button>
-        <p id="error-login" style="color:red; display:none; margin-top:10px;">Erro no usuário ou senha!</p>
+        <button class="btn-link" onclick="alternarTela('cadastro-screen')">Não tem conta? Criar aqui</button>
+        <p id="error-login" style="color:red; display:none; margin-top:10px;">Usuário ou senha incorretos!</p>
     </div>
 
     <div id="cadastro-screen" class="auth-card hidden">
-        <h2>Novo Usuário</h2>
-        <input type="text" id="reg-user" placeholder="Escolha um Usuário">
-        <input type="password" id="reg-pass" placeholder="Escolha uma Senha">
+        <h2>Criar Conta</h2>
+        <input type="text" id="reg-user" placeholder="Novo Usuário">
+        <input type="password" id="reg-pass" placeholder="Senha">
         <button onclick="cadastrarUsuario()" style="background: var(--accent);">CADASTRAR</button>
         <button class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</button>
     </div>
@@ -61,17 +73,23 @@
 
         <div class="form-cadastro">
             <input type="text" id="input-empresa" placeholder="Empresa">
-            <input type="text" id="input-data" placeholder="Data" maxlength="10">
-            <input type="text" id="input-objeto" placeholder="Objeto" class="full-width">
+            <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
+            <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
             <button onclick="adicionarProcesso()" class="full-width" style="background:var(--accent)">SALVAR NA NUVEM</button>
         </div>
 
-        <h3>📦 Processos Ativos</h3>
-        <div id="lista-ativos">Carregando...</div>
+        <h3>📦 Processos em Andamento</h3>
+        <div id="lista-ativos">Carregando dados da nuvem...</div>
+
+        <div class="lixeira-section">
+            <h3>🗑️ Lixeira</h3>
+            <div id="lista-lixeira"></div>
+            <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 8px; border: 1px solid var(--danger); background: white; border-radius: 5px; cursor: pointer; width: 100%;">Esvaziar Lixeira</button>
+        </div>
     </div>
 
 <script>
-    // --- FIREBASE CONFIG ---
+    // --- CONFIGURAÇÃO FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
         authDomain: "sistema-de-licitacoes.firebaseapp.com",
@@ -84,84 +102,98 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // --- LÓGICA DE TELAS ---
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
         document.getElementById(id).classList.remove('hidden');
     }
 
-    // CADASTRO CORRIGIDO
+    function fazerLogout() { localStorage.clear(); location.reload(); }
+
     function cadastrarUsuario() {
         const u = document.getElementById('reg-user').value.toLowerCase().trim();
         const p = document.getElementById('reg-pass').value;
         if (!u || !p) return alert("Preencha tudo!");
 
         db.ref('usuarios/' + u).set({ usuario: u, senha: p }).then(() => {
-            alert("Conta criada! Agora faça seu login.");
+            alert("Conta criada! Agora faça o login.");
             alternarTela('login-screen');
-        }).catch(e => alert("Erro ao salvar: " + e));
+        });
     }
 
-    // LOGIN CORRIGIDO
     function fazerLogin() {
         const u = document.getElementById('login-user').value.toLowerCase().trim();
         const p = document.getElementById('login-pass').value;
-
-        db.ref('usuarios/' + u).once('value', snapshot => {
-            const dados = snapshot.val();
-            if (dados && dados.senha === p) {
-                localStorage.setItem('logado', 'true');
-                localStorage.setItem('user', u);
-                entrarNoSistema();
+        db.ref('usuarios/' + u).once('value', snap => {
+            const d = snap.val();
+            if (d && d.senha === p) {
+                localStorage.setItem('fgb_logado', 'true');
+                localStorage.setItem('fgb_user', u);
+                abrirPainel();
             } else {
                 document.getElementById('error-login').style.display = 'block';
             }
         });
     }
 
-    function entrarNoSistema() {
+    function abrirPainel() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
         document.getElementById('main-system').style.display = 'block';
-        document.body.style.alignItems = 'flex-start';
-        document.getElementById('user-display').innerText = "Operador: " + localStorage.getItem('user').toUpperCase();
-        
-        // Ativa a escuta dos processos
-        db.ref('processos').on('value', snapshot => {
-            const div = document.getElementById('lista-ativos');
-            div.innerHTML = '';
-            const processos = snapshot.val();
-            if (!processos) { div.innerHTML = 'Nenhum processo.'; return; }
-            Object.values(processos).reverse().forEach(item => {
-                if(!item.excluido){
-                    div.innerHTML += `<div class="processo-card">
-                        <div style="font-size:0.7rem; color:#999">${item.empresa}</div>
-                        <div class="objeto">${item.objeto}</div>
-                        <div class="tag-box">${item.fase}</div>
-                        <div style="font-size:0.8rem; margin-top:5px">📅 ${item.data}</div>
-                    </div>`;
-                }
-            });
-        });
+        document.body.style.justifyContent = 'flex-start';
+        document.getElementById('user-display').innerText = "Operador: " + localStorage.getItem('fgb_user').toUpperCase();
+        carregarDados();
+    }
+
+    // --- SISTEMA DE LICITAÇÕES ---
+    function mascaraData(campo) {
+        let v = campo.value.replace(/\D/g, "");
+        if (v.length > 2) v = v.substring(0,2) + "/" + v.substring(2);
+        if (v.length > 5) v = v.substring(0,5) + "/" + v.substring(5,10);
+        campo.value = v;
     }
 
     function adicionarProcesso() {
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
-        if (!emp || !obj) return;
+        if (!emp || !obj) return alert("Preencha os campos!");
         const id = Date.now();
         db.ref('processos/' + id).set({ id, empresa: emp, objeto: obj, data: dat, fase: "Confecção do QDD", excluido: false });
-        document.getElementById('input-empresa').value = ''; 
-        document.getElementById('input-objeto').value = '';
+        document.getElementById('input-empresa').value = ''; document.getElementById('input-objeto').value = '';
     }
 
-    function fazerLogout() { localStorage.clear(); location.reload(); }
-
-    // Verifica se já estava logado
-    if (localStorage.getItem('logado') === 'true') {
-        entrarNoSistema();
+    function carregarDados() {
+        db.ref('processos').on('value', snapshot => {
+            const ativos = document.getElementById('lista-ativos');
+            const lixeira = document.getElementById('lista-lixeira');
+            ativos.innerHTML = ''; lixeira.innerHTML = '';
+            const dados = snapshot.val();
+            if (!dados) { ativos.innerHTML = 'Nenhum processo.'; return; }
+            Object.values(dados).reverse().forEach(p => {
+                const html = `<div class="processo-card">
+                    <button class="btn-excluir" onclick="db.ref('processos/${p.id}').update({excluido: ${!p.excluido}})">${p.excluido ? '↺' : '✖'}</button>
+                    <div class="empresa">${p.empresa}</div>
+                    <div class="objeto">${p.objeto}</div>
+                    <div class="tag-box">📍 ${p.fase}</div>
+                    <div class="detalhes">📅 Data: ${p.data}</div>
+                </div>`;
+                if (p.excluido) lixeira.innerHTML += html; else ativos.innerHTML += html;
+            });
+        });
     }
+
+    function limparLixeiraPermanente() {
+        if(confirm("Apagar tudo da lixeira?")) {
+            db.ref('processos').once('value', snap => {
+                snap.forEach(c => { if(c.val().excluido) c.ref.remove(); });
+            });
+        }
+    }
+
+    // Verifica login automático
+    if (localStorage.getItem('fgb_logado') === 'true') abrirPainel();
 </script>
 </body>
 </html>
