@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Sistema Integrado v8.4</title>
+    <title>FGB Cloud - v8.6 (Sistema Completo)</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -16,7 +16,7 @@
         
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
         
-        /* TELAS DE ACESSO (LOGIN/CADASTRO) */
+        /* TELAS DE ACESSO */
         .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; }
         .hidden { display: none !important; }
         
@@ -25,7 +25,7 @@
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.85rem; text-decoration: underline; margin-top: 15px; cursor: pointer; }
 
         /* SISTEMA PRINCIPAL (PAINEL FGB) */
-        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; }
+        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: center; }
         header { text-align: center; padding: 15px; background: var(--primary); color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
         .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
 
@@ -60,7 +60,7 @@
         <h2>Criar Conta</h2>
         <input type="text" id="reg-user" placeholder="Novo Usuário">
         <input type="password" id="reg-pass" placeholder="Senha">
-        <button onclick="cadastrarUsuario()" style="background: var(--accent);">CADASTRAR</button>
+        <button id="btn-cadastrar" onclick="cadastrarUsuario()" style="background: var(--accent);">CADASTRAR E ENTRAR</button>
         <button class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</button>
     </div>
 
@@ -111,14 +111,28 @@
 
     function fazerLogout() { localStorage.clear(); location.reload(); }
 
+    // --- FUNÇÃO DE CADASTRO COM RASTREADOR DE ERRO ---
     function cadastrarUsuario() {
         const u = document.getElementById('reg-user').value.toLowerCase().trim();
         const p = document.getElementById('reg-pass').value;
-        if (!u || !p) return alert("Preencha tudo!");
+        const btn = document.getElementById('btn-cadastrar');
 
-        db.ref('usuarios/' + u).set({ usuario: u, senha: p }).then(() => {
-            alert("Conta criada! Agora faça o login.");
+        if (!u || !p) return alert("Preencha Usuário e Senha!");
+
+        btn.innerText = "CONECTANDO...";
+        btn.disabled = true;
+
+        db.ref('usuarios/' + u).set({ usuario: u, senha: p })
+        .then(() => {
+            alert("✅ SUCESSO! Usuário criado. Agora faça o login.");
+            btn.innerText = "CADASTRAR E ENTRAR";
+            btn.disabled = false;
             alternarTela('login-screen');
+        })
+        .catch(error => {
+            btn.innerText = "CADASTRAR E ENTRAR";
+            btn.disabled = false;
+            alert("❌ ERRO DO FIREBASE: " + error.message + "\n\nVerifique se as REGRAS estão como 'true' no Firebase.");
         });
     }
 
@@ -161,39 +175,11 @@
         if (!emp || !obj) return alert("Preencha os campos!");
         const id = Date.now();
         db.ref('processos/' + id).set({ id, empresa: emp, objeto: obj, data: dat, fase: "Confecção do QDD", excluido: false });
-        document.getElementById('input-empresa').value = ''; document.getElementById('input-objeto').value = '';
+        document.getElementById('input-empresa').value = ''; 
+        document.getElementById('input-objeto').value = ''; 
+        document.getElementById('input-data').value = '';
     }
 
     function carregarDados() {
         db.ref('processos').on('value', snapshot => {
-            const ativos = document.getElementById('lista-ativos');
-            const lixeira = document.getElementById('lista-lixeira');
-            ativos.innerHTML = ''; lixeira.innerHTML = '';
-            const dados = snapshot.val();
-            if (!dados) { ativos.innerHTML = 'Nenhum processo.'; return; }
-            Object.values(dados).reverse().forEach(p => {
-                const html = `<div class="processo-card">
-                    <button class="btn-excluir" onclick="db.ref('processos/${p.id}').update({excluido: ${!p.excluido}})">${p.excluido ? '↺' : '✖'}</button>
-                    <div class="empresa">${p.empresa}</div>
-                    <div class="objeto">${p.objeto}</div>
-                    <div class="tag-box">📍 ${p.fase}</div>
-                    <div class="detalhes">📅 Data: ${p.data}</div>
-                </div>`;
-                if (p.excluido) lixeira.innerHTML += html; else ativos.innerHTML += html;
-            });
-        });
-    }
-
-    function limparLixeiraPermanente() {
-        if(confirm("Apagar tudo da lixeira?")) {
-            db.ref('processos').once('value', snap => {
-                snap.forEach(c => { if(c.val().excluido) c.ref.remove(); });
-            });
-        }
-    }
-
-    // Verifica login automático
-    if (localStorage.getItem('fgb_logado') === 'true') abrirPainel();
-</script>
-</body>
-</html>
+            const ativos = document.getElementById('lista
