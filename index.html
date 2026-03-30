@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v9.6</title>
+    <title>FGB Cloud - Gestão Oficial v9.7</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -48,7 +48,7 @@
         /* CARDS DOS PROCESSOS (AJUSTADOS PARA MOBILE) */
         .processo-card { background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); word-wrap: break-word; }
         .btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; z-index: 2; }
-        .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; } /* Margem maior para não bater no botão */
+        .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; }
         .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; line-height: 1.3; }
         
         /* TAGS E SELECTS BLINDADOS PARA NÃO QUEBRAREM A TELA */
@@ -99,7 +99,7 @@
 
     <div id="main-system">
         <header>
-            <button class="btn-sair" onclick="fazerLogout()">Sair da Conta</button>
+            <button class="btn-sair" onclick="fazerLogout(false)">Sair da Conta</button>
             <h1>FGB Cloud - Gestão</h1>
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
@@ -140,7 +140,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- 2. DADOS DA FGB (FASES E SETORES) ---
+    // --- 2. DADOS DA FGB E VARIÁVEIS DE SISTEMA ---
     const fasesPadrao = ["Confecção do QDD", "Parecer Jurídico", "Publicação de Edital", "Abertura de Certame", "Homologação"];
     const setoresFGB = [
         "FGB-AC - Assessoria de Comunicação", "FGB-AJ - Assessoria Jurídica", "FGB-AP - Assessoria de Planejamento",
@@ -152,6 +152,7 @@
         "FGB-SAP - Seção de Almoxarifado e Patrimônio", "FGB-SEC - Secretaria Executiva dos Conselhos",
         "FGB-SGP - Seção de Gestão de Pessoas"
     ];
+    let temporizadorInatividade;
 
     // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
@@ -243,12 +244,34 @@
         });
     }
 
-    function fazerLogout() { 
+    function fazerLogout(porInatividade = false) { 
+        if(porInatividade) {
+            alert("⏱️ Sua sessão expirou devido a 1 hora de inatividade. Por segurança, você foi desconectado.");
+        }
         localStorage.clear(); 
         location.reload(); 
     }
 
-    // --- 4. INICIAR O PAINEL DE LICITAÇÕES ---
+    // --- 4. SISTEMA DE SEGURANÇA: MONITORAMENTO DE INATIVIDADE ---
+    function resetarTimerInatividade() {
+        clearTimeout(temporizadorInatividade);
+        // 3.600.000 ms = 1 hora
+        temporizadorInatividade = setTimeout(() => fazerLogout(true), 3600000);
+    }
+
+    function iniciarMonitoramento() {
+        // Observa qualquer interação do usuário para resetar o relógio
+        window.onload = resetarTimerInatividade;
+        document.onmousemove = resetarTimerInatividade;
+        document.onkeypress = resetarTimerInatividade;
+        document.onclick = resetarTimerInatividade;
+        document.ontouchstart = resetarTimerInatividade;
+        window.addEventListener('scroll', resetarTimerInatividade, true);
+        
+        resetarTimerInatividade(); // Liga o cronômetro a primeira vez
+    }
+
+    // --- 5. INICIAR O PAINEL DE LICITAÇÕES ---
     function abrirPainelCompleto() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
@@ -260,9 +283,10 @@
         document.getElementById('user-display').innerText = "Operador(a) Logado(a): " + nomeOperador + " | ☁️ Online";
         
         carregarProcessos(); 
+        iniciarMonitoramento(); // Inicia o bloqueio de inatividade apenas após logar
     }
 
-    // --- 5. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
+    // --- 6. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
     function mascaraData(campo) {
         let v = campo.value.replace(/\D/g, "");
         if (v.length > 2) v = v.substring(0,2) + "/" + v.substring(2);
@@ -326,7 +350,7 @@
         });
     }
 
-    // --- 6. RENDERIZAÇÃO EM TEMPO REAL ---
+    // --- 7. RENDERIZAÇÃO EM TEMPO REAL ---
     function carregarProcessos() {
         db.ref('processos').on('value', snapshot => {
             const ativosDiv = document.getElementById('lista-ativos');
@@ -383,7 +407,7 @@
         });
     }
 
-    // --- 7. VERIFICAÇÃO INICIAL ---
+    // --- 8. VERIFICAÇÃO INICIAL ---
     if (localStorage.getItem('fgb_logado') === 'true') {
         abrirPainelCompleto();
     }
