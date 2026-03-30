@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v9.8</title>
+    <title>FGB Cloud - Gestão Oficial v9.9</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -16,38 +16,62 @@
             --setor-bg: #e8f4fd; --setor-text: #2980b9;
         }
         
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
+        /* REGRAS DO MODO NOTURNO */
+        body.dark-mode {
+            --primary: #ecf0f1; 
+            --bg: #121212; 
+            --card-bg: #1e1e1e;
+            --status-bg: #332b00; --status-text: #f39c12;
+            --setor-bg: #002233; --setor-text: #5dade2;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
         
+        /* BOTÃO TEMA MODO NOTURNO */
+        .btn-tema {
+            position: fixed; top: 15px; left: 15px; background: rgba(0,0,0,0.1); color: var(--primary);
+            border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer;
+            z-index: 2000; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        body.dark-mode .btn-tema { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-tema:hover { transform: scale(1.1); }
+
         /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
-        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; }
+        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
         .hidden { display: none !important; }
         .auth-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        .auth-card button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .auth-card button { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.9rem; text-decoration: underline; margin-top: 20px; cursor: pointer; display: inline-block; width: 100%; }
         .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
 
         /* SISTEMA PRINCIPAL (PAINEL DE LICITAÇÕES) */
         #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; position: relative; }
-        header { text-align: center; padding: 20px 15px 15px 15px; background: var(--primary); color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
+        header { text-align: center; padding: 20px 15px 15px 15px; background: #2c3e50; color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
+        body.dark-mode header { background: #0f171e; }
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
         .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
 
         /* BARRA DE PESQUISA COM LUPA */
-        .search-container { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; }
+        .search-container { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; transition: 0.3s; }
         .search-container input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; outline: none; width: 100%; }
         .search-container input:focus { border-color: var(--accent); }
-        .btn-search { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
-        .btn-search:hover { background: var(--accent); }
+        .btn-search { background: #2c3e50; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+        body.dark-mode .btn-search { background: var(--accent); }
 
         /* FORMULÁRIO DE CADASTRO */
-        .form-cadastro { background: white; padding: 15px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 10px; }
+        .form-cadastro { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 10px; transition: 0.3s; }
         @media (min-width: 600px) { .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
         .form-cadastro input, .form-cadastro button { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
         .form-cadastro button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; border: none; width: 100%; margin-top: 0; }
         
+        /* AJUSTES DE INPUTS PARA MODO NOTURNO */
+        body.dark-mode input, body.dark-mode textarea { background: #2c3e50; color: #ecf0f1; border-color: #444; }
+        body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color: #95a5a6; }
+
         /* CARDS DOS PROCESSOS */
-        .processo-card { background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); word-wrap: break-word; }
+        .processo-card { background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); word-wrap: break-word; transition: 0.3s; }
         .btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; z-index: 2; }
+        body.dark-mode .btn-excluir { background: rgba(231, 76, 60, 0.1); border-color: var(--danger); }
         .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; }
         .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; line-height: 1.3; }
         
@@ -56,15 +80,19 @@
         .status-box { background: var(--status-bg); border: 1px solid #f39c12; color: var(--status-text); }
         .setor-box { background: var(--setor-bg); border: 1px solid #2980b9; color: var(--setor-text); }
         select { border: none; background: none; font-weight: bold; color: inherit; cursor: pointer; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        body.dark-mode select { background-color: var(--bg); color: var(--primary); padding: 5px; border-radius: 5px; }
+        
         input.input-card { border: none; background: none; font-weight: bold; color: inherit; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; box-sizing: border-box; }
         
         .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; display: flex; flex-direction: column; }
-        .detalhes span { margin-bottom: 4px; color: #666; }
+        body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
+        .detalhes span { margin-bottom: 4px; color: #7f8c8d; }
+        body.dark-mode .detalhes span { color: #bdc3c7; }
         
-        .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } /* Espaço extra embaixo para o botão não cobrir conteúdo */
+        .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } 
         .na-lixeira { border-left-color: #95a5a6; filter: grayscale(0.5); }
 
-        /* NOVO: BOTÃO FLUTUANTE DE SUGESTÕES E MODAL */
+        /* BOTÃO FLUTUANTE DE SUGESTÕES E MODAL */
         .btn-flutuante {
             position: fixed; bottom: 20px; right: 20px; background: #f39c12; color: white; border: none;
             padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem;
@@ -78,19 +106,21 @@
             display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; box-sizing: border-box;
         }
         .modal-content {
-            background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            background: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: 0.3s;
         }
         .modal-content h3 { margin-top: 0; color: var(--primary); }
         .modal-content textarea {
             width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
             resize: none; box-sizing: border-box; margin: 15px 0; outline: none;
         }
-        .modal-content textarea:focus { border-color: #f39c12; }
         .modal-btn-enviar { background: #f39c12; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; }
         .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
     </style>
 </head>
 <body>
+
+    <button class="btn-tema" id="btn-tema" onclick="alternarTema()" title="Alternar Modo Claro/Escuro">🌙</button>
 
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
@@ -107,14 +137,14 @@
         <h2>Criar Credencial</h2>
         <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
         <input type="password" id="reg-pass" placeholder="Definir Senha">
-        <button id="btn-cadastrar" onclick="cadastrarUsuario()" style="background: var(--accent);">SALVAR E ENTRAR</button>
+        <button id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
 
     <div id="recuperar-screen" class="auth-card hidden">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Redefinir Senha</h2>
-        <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Digite seu usuário exato para cadastrar uma nova senha.</p>
+        <p style="font-size: 0.8rem; margin-bottom: 15px;">Digite seu usuário exato para cadastrar uma nova senha.</p>
         <input type="text" id="rec-user" placeholder="Seu Usuário (Ex: josefgb)">
         <input type="password" id="rec-pass" placeholder="Nova Senha">
         <button onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
@@ -146,7 +176,7 @@
         <div class="lixeira-section">
             <h3>🗑️ Lixeira de Processos</h3>
             <div id="lista-lixeira"></div>
-            <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: white; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold;">Esvaziar Lixeira Permanentemente</button>
+            <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Lixeira Permanentemente</button>
         </div>
 
         <button class="btn-flutuante" onclick="abrirModalSugestao()">💡 Sugestões</button>
@@ -154,7 +184,7 @@
         <div class="modal-overlay" id="modal-sugestao">
             <div class="modal-content">
                 <h3>Envie sua Sugestão</h3>
-                <p style="font-size: 0.8rem; color: #666; margin: 0;">Tem uma ideia ou encontrou um problema? Nos avise abaixo!</p>
+                <p style="font-size: 0.8rem; margin: 0;">Tem uma ideia ou encontrou um problema? Nos avise abaixo!</p>
                 <textarea id="texto-sugestao" placeholder="Digite sua mensagem aqui..."></textarea>
                 <button class="modal-btn-enviar" onclick="enviarSugestao()">ENVIAR MENSAGEM</button>
                 <button class="modal-btn-cancelar" onclick="fecharModalSugestao()">Cancelar</button>
@@ -180,7 +210,7 @@
     const fasesPadrao = ["Confecção do QDD", "Parecer Jurídico", "Publicação de Edital", "Abertura de Certame", "Homologação"];
     const setoresFGB = [
         "FGB-AC - Assessoria de Comunicação", "FGB-AJ - Assessoria Jurídica", "FGB-AP - Assessoria de Planejamento",
-        "FGB-CA - Coordenadoria Administrativa", "FGB-CEC - Coordenadoria de Equipamentos Culturais",
+        "FGB-CA - Coordenadora Administrativa", "FGB-CEC - Coordenadoria de Equipamentos Culturais",
         "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira", "FGB-CG - Chefia de Gabinete",
         "FGB-CI - Controle Interno", "FGB-CMPC - Conselho Municipal de Políticas Culturais",
         "FGB-COA - Coordenadoria de Artes", "FGB-CPHC - Coordenadoria de Patrimônio Histórico",
@@ -189,6 +219,20 @@
         "FGB-SGP - Seção de Gestão de Pessoas"
     ];
     let temporizadorInatividade;
+
+    // --- LÓGICA DO MODO NOTURNO ---
+    function alternarTema() {
+        document.body.classList.toggle('dark-mode');
+        const modoEscuroAtivo = document.body.classList.contains('dark-mode');
+        localStorage.setItem('fgb_tema', modoEscuroAtivo ? 'dark' : 'light');
+        document.getElementById('btn-tema').innerText = modoEscuroAtivo ? '☀️' : '🌙';
+    }
+
+    // Carrega o tema salvo assim que a página abre
+    if (localStorage.getItem('fgb_tema') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('btn-tema').innerText = '☀️';
+    }
 
     // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
@@ -319,21 +363,21 @@
         iniciarMonitoramento(); 
     }
 
-    // --- NOVO: LÓGICA DO SISTEMA DE SUGESTÕES ---
+    // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
     function abrirModalSugestao() {
         document.getElementById('modal-sugestao').style.display = 'flex';
     }
 
     function fecharModalSugestao() {
         document.getElementById('modal-sugestao').style.display = 'none';
-        document.getElementById('texto-sugestao').value = ''; // Limpa o texto ao fechar
+        document.getElementById('texto-sugestao').value = ''; 
     }
 
     function enviarSugestao() {
         const texto = document.getElementById('texto-sugestao').value.trim();
         if (!texto) return alert("Escreva algo antes de enviar!");
 
-        const usuarioAtual = localStorage.getItem('fgb_user');
+        const usuarioAtual = localStorage.getItem('fgb_user') || 'Usuário Não Logado';
         const idSugestao = Date.now();
         const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
 
