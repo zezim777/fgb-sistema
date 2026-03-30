@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v9.1</title>
+    <title>FGB Cloud - Gestão Oficial v9.3</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -18,12 +18,13 @@
         
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; }
         
-        /* TELAS DE LOGIN E CADASTRO */
+        /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
         .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; position: relative; z-index: 100; }
         .hidden { display: none !important; }
         .auth-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         .auth-card button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.9rem; text-decoration: underline; margin-top: 20px; cursor: pointer; display: inline-block; width: 100%; }
+        .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
 
         /* SISTEMA PRINCIPAL (PAINEL DE LICITAÇÕES) */
         #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; }
@@ -60,6 +61,7 @@
         <input type="password" id="login-pass" placeholder="Senha">
         <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
+        <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
     </div>
 
     <div id="cadastro-screen" class="auth-card hidden">
@@ -68,6 +70,16 @@
         <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
         <input type="password" id="reg-pass" placeholder="Definir Senha">
         <button id="btn-cadastrar" onclick="cadastrarUsuario()" style="background: var(--accent);">SALVAR E ENTRAR</button>
+        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
+    </div>
+
+    <div id="recuperar-screen" class="auth-card hidden">
+        <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
+        <h2>Redefinir Senha</h2>
+        <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Digite seu usuário exato para cadastrar uma nova senha.</p>
+        <input type="text" id="rec-user" placeholder="Seu Usuário (Ex: josefgb)">
+        <input type="password" id="rec-pass" placeholder="Nova Senha">
+        <button onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
 
@@ -82,7 +94,7 @@
             <input type="text" id="input-empresa" placeholder="Nome da Empresa">
             <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
             <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
-            <button onclick="adicionarProcesso()" class="full-width">SALVAR PROCESSO</button>
+            <button onclick="adicionarProcesso()" class="full-width">SALVAR PROCESSO NA NUVEM</button>
         </div>
 
         <h3>📦 Processos em Andamento</h3>
@@ -122,11 +134,32 @@
         "FGB-SGP - Seção de Gestão de Pessoas"
     ];
 
-    // --- 3. LÓGICA DE LOGIN E CADASTRO (COM TRAVAS DE SEGURANÇA) ---
+    // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
+        document.getElementById('recuperar-screen').classList.add('hidden'); // Nova tela adicionada aqui
         document.getElementById(id).classList.remove('hidden');
+    }
+
+    function alterarSenha() {
+        const u = document.getElementById('rec-user').value.toLowerCase().trim();
+        const novaSenha = document.getElementById('rec-pass').value;
+
+        if (!u || !novaSenha) return alert("Preencha o Usuário e a Nova Senha!");
+
+        db.ref('usuarios/' + u).once('value', snap => {
+            if (snap.exists()) {
+                db.ref('usuarios/' + u).update({ senha: novaSenha }).then(() => {
+                    alert("✅ Senha alterada com sucesso! Faça seu login.");
+                    document.getElementById('rec-user').value = '';
+                    document.getElementById('rec-pass').value = '';
+                    alternarTela('login-screen');
+                });
+            } else {
+                alert("❌ Usuário não encontrado no sistema. Verifique se digitou corretamente.");
+            }
+        });
     }
 
     function cadastrarUsuario() {
@@ -136,7 +169,6 @@
 
         if (!u || !p) return alert("Preencha Usuário e Senha!");
 
-        // BLOQUEIO DE CARACTERES INVÁLIDOS (O motivo do travamento infinito)
         const caracteresInvalidos = /[.#$\[\]\/\s]/;
         if (caracteresInvalidos.test(u)) {
             return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos. Use apenas letras e números (Ex: jose123).");
@@ -145,7 +177,6 @@
         btn.innerText = "SALVANDO...";
         btn.disabled = true;
 
-        // Cronômetro de emergência: se passar 10 segundos, ele destrava.
         const timeoutEmergencia = setTimeout(() => {
             btn.innerText = "SALVAR E ENTRAR";
             btn.disabled = false;
@@ -155,7 +186,7 @@
         try {
             db.ref('usuarios/' + u).set({ usuario: u, senha: p })
             .then(() => {
-                clearTimeout(timeoutEmergencia); // Cancela o cronômetro se der certo
+                clearTimeout(timeoutEmergencia); 
                 alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
                 btn.innerText = "SALVAR E ENTRAR";
                 btn.disabled = false;
@@ -202,6 +233,7 @@
     function abrirPainelCompleto() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
+        document.getElementById('recuperar-screen').classList.add('hidden');
         document.getElementById('main-system').style.display = 'block';
         document.body.style.justifyContent = 'flex-start';
         
