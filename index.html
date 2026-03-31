@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v10.5</title>
+    <title>FGB Cloud - Gestão Oficial v10.6</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -435,7 +435,7 @@
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
         const usuarioAtual = localStorage.getItem('fgb_user'); 
-        const setorDoDono = localStorage.getItem('fgb_setor'); // NOVO: Puxa o setor de quem está criando
+        const setorDoDono = localStorage.getItem('fgb_setor'); // PUXA O SETOR DO USUÁRIO LOGADO
         
         if (!emp || !obj || dat.length < 10) return alert("Preencha todos os campos corretamente (Data com 8 dígitos)!");
         
@@ -443,12 +443,12 @@
         db.ref('processos/' + novoId).set({
             id: novoId, 
             dono: usuarioAtual, 
-            setorOrigem: setorDoDono, // NOVO: Carimbo invisível da origem
+            setorOrigem: setorDoDono, 
             empresa: emp, 
             objeto: obj, 
             data: dat,
-            fase: "", 
-            setor: "", 
+            fase: "", // Nasce vazio (manual)
+            setor: setorDoDono, // NASCE AUTOMATICAMENTE COM O SETOR DO USUÁRIO
             valor: "", 
             excluido: false
         });
