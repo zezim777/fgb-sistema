@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.0</title>
+    <title>FGB Cloud - Gestão Oficial v12.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -181,6 +181,10 @@
         .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
         body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
 
+        /* NOVO: ESTILO DO BOTÃO DE TEMA NO MODAL */
+        #btn-modal-tema { background: var(--primary); color: white; padding: 12px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.3s; }
+        body.dark-mode #btn-modal-tema { color: #121212; } /* Garante que o texto fique escuro e legível no modo noturno */
+
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
@@ -216,7 +220,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.0<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.1<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -340,7 +344,7 @@
                 <h3>Personalizar Sistema</h3>
                 <p style="font-size: 0.8rem; margin-bottom: 15px;">Ajuste a aparência do FGB Cloud para o seu conforto.</p>
                 
-                <button onclick="alternarTema()" style="background: var(--primary); color: white; padding: 12px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;" id="btn-modal-tema">
+                <button onclick="alternarTema()" id="btn-modal-tema">
                     🌙 Ativar Modo Escuro
                 </button>
                 
@@ -402,7 +406,7 @@
     }
 
     function abrirModalPersonalizar() {
-        document.querySelector('.user-menu-container').classList.remove('active'); // Esconde o menu de perfil
+        document.querySelector('.user-menu-container').classList.remove('active');
         document.getElementById('modal-personalizar').style.display = 'flex';
     }
 
