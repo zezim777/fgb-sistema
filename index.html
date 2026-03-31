@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v10.4</title>
+    <title>FGB Cloud - Gestão Oficial v10.5</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -295,7 +295,6 @@
         btn.innerText = "VERIFICANDO...";
         btn.disabled = true;
 
-        // Vai no banco checar se já tem coordenador neste setor
         db.ref('usuarios').once('value', snapshot => {
             let coordenadorJaExiste = false;
 
@@ -308,14 +307,12 @@
                 });
             }
 
-            // Se for coordenador e já existir alguém, bloqueia!
             if (coordenadorJaExiste) {
                 btn.innerText = "SALVAR E ENTRAR";
                 btn.disabled = false;
                 return alert(`❌ ERRO: Já existe um Coordenador cadastrado para o setor selecionado (${s}). Escolha o nível de Operador ou fale com a administração.`);
             }
 
-            // Se passou na verificação, segue com o cadastro normal
             const timeoutEmergencia = setTimeout(() => {
                 btn.innerText = "SALVAR E ENTRAR";
                 btn.disabled = false;
@@ -438,6 +435,7 @@
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
         const usuarioAtual = localStorage.getItem('fgb_user'); 
+        const setorDoDono = localStorage.getItem('fgb_setor'); // NOVO: Puxa o setor de quem está criando
         
         if (!emp || !obj || dat.length < 10) return alert("Preencha todos os campos corretamente (Data com 8 dígitos)!");
         
@@ -445,6 +443,7 @@
         db.ref('processos/' + novoId).set({
             id: novoId, 
             dono: usuarioAtual, 
+            setorOrigem: setorDoDono, // NOVO: Carimbo invisível da origem
             empresa: emp, 
             objeto: obj, 
             data: dat,
@@ -489,7 +488,7 @@
         });
     }
 
-    // --- 7. RENDERIZAÇÃO EM TEMPO REAL COM VERIFICAÇÃO DE HIERARQUIA ---
+    // --- 7. RENDERIZAÇÃO EM TEMPO REAL COM VERIFICAÇÃO DE HIERARQUIA E ORIGEM ---
     function carregarProcessos() {
         const usuarioAtual = localStorage.getItem('fgb_user'); 
         const setorAtual = localStorage.getItem('fgb_setor');
@@ -514,9 +513,12 @@
                 
                 let temPermissaoParaVer = false;
                 
+                // 1. Se eu fui quem criei, eu posso ver sempre.
                 if (p.dono === usuarioAtual) {
                     temPermissaoParaVer = true;
-                } else if (nivelAtual === 'Coordenador' && p.setor === setorAtual && p.setor !== "") {
+                } 
+                // 2. Se eu sou Coordenador, vejo se a caixa setor bater OU se a origem invisível bater com o meu setor.
+                else if (nivelAtual === 'Coordenador' && (p.setor === setorAtual || p.setorOrigem === setorAtual)) {
                     temPermissaoParaVer = true;
                 }
 
