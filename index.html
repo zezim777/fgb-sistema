@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.2</title>
+    <title>FGB Cloud - Gestão Oficial v12.3</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -65,13 +65,39 @@
         body.dark-mode header { background: #0f171e; }
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
 
-        /* --- MENU DO USUÁRIO ANIMADO --- */
+        /* --- MENU DO USUÁRIO E SINO DE NOTIFICAÇÃO --- */
         .user-menu-container { position: absolute; right: 15px; top: 15px; z-index: 200; }
-        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white; user-select: none; -webkit-tap-highlight-color: transparent; }
-        .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05); }
-        .user-dropdown { position: absolute; right: 0; top: 48px; background: var(--card-bg); color: var(--primary); border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); width: 170px; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-align: left; }
-        body.dark-mode .user-dropdown { background: #1e1e1e; border: 1px solid #333; }
-        .user-menu-container:hover .user-dropdown, .user-menu-container.active .user-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .notification-container { position: absolute; left: 15px; top: 15px; z-index: 200; }
+        
+        .user-avatar, .bell-icon { 
+            width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; 
+            cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white; 
+            user-select: none; -webkit-tap-highlight-color: transparent; position: relative;
+        }
+        
+        .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar,
+        .notification-container:hover .bell-icon, .notification-container.active .bell-icon { 
+            background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05); 
+        }
+        
+        .user-dropdown, .notif-dropdown { 
+            position: absolute; top: 48px; background: var(--card-bg); color: var(--primary); 
+            border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); overflow: hidden; 
+            opacity: 0; visibility: hidden; transform: translateY(-15px); 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-align: left; 
+        }
+        
+        .user-dropdown { right: 0; width: 170px; }
+        .notif-dropdown { left: 0; width: 260px; max-height: 300px; overflow-y: auto; }
+        
+        body.dark-mode .user-dropdown, body.dark-mode .notif-dropdown { background: #1e1e1e; border: 1px solid #333; }
+        
+        .user-menu-container:hover .user-dropdown, .user-menu-container.active .user-dropdown,
+        .notification-container:hover .notif-dropdown, .notification-container.active .notif-dropdown { 
+            opacity: 1; visibility: visible; transform: translateY(0); 
+        }
+        
         .dropdown-item { padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f0f0f0; }
         body.dark-mode .dropdown-item { border-bottom-color: #333; color: #ecf0f1; }
         .dropdown-item:last-child { border-bottom: none; }
@@ -80,6 +106,33 @@
         .dropdown-item.danger { color: var(--danger); }
         body.dark-mode .dropdown-item.danger { color: #ff6b6b; }
         .dropdown-item.danger:hover { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
+
+        /* ITENS ESPECÍFICOS DA NOTIFICAÇÃO */
+        .notif-item { padding: 12px 15px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; line-height: 1.4; color: var(--primary); transition: 0.2s; cursor: default; }
+        body.dark-mode .notif-item { border-bottom-color: #333; color: #ecf0f1; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item.empty { font-weight: normal; color: #7f8c8d; text-align: center; }
+        body.dark-mode .notif-item.empty { color: #95a5a6; }
+
+        .notif-badge {
+            position: absolute; top: -3px; right: -3px; background: var(--danger); color: white;
+            font-size: 0.65rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center; border: 2px solid #2c3e50;
+        }
+        body.dark-mode .notif-badge { border-color: #0f171e; }
+
+        /* ANIMAÇÃO DO SINO */
+        @keyframes ring {
+            0% { transform: rotate(0); }
+            15% { transform: rotate(20deg); }
+            30% { transform: rotate(-20deg); }
+            45% { transform: rotate(15deg); }
+            60% { transform: rotate(-15deg); }
+            75% { transform: rotate(5deg); }
+            85% { transform: rotate(-5deg); }
+            100% { transform: rotate(0); }
+        }
+        .ringing { animation: ring 0.6s ease-in-out; display: inline-block; }
 
         /* ESTILOS DO DASHBOARD E RELATÓRIO */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -164,7 +217,7 @@
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
-            .user-menu-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
+            .user-menu-container, .notification-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
             #main-system { max-width: 100%; width: 100%; padding: 0; }
             header { background: transparent; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
             .processo-card { border: 1px solid #ddd; page-break-inside: avoid; box-shadow: none; }
@@ -196,7 +249,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.2<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.3<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -261,6 +314,17 @@
 
     <div id="main-system">
         <header>
+            
+            <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
+                <div class="bell-icon" title="Notificações">
+                    <span id="bell-emoji">🔔</span>
+                    <div class="notif-badge" id="notif-badge">0</div>
+                </div>
+                <div class="notif-dropdown" id="notif-list">
+                    <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova no momento.</div>
+                </div>
+            </div>
+
             <div class="user-menu-container">
                 <div class="user-avatar" title="Menu de Opções" onclick="toggleMenuUsuario(event)">👤</div>
                 <div class="user-dropdown">
@@ -412,16 +476,61 @@
         }
     }
 
-    // --- LÓGICA DO MENU DO USUÁRIO (MOBILE/CLICK) ---
+    // --- LÓGICA DOS MENUS DO CABEÇALHO (MOBILE/CLICK) E NOTIFICAÇÕES ---
+    let contadorNotificacoes = 0;
+
+    function dispararNotificacaoExemplo(mensagem) {
+        contadorNotificacoes++;
+        const badge = document.getElementById('notif-badge');
+        const emoji = document.getElementById('bell-emoji');
+        const lista = document.getElementById('notif-list');
+        const msgVazia = document.getElementById('notif-vazia');
+
+        badge.innerText = contadorNotificacoes;
+        badge.style.display = 'flex';
+
+        if (msgVazia) msgVazia.style.display = 'none';
+
+        // Adiciona a nova notificação no topo da lista
+        lista.innerHTML = `<div class="notif-item"><strong>Novo Aviso:</strong><br>${mensagem}</div>` + lista.innerHTML;
+
+        // Dispara a animação do sino
+        emoji.classList.remove('ringing');
+        void emoji.offsetWidth; // Força o navegador a reiniciar a animação
+        emoji.classList.add('ringing');
+    }
+
+    function lerNotificacoes() {
+        contadorNotificacoes = 0;
+        const badge = document.getElementById('notif-badge');
+        badge.style.display = 'none';
+    }
+
     function toggleMenuUsuario(event) {
         event.stopPropagation(); 
+        document.querySelector('.notification-container').classList.remove('active');
         document.querySelector('.user-menu-container').classList.toggle('active');
+    }
+
+    function toggleNotificacoes(event) {
+        event.stopPropagation(); 
+        document.querySelector('.user-menu-container').classList.remove('active');
+        const notifCont = document.querySelector('.notification-container');
+        notifCont.classList.toggle('active');
+        if(notifCont.classList.contains('active')) {
+            lerNotificacoes();
+        }
     }
 
     window.onclick = function(event) {
         const menuCont = document.querySelector('.user-menu-container');
+        const notifCont = document.querySelector('.notification-container');
+        
         if (menuCont && !menuCont.contains(event.target)) {
             menuCont.classList.remove('active');
+        }
+        if (notifCont && !notifCont.contains(event.target)) {
+            notifCont.classList.remove('active');
         }
     };
 
@@ -433,7 +542,6 @@
         document.getElementById(id).classList.remove('hidden');
     }
 
-    // --- NOVO: LÓGICA DE ALTERAR SENHA COM PALAVRA-CHAVE ---
     function alterarSenha() {
         const u = document.getElementById('rec-user').value.toLowerCase().trim();
         const k = document.getElementById('rec-keyword').value.trim();
@@ -445,7 +553,6 @@
             if (snap.exists()) {
                 const userData = snap.val();
                 
-                // Verifica se a palavra-chave existe e bate com a digitada (ignora maiúsculas/minúsculas)
                 if (userData.palavraChave && userData.palavraChave.toLowerCase() === k.toLowerCase()) {
                     db.ref('usuarios/' + u).update({ senha: novaSenha }).then(() => {
                         alert("✅ Senha alterada com sucesso! Faça seu login.");
@@ -463,11 +570,10 @@
         });
     }
 
-    // --- NOVO: CADASTRO INCLUINDO PALAVRA-CHAVE ---
     function cadastrarUsuario() {
         const u = document.getElementById('reg-user').value.toLowerCase().trim();
         const p = document.getElementById('reg-pass').value;
-        const k = document.getElementById('reg-keyword').value.trim(); // Puxa a palavra-chave
+        const k = document.getElementById('reg-keyword').value.trim();
         const s = document.getElementById('reg-setor').value;
         const n = document.getElementById('reg-nivel').value;
         const btn = document.getElementById('btn-cadastrar');
@@ -506,7 +612,6 @@
                 alert("A conexão falhou. Verifique sua internet.");
             }, 10000);
 
-            // Salva a palavraChave no banco de dados junto com o resto
             db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n, palavraChave: k })
             .then(() => {
                 clearTimeout(timeoutEmergencia); 
@@ -578,6 +683,11 @@
         
         iniciarMonitoramento(); 
         iniciarLeituraDeDados(); 
+
+        // Simulação de Notificação de Boas-Vindas para testar o sino animado
+        setTimeout(() => {
+            dispararNotificacaoExemplo(`Olá, <strong>${localStorage.getItem('fgb_user').toUpperCase()}</strong>! Seu painel foi carregado com sucesso e está pronto para uso.`);
+        }, 2500);
     }
 
     // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
@@ -652,7 +762,6 @@
         db.ref('processos/' + id).update({ excluido: estado });
     }
 
-    // TRANSFERIR PROCESSO
     function transferirProcesso(id, novoDono) {
         if(novoDono === "") return;
         if(confirm(`Tem certeza que deseja delegar este processo para o operador '${novoDono.toUpperCase()}'?`)) {
@@ -711,7 +820,6 @@
 
         document.getElementById('user-display').innerText = `Painel de ${meuNivel}: ${usuarioAtual.toUpperCase()} | 🏢 ${meuSetor.split(' -')[0]}`;
 
-        // CONTROLE DE EXIBIÇÃO DE RECURSOS DO COORDENADOR
         const dashSetor = document.getElementById('dash-setor');
         const btnReport = document.getElementById('btn-report');
         const btnLimparLixeira = document.getElementById('btn-limpar-lixeira');
@@ -737,8 +845,6 @@
         }
 
         let temProcessos = false;
-        
-        // VARIÁVEIS PARA O DASHBOARD
         let totalSetor = 0;
         let valorTotal = 0;
         let fasesCount = {};
@@ -762,7 +868,6 @@
 
             temProcessos = true;
 
-            // --- ALIMENTAR DADOS DO DASHBOARD ---
             if (!p.excluido && (setorOficialDoDono === meuSetor || p.setor === meuSetor)) {
                 totalSetor++;
                 
@@ -782,7 +887,6 @@
             
             const etiquetaDono = (donoDoProcesso !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${donoDoProcesso.toUpperCase()}</span>` : '';
 
-            // --- CAIXA DE TRANSFERÊNCIA ---
             let transferHTML = '';
             if (meuNivel === 'Coordenador' && !p.excluido) {
                 let selectTransfer = `<option value="" selected disabled>Transferir para...</option>`;
@@ -836,7 +940,6 @@
             if (p.excluido) { lixeiraDiv.innerHTML += htmlCard; } else { ativosDiv.innerHTML += htmlCard; }
         });
 
-        // --- ATUALIZA O DASHBOARD NA TELA ---
         if (meuNivel === 'Coordenador') {
             document.getElementById('stat-total').innerText = totalSetor;
             document.getElementById('stat-valor').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
