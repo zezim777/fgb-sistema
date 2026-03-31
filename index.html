@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.1</title>
+    <title>FGB Cloud - Gestão Oficial v11.2</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -51,7 +51,7 @@
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
         .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
 
-        /* --- NOVO: ESTILOS DO DASHBOARD E RELATÓRIO --- */
+        /* --- ESTILOS DO DASHBOARD E RELATÓRIO --- */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; border-bottom: 4px solid var(--accent); transition: 0.3s; }
         .stat-card h4 { margin: 0 0 5px 0; font-size: 0.85rem; color: #7f8c8d; text-transform: uppercase; }
@@ -127,7 +127,7 @@
         .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
         body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
 
-        /* --- NOVO: REGRAS PARA IMPRESSÃO LIMPA --- */
+        /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
             .btn-tema, .btn-sair, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
@@ -258,7 +258,7 @@
     const fasesPadrao = ["Confecção do QDD", "Parecer Jurídico", "Publicação de Edital", "Abertura de Certame", "Homologação"];
     const setoresFGB = [
         "FGB-AC - Assessoria de Comunicação", "FGB-AJ - Assessoria Jurídica", "FGB-AP - Assessoria de Planejamento",
-        "FGB-CA - Coordenadora Administrativa", "FGB-CEC - Coordenadoria de Equipamentos Culturais",
+        "FGB-CA - Coordenadora Administrativa", "FGB-CCL - Coordenadoria de Contratos e Licitações", "FGB-CEC - Coordenadoria de Equipamentos Culturais",
         "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira", "FGB-CG - Chefia de Gabinete",
         "FGB-CI - Controle Interno", "FGB-CMPC - Conselho Municipal de Políticas Culturais",
         "FGB-COA - Coordenadoria de Artes", "FGB-CPHC - Coordenadoria de Patrimônio Histórico",
@@ -501,7 +501,7 @@
         db.ref('processos/' + id).update({ excluido: estado });
     }
 
-    // NOVO: DELEGAR/TRANSFERIR PROCESSO
+    // TRANSFERIR PROCESSO
     function transferirProcesso(id, novoDono) {
         if(novoDono === "") return;
         if(confirm(`Tem certeza que deseja delegar este processo para o operador '${novoDono.toUpperCase()}'?`)) {
@@ -521,7 +521,6 @@
                     const perfilDono = dbUsuarios[donoProcesso] || {};
                     const setorOficialDono = perfilDono.setor || p.setorOrigem || "";
 
-                    // Apaga se for do mesmo setor
                     if(p.excluido && (setorOficialDono === meuSetor || p.setor === meuSetor)) {
                         child.ref.remove();
                     }
@@ -561,7 +560,7 @@
 
         document.getElementById('user-display').innerText = `Painel de ${meuNivel}: ${usuarioAtual.toUpperCase()} | 🏢 ${meuSetor.split(' -')[0]}`;
 
-        // --- CONTROLE DE EXIBIÇÃO DE RECURSOS DO COORDENADOR ---
+        // CONTROLE DE EXIBIÇÃO DE RECURSOS DO COORDENADOR
         const dashSetor = document.getElementById('dash-setor');
         const btnReport = document.getElementById('btn-report');
         const btnLimparLixeira = document.getElementById('btn-limpar-lixeira');
@@ -588,7 +587,6 @@
 
         let temProcessos = false;
         
-        // VARIÁVEIS PARA O DASHBOARD
         let totalSetor = 0;
         let valorTotal = 0;
         let fasesCount = {};
@@ -612,7 +610,6 @@
 
             temProcessos = true;
 
-            // --- ALIMENTAR DADOS DO DASHBOARD (Apenas ativos do setor do coordenador) ---
             if (!p.excluido && (setorOficialDoDono === meuSetor || p.setor === meuSetor)) {
                 totalSetor++;
                 
@@ -632,7 +629,6 @@
             
             const etiquetaDono = (donoDoProcesso !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${donoDoProcesso.toUpperCase()}</span>` : '';
 
-            // --- CAIXA DE TRANSFERÊNCIA (Só Coordenador vê e só se não estiver na lixeira) ---
             let transferHTML = '';
             if (meuNivel === 'Coordenador' && !p.excluido) {
                 let selectTransfer = `<option value="" selected disabled>Transferir para...</option>`;
@@ -686,7 +682,6 @@
             if (p.excluido) { lixeiraDiv.innerHTML += htmlCard; } else { ativosDiv.innerHTML += htmlCard; }
         });
 
-        // --- ATUALIZA O DASHBOARD NA TELA ---
         if (meuNivel === 'Coordenador') {
             document.getElementById('stat-total').innerText = totalSetor;
             document.getElementById('stat-valor').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
