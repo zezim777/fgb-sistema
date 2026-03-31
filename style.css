@@ -329,3 +329,18 @@ body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
         width: 95% !important;
     }
 }
+
+/* AJUSTE DOS CARDS PARA O NOVO LAYOUT */
+#lista-ativos, #lista-lixeira {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    padding-top: 20px;
+}
+
+.processo-card {
+    width: 100%;
+    max-width: 400px; /* Mantém o tamanho que você já gostava */
+    flex-grow: 0;
+}
