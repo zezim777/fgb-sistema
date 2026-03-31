@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.3</title>
+    <title>FGB Cloud - Gestão Oficial v11.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -40,16 +40,28 @@
         .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
         .hidden { display: none !important; }
         
-        /* --- NOVOS ESTILOS PARA ÍCONES NOS INPUTS --- */
+        /* --- ESTILOS PARA ÍCONES E BOTÃO DE SENHA --- */
         .input-wrapper { position: relative; width: 100%; margin: 8px 0; }
         .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #7f8c8d; z-index: 2; pointer-events: none; }
-        .toggle-pass { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #7f8c8d; padding: 0; z-index: 2; margin: 0 !important; width: auto !important; outline: none; }
+        
+        /* Forçando o botão de senha a ser apenas texto e sem fundo */
+        .auth-card button.toggle-pass { 
+            position: absolute; right: 5px; top: 50%; transform: translateY(-50%); 
+            background: transparent !important; border: none; cursor: pointer; 
+            font-size: 0.75rem; color: #7f8c8d; padding: 8px; z-index: 2; margin: 0 !important; 
+            width: auto !important; outline: none; font-weight: bold; text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        .auth-card button.toggle-pass:hover { color: var(--primary); }
+        body.dark-mode .auth-card button.toggle-pass { color: #95a5a6; }
+        body.dark-mode .auth-card button.toggle-pass:hover { color: #fff; }
         
         .auth-card input, .auth-card select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
         .input-wrapper input { padding-left: 40px !important; margin: 0 !important; }
-        .input-wrapper input[type="password"], .input-wrapper input.pass-text { padding-right: 40px !important; }
+        /* Dando espaço na direita para não encostar no botão VER */
+        .input-wrapper input[type="password"], .input-wrapper input.pass-text { padding-right: 70px !important; }
         
-        .auth-card button { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .auth-card button.btn-principal { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.9rem; text-decoration: underline; margin-top: 20px; cursor: pointer; display: inline-block; width: 100%; }
         .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
 
@@ -162,21 +174,22 @@
         
         <div class="input-wrapper">
             <span class="input-icon">👤</span>
-            <input type="text" id="login-user" placeholder="Usuário (Sem pontos/espaços)">
+            <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
         </div>
         
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="login-pass" placeholder="Senha">
-            <button type="button" class="toggle-pass" onclick="toggleSenha('login-pass', this)">👁️</button>
+            <input type="password" id="login-pass" class="pass-text" placeholder="Senha">
+            <button type="button" class="toggle-pass" onclick="toggleSenha('login-pass', this)">VER</button>
         </div>
 
-        <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+        <button class="btn-principal" onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+        
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.3
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.4
         </div>
     </div>
 
@@ -191,8 +204,8 @@
         
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="reg-pass" placeholder="Definir Senha">
-            <button type="button" class="toggle-pass" onclick="toggleSenha('reg-pass', this)">👁️</button>
+            <input type="password" id="reg-pass" class="pass-text" placeholder="Definir Senha">
+            <button type="button" class="toggle-pass" onclick="toggleSenha('reg-pass', this)">VER</button>
         </div>
         
         <select id="reg-setor" style="margin-top: 10px;">
@@ -204,7 +217,7 @@
             <option value="Coordenador">Nível: Coordenador (Ver todos do meu setor)</option>
         </select>
 
-        <button id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
+        <button class="btn-principal" id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
 
@@ -220,11 +233,11 @@
         
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="rec-pass" placeholder="Nova Senha">
-            <button type="button" class="toggle-pass" onclick="toggleSenha('rec-pass', this)">👁️</button>
+            <input type="password" id="rec-pass" class="pass-text" placeholder="Nova Senha">
+            <button type="button" class="toggle-pass" onclick="toggleSenha('rec-pass', this)">VER</button>
         </div>
 
-        <button onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
+        <button class="btn-principal" onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
 
@@ -333,15 +346,15 @@
         document.getElementById('btn-tema').innerText = '☀️';
     }
 
-    // --- NOVO: LÓGICA DE VER/OCULTAR SENHA ---
+    // --- LÓGICA DE VER/OCULTAR SENHA (ATUALIZADA) ---
     function toggleSenha(inputId, btn) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
             input.type = "text";
-            btn.innerText = "🙈"; 
+            btn.innerText = "OCULTAR"; 
         } else {
             input.type = "password";
-            btn.innerText = "👁️";
+            btn.innerText = "VER";
         }
     }
 
