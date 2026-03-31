@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.9</title>
+    <title>FGB Cloud - Gestão Oficial v12.0</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -27,15 +27,6 @@
 
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
         
-        /* BOTÃO TEMA MODO NOTURNO */
-        .btn-tema {
-            position: fixed; top: 15px; left: 15px; background: rgba(0,0,0,0.1); color: var(--primary);
-            border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer;
-            z-index: 2000; display: flex; align-items: center; justify-content: center; transition: 0.3s;
-        }
-        body.dark-mode .btn-tema { background: rgba(255,255,255,0.1); color: #fff; }
-        .btn-tema:hover { transform: scale(1.1); }
-
         /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
         .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
         .hidden { display: none !important; }
@@ -96,7 +87,6 @@
         }
         body.dark-mode .user-dropdown { background: #1e1e1e; border: 1px solid #333; }
         
-        /* NOVO: Classe .active garante que funcione com o clique no celular */
         .user-menu-container:hover .user-dropdown, 
         .user-menu-container.active .user-dropdown {
             opacity: 1; visibility: visible; transform: translateY(0);
@@ -194,7 +184,7 @@
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
-            .btn-tema, .user-menu-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
+            .user-menu-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
             #main-system { max-width: 100%; width: 100%; padding: 0; }
             header { background: transparent; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
             .processo-card { border: 1px solid #ddd; page-break-inside: avoid; box-shadow: none; }
@@ -204,8 +194,6 @@
     </style>
 </head>
 <body>
-
-    <button class="btn-tema" id="btn-tema" onclick="alternarTema()" title="Alternar Modo Claro/Escuro">🌙</button>
 
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
@@ -228,7 +216,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.9<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.0<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -288,7 +276,7 @@
                 <div class="user-dropdown">
                     <div class="dropdown-item" onclick="alert('Módulo de Perfil em desenvolvimento!')">Perfil</div>
                     <div class="dropdown-item" onclick="alert('Módulo de Configurações em desenvolvimento!')">Configurações</div>
-                    <div class="dropdown-item" onclick="alert('Módulo de Personalização em desenvolvimento!')">Personalizar</div>
+                    <div class="dropdown-item" onclick="abrirModalPersonalizar()">Personalizar</div>
                     <div class="dropdown-item danger" onclick="fazerLogout(false)">Sair da conta</div>
                 </div>
             </div>
@@ -346,6 +334,19 @@
                 <button class="modal-btn-cancelar" onclick="fecharModalSugestao()">Cancelar</button>
             </div>
         </div>
+
+        <div class="modal-overlay" id="modal-personalizar">
+            <div class="modal-content">
+                <h3>Personalizar Sistema</h3>
+                <p style="font-size: 0.8rem; margin-bottom: 15px;">Ajuste a aparência do FGB Cloud para o seu conforto.</p>
+                
+                <button onclick="alternarTema()" style="background: var(--primary); color: white; padding: 12px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px;" id="btn-modal-tema">
+                    🌙 Ativar Modo Escuro
+                </button>
+                
+                <button class="modal-btn-cancelar" onclick="fecharModalPersonalizar()">Fechar</button>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -382,17 +383,31 @@
     const regSetor = document.getElementById('reg-setor');
     setoresFGB.forEach(s => { regSetor.innerHTML += `<option value="${s}">${s}</option>`; });
 
-    // --- LÓGICA DO MODO NOTURNO ---
+    // --- LÓGICA DO MODO NOTURNO E PERSONALIZAÇÃO ---
     function alternarTema() {
         document.body.classList.toggle('dark-mode');
         const modoEscuroAtivo = document.body.classList.contains('dark-mode');
         localStorage.setItem('fgb_tema', modoEscuroAtivo ? 'dark' : 'light');
-        document.getElementById('btn-tema').innerText = modoEscuroAtivo ? '☀️' : '🌙';
+        
+        const btnModalTema = document.getElementById('btn-modal-tema');
+        if (btnModalTema) {
+            btnModalTema.innerText = modoEscuroAtivo ? '☀️ Ativar Modo Claro' : '🌙 Ativar Modo Escuro';
+        }
     }
 
     if (localStorage.getItem('fgb_tema') === 'dark') {
         document.body.classList.add('dark-mode');
-        document.getElementById('btn-tema').innerText = '☀️';
+        const btnModalTema = document.getElementById('btn-modal-tema');
+        if (btnModalTema) btnModalTema.innerText = '☀️ Ativar Modo Claro';
+    }
+
+    function abrirModalPersonalizar() {
+        document.querySelector('.user-menu-container').classList.remove('active'); // Esconde o menu de perfil
+        document.getElementById('modal-personalizar').style.display = 'flex';
+    }
+
+    function fecharModalPersonalizar() {
+        document.getElementById('modal-personalizar').style.display = 'none';
     }
 
     // --- LÓGICA DE VER/OCULTAR SENHA ---
@@ -407,13 +422,12 @@
         }
     }
 
-    // --- NOVO: LÓGICA DO MENU DO USUÁRIO (MOBILE/CLICK) ---
+    // --- LÓGICA DO MENU DO USUÁRIO (MOBILE/CLICK) ---
     function toggleMenuUsuario(event) {
-        event.stopPropagation(); // Evita que o clique feche imediatamente pelo window.onclick
+        event.stopPropagation(); 
         document.querySelector('.user-menu-container').classList.toggle('active');
     }
 
-    // Fecha o menu se a pessoa clicar fora dele (comportamento de app)
     window.onclick = function(event) {
         const menuCont = document.querySelector('.user-menu-container');
         if (menuCont && !menuCont.contains(event.target)) {
