@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.1</title>
+    <title>FGB Cloud - Gestão Oficial v12.2</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -66,41 +66,17 @@
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
 
         /* --- MENU DO USUÁRIO ANIMADO --- */
-        .user-menu-container {
-            position: absolute; right: 15px; top: 15px; z-index: 200;
-        }
-        .user-avatar {
-            width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white;
-            user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-        .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar {
-            background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05);
-        }
-        .user-dropdown {
-            position: absolute; right: 0; top: 48px; background: var(--card-bg);
-            color: var(--primary); border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            width: 170px; overflow: hidden; opacity: 0; visibility: hidden;
-            transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            text-align: left;
-        }
+        .user-menu-container { position: absolute; right: 15px; top: 15px; z-index: 200; }
+        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05); }
+        .user-dropdown { position: absolute; right: 0; top: 48px; background: var(--card-bg); color: var(--primary); border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); width: 170px; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-align: left; }
         body.dark-mode .user-dropdown { background: #1e1e1e; border: 1px solid #333; }
-        
-        .user-menu-container:hover .user-dropdown, 
-        .user-menu-container.active .user-dropdown {
-            opacity: 1; visibility: visible; transform: translateY(0);
-        }
-        
-        .dropdown-item {
-            padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
-            transition: 0.2s; border-bottom: 1px solid #f0f0f0;
-        }
+        .user-menu-container:hover .user-dropdown, .user-menu-container.active .user-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item { padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f0f0f0; }
         body.dark-mode .dropdown-item { border-bottom-color: #333; color: #ecf0f1; }
         .dropdown-item:last-child { border-bottom: none; }
         .dropdown-item:hover { background: rgba(0,0,0,0.05); padding-left: 20px; color: var(--accent); }
         body.dark-mode .dropdown-item:hover { background: rgba(255,255,255,0.05); color: var(--accent); }
-        
         .dropdown-item.danger { color: var(--danger); }
         body.dark-mode .dropdown-item.danger { color: #ff6b6b; }
         .dropdown-item.danger:hover { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
@@ -181,9 +157,9 @@
         .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
         body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
 
-        /* NOVO: ESTILO DO BOTÃO DE TEMA NO MODAL */
+        /* ESTILO DO BOTÃO DE TEMA NO MODAL */
         #btn-modal-tema { background: var(--primary); color: white; padding: 12px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.3s; }
-        body.dark-mode #btn-modal-tema { color: #121212; } /* Garante que o texto fique escuro e legível no modo noturno */
+        body.dark-mode #btn-modal-tema { color: #121212; }
 
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
@@ -220,7 +196,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.1<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.2<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -239,6 +215,11 @@
             <input type="password" id="reg-pass" class="pass-text" placeholder="Definir Senha">
             <button type="button" class="toggle-pass" onclick="toggleSenha('reg-pass', this)">VER</button>
         </div>
+
+        <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input type="text" id="reg-keyword" placeholder="Palavra-Chave Secreta (Ex: nome da mãe)">
+        </div>
         
         <select id="reg-setor" style="margin-top: 10px;">
             <option value="" disabled selected>Qual o seu Setor?</option>
@@ -256,16 +237,21 @@
     <div id="recuperar-screen" class="auth-card hidden">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Redefinir Senha</h2>
-        <p style="font-size: 0.8rem; margin-bottom: 15px;">Digite seu usuário exato para cadastrar uma nova senha.</p>
+        <p style="font-size: 0.8rem; margin-bottom: 15px;">Digite seu usuário e sua Palavra-Chave para cadastrar a nova senha.</p>
         
         <div class="input-wrapper">
             <span class="input-icon">👤</span>
             <input type="text" id="rec-user" placeholder="Seu Usuário (Ex: josefgb)">
         </div>
+
+        <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input type="text" id="rec-keyword" placeholder="Sua Palavra-Chave Secreta">
+        </div>
         
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="rec-pass" class="pass-text" placeholder="Nova Senha">
+            <input type="password" id="rec-pass" class="pass-text" placeholder="Sua Nova Senha">
             <button type="button" class="toggle-pass" onclick="toggleSenha('rec-pass', this)">VER</button>
         </div>
 
@@ -447,34 +433,46 @@
         document.getElementById(id).classList.remove('hidden');
     }
 
+    // --- NOVO: LÓGICA DE ALTERAR SENHA COM PALAVRA-CHAVE ---
     function alterarSenha() {
         const u = document.getElementById('rec-user').value.toLowerCase().trim();
+        const k = document.getElementById('rec-keyword').value.trim();
         const novaSenha = document.getElementById('rec-pass').value;
 
-        if (!u || !novaSenha) return alert("Preencha o Usuário e a Nova Senha!");
+        if (!u || !k || !novaSenha) return alert("Preencha o Usuário, Palavra-Chave e a Nova Senha!");
 
         db.ref('usuarios/' + u).once('value', snap => {
             if (snap.exists()) {
-                db.ref('usuarios/' + u).update({ senha: novaSenha }).then(() => {
-                    alert("✅ Senha alterada com sucesso! Faça seu login.");
-                    document.getElementById('rec-user').value = '';
-                    document.getElementById('rec-pass').value = '';
-                    alternarTela('login-screen');
-                });
+                const userData = snap.val();
+                
+                // Verifica se a palavra-chave existe e bate com a digitada (ignora maiúsculas/minúsculas)
+                if (userData.palavraChave && userData.palavraChave.toLowerCase() === k.toLowerCase()) {
+                    db.ref('usuarios/' + u).update({ senha: novaSenha }).then(() => {
+                        alert("✅ Senha alterada com sucesso! Faça seu login.");
+                        document.getElementById('rec-user').value = '';
+                        document.getElementById('rec-keyword').value = '';
+                        document.getElementById('rec-pass').value = '';
+                        alternarTela('login-screen');
+                    });
+                } else {
+                    alert("❌ Palavra-Chave incorreta. A senha não foi alterada por segurança.");
+                }
             } else {
-                alert("❌ Usuário não encontrado no sistema. Verifique se digitou corretamente.");
+                alert("❌ Usuário não encontrado no sistema.");
             }
         });
     }
 
+    // --- NOVO: CADASTRO INCLUINDO PALAVRA-CHAVE ---
     function cadastrarUsuario() {
         const u = document.getElementById('reg-user').value.toLowerCase().trim();
         const p = document.getElementById('reg-pass').value;
+        const k = document.getElementById('reg-keyword').value.trim(); // Puxa a palavra-chave
         const s = document.getElementById('reg-setor').value;
         const n = document.getElementById('reg-nivel').value;
         const btn = document.getElementById('btn-cadastrar');
 
-        if (!u || !p || !s) return alert("Preencha Usuário, Senha e selecione o Setor!");
+        if (!u || !p || !k || !s) return alert("Preencha Usuário, Senha, Palavra-Chave e selecione o Setor!");
 
         const caracteresInvalidos = /[.#$\[\]\/\s]/;
         if (caracteresInvalidos.test(u)) {
@@ -508,7 +506,8 @@
                 alert("A conexão falhou. Verifique sua internet.");
             }, 10000);
 
-            db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n })
+            // Salva a palavraChave no banco de dados junto com o resto
+            db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n, palavraChave: k })
             .then(() => {
                 clearTimeout(timeoutEmergencia); 
                 alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
