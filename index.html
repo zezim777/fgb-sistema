@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.3</title>
+    <title>FGB Cloud - Gestão Oficial v12.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -65,21 +65,29 @@
         body.dark-mode header { background: #0f171e; }
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
 
-        /* --- MENU DO USUÁRIO E SINO DE NOTIFICAÇÃO --- */
+        /* --- MENUS E BOTÕES DO CABEÇALHO --- */
         .user-menu-container { position: absolute; right: 15px; top: 15px; z-index: 200; }
         .notification-container { position: absolute; left: 15px; top: 15px; z-index: 200; }
         
-        .user-avatar, .bell-icon { 
+        /* NOVO: Botão Megafone do Admin (invisível por padrão) */
+        .admin-container { position: absolute; left: 65px; top: 15px; z-index: 200; display: none; }
+        .admin-container.visible { display: block; }
+        
+        .user-avatar, .bell-icon, .admin-icon { 
             width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem; 
             cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white; 
             user-select: none; -webkit-tap-highlight-color: transparent; position: relative;
         }
         
+        .admin-icon { background: rgba(243, 156, 18, 0.2); } /* Destaque leve em laranja */
+        
         .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar,
-        .notification-container:hover .bell-icon, .notification-container.active .bell-icon { 
+        .notification-container:hover .bell-icon, .notification-container.active .bell-icon,
+        .admin-container:hover .admin-icon { 
             background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05); 
         }
+        .admin-container:hover .admin-icon { background: rgba(243, 156, 18, 0.5); border-color: rgba(243, 156, 18, 0.7); }
         
         .user-dropdown, .notif-dropdown { 
             position: absolute; top: 48px; background: var(--card-bg); color: var(--primary); 
@@ -89,7 +97,7 @@
         }
         
         .user-dropdown { right: 0; width: 170px; }
-        .notif-dropdown { left: 0; width: 260px; max-height: 300px; overflow-y: auto; }
+        .notif-dropdown { left: 0; width: 280px; max-height: 300px; overflow-y: auto; }
         
         body.dark-mode .user-dropdown, body.dark-mode .notif-dropdown { background: #1e1e1e; border: 1px solid #333; }
         
@@ -107,7 +115,7 @@
         body.dark-mode .dropdown-item.danger { color: #ff6b6b; }
         .dropdown-item.danger:hover { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
 
-        /* ITENS ESPECÍFICOS DA NOTIFICAÇÃO */
+        /* ITENS DA NOTIFICAÇÃO (REAL-TIME) */
         .notif-item { padding: 12px 15px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; line-height: 1.4; color: var(--primary); transition: 0.2s; cursor: default; }
         body.dark-mode .notif-item { border-bottom-color: #333; color: #ecf0f1; }
         .notif-item:last-child { border-bottom: none; }
@@ -181,43 +189,28 @@
         body.dark-mode .detalhes span { color: #bdc3c7; }
         .autor-badge { font-size: 0.7rem; background: var(--primary); color: white; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px; }
         
-        /* LIXEIRA */
+        /* LIXEIRA E MODAIS */
         .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } 
         .na-lixeira { border-left-color: #95a5a6; filter: grayscale(0.5); }
 
-        /* BOTÃO FLUTUANTE DE SUGESTÕES E MODAL */
-        .btn-flutuante {
-            position: fixed; bottom: 20px; right: 20px; background: #f39c12; color: white; border: none;
-            padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .btn-flutuante { position: fixed; bottom: 20px; right: 20px; background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .btn-flutuante:hover { background: #e67e22; transform: scale(1.05); }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; box-sizing: border-box;
-        }
-        .modal-content {
-            background: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: 0.3s;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; box-sizing: border-box; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: 0.3s; }
         .modal-content h3 { margin-top: 0; color: var(--primary); }
-        .modal-content textarea {
-            width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
-            resize: none; box-sizing: border-box; margin: 15px 0; outline: none;
-        }
+        .modal-content textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: none; box-sizing: border-box; margin: 15px 0; outline: none; }
         .modal-btn-enviar { background: #f39c12; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; }
         .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
         body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
 
-        /* ESTILO DO BOTÃO DE TEMA NO MODAL */
         #btn-modal-tema { background: var(--primary); color: white; padding: 12px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.3s; }
         body.dark-mode #btn-modal-tema { color: #121212; }
 
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
-            .user-menu-container, .notification-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
+            .user-menu-container, .notification-container, .admin-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
             #main-system { max-width: 100%; width: 100%; padding: 0; }
             header { background: transparent; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
             .processo-card { border: 1px solid #ddd; page-break-inside: avoid; box-shadow: none; }
@@ -249,7 +242,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.3<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.4<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -323,6 +316,10 @@
                 <div class="notif-dropdown" id="notif-list">
                     <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova no momento.</div>
                 </div>
+            </div>
+
+            <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
+                <div class="admin-icon" title="Megafone do Sistema (Somente Admin)">📢</div>
             </div>
 
             <div class="user-menu-container">
@@ -401,6 +398,17 @@
                 <button class="modal-btn-cancelar" onclick="fecharModalPersonalizar()">Fechar</button>
             </div>
         </div>
+
+        <div class="modal-overlay" id="modal-admin-notif">
+            <div class="modal-content">
+                <h3>Painel de Transmissão 📢</h3>
+                <p style="font-size: 0.8rem; margin-bottom: 15px; color: var(--danger); font-weight: bold;">Atenção: Esta mensagem aparecerá para todos os usuários do sistema.</p>
+                <textarea id="texto-admin-notif" placeholder="Digite o aviso oficial (Ex: Sistema em manutenção às 18h)..."></textarea>
+                <button class="modal-btn-enviar" onclick="enviarNotificacaoGlobal()" style="background: var(--danger);">TRANSMITIR AVISO GLOBAL</button>
+                <button class="modal-btn-cancelar" onclick="fecharModalAdminNotif()">Cancelar</button>
+            </div>
+        </div>
+
     </div>
 
 <script>
@@ -433,6 +441,10 @@
     
     let dbUsuarios = {};
     let dbProcessos = null;
+    
+    // VARIÁVEIS DA NOTIFICAÇÃO REAL-TIME
+    let listaNotificacoesGlobais = [];
+    let ultimaNotifLida = localStorage.getItem('ultima_notif_lida') || 0;
 
     const regSetor = document.getElementById('reg-setor');
     setoresFGB.forEach(s => { regSetor.innerHTML += `<option value="${s}">${s}</option>`; });
@@ -459,10 +471,7 @@
         document.querySelector('.user-menu-container').classList.remove('active');
         document.getElementById('modal-personalizar').style.display = 'flex';
     }
-
-    function fecharModalPersonalizar() {
-        document.getElementById('modal-personalizar').style.display = 'none';
-    }
+    function fecharModalPersonalizar() { document.getElementById('modal-personalizar').style.display = 'none'; }
 
     // --- LÓGICA DE VER/OCULTAR SENHA ---
     function toggleSenha(inputId, btn) {
@@ -476,36 +485,7 @@
         }
     }
 
-    // --- LÓGICA DOS MENUS DO CABEÇALHO (MOBILE/CLICK) E NOTIFICAÇÕES ---
-    let contadorNotificacoes = 0;
-
-    function dispararNotificacaoExemplo(mensagem) {
-        contadorNotificacoes++;
-        const badge = document.getElementById('notif-badge');
-        const emoji = document.getElementById('bell-emoji');
-        const lista = document.getElementById('notif-list');
-        const msgVazia = document.getElementById('notif-vazia');
-
-        badge.innerText = contadorNotificacoes;
-        badge.style.display = 'flex';
-
-        if (msgVazia) msgVazia.style.display = 'none';
-
-        // Adiciona a nova notificação no topo da lista
-        lista.innerHTML = `<div class="notif-item"><strong>Novo Aviso:</strong><br>${mensagem}</div>` + lista.innerHTML;
-
-        // Dispara a animação do sino
-        emoji.classList.remove('ringing');
-        void emoji.offsetWidth; // Força o navegador a reiniciar a animação
-        emoji.classList.add('ringing');
-    }
-
-    function lerNotificacoes() {
-        contadorNotificacoes = 0;
-        const badge = document.getElementById('notif-badge');
-        badge.style.display = 'none';
-    }
-
+    // --- LÓGICA DO MENU DO USUÁRIO E SINO ---
     function toggleMenuUsuario(event) {
         event.stopPropagation(); 
         document.querySelector('.notification-container').classList.remove('active');
@@ -517,22 +497,95 @@
         document.querySelector('.user-menu-container').classList.remove('active');
         const notifCont = document.querySelector('.notification-container');
         notifCont.classList.toggle('active');
-        if(notifCont.classList.contains('active')) {
-            lerNotificacoes();
-        }
+        if(notifCont.classList.contains('active')) lerNotificacoes();
     }
 
     window.onclick = function(event) {
         const menuCont = document.querySelector('.user-menu-container');
         const notifCont = document.querySelector('.notification-container');
         
-        if (menuCont && !menuCont.contains(event.target)) {
-            menuCont.classList.remove('active');
-        }
-        if (notifCont && !notifCont.contains(event.target)) {
-            notifCont.classList.remove('active');
-        }
+        if (menuCont && !menuCont.contains(event.target)) menuCont.classList.remove('active');
+        if (notifCont && !notifCont.contains(event.target)) notifCont.classList.remove('active');
     };
+
+    // --- NOVO: FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) ---
+    function abrirModalAdminNotif() {
+        document.getElementById('modal-admin-notif').style.display = 'flex';
+    }
+    
+    function fecharModalAdminNotif() {
+        document.getElementById('modal-admin-notif').style.display = 'none';
+        document.getElementById('texto-admin-notif').value = '';
+    }
+
+    function enviarNotificacaoGlobal() {
+        const texto = document.getElementById('texto-admin-notif').value.trim();
+        if (!texto) return alert("Digite o aviso oficial antes de enviar!");
+
+        const idMsg = Date.now();
+        const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+
+        db.ref('notificacoes_globais/' + idMsg).set({ id: idMsg, msg: texto, data: dataEnvio })
+        .then(() => { 
+            alert("📢 Aviso transmitido em tempo real para toda a fundação!"); 
+            fecharModalAdminNotif(); 
+        })
+        .catch(e => alert("Erro ao transmitir: " + e.message));
+    }
+
+    // --- PROCESSADOR DE NOTIFICAÇÕES (RECEBIMENTO) ---
+    function renderizarNotificacoes() {
+        const listaDiv = document.getElementById('notif-list');
+        const badge = document.getElementById('notif-badge');
+        const emoji = document.getElementById('bell-emoji');
+        
+        listaDiv.innerHTML = '';
+        let numNaoLidas = 0;
+        let maiorIdNotificacao = 0;
+
+        if(listaNotificacoesGlobais.length === 0) {
+            listaDiv.innerHTML = '<div class="notif-item empty">Nenhuma notificação oficial no momento.</div>';
+            badge.style.display = 'none';
+            return;
+        }
+
+        // Ordena para a mais recente ficar no topo
+        listaNotificacoesGlobais.sort((a,b) => b.id - a.id).forEach(notif => {
+            if(notif.id > maiorIdNotificacao) maiorIdNotificacao = notif.id;
+            if(notif.id > ultimaNotifLida) numNaoLidas++;
+            
+            listaDiv.innerHTML += `
+                <div class="notif-item">
+                    <strong style="color: var(--danger);">📢 FGB Cloud Informa:</strong><br>
+                    ${notif.msg}<br>
+                    <span style="font-size:0.7rem; color:#95a5a6; display:block; margin-top:3px;">Recebido em: ${notif.data}</span>
+                </div>
+            `;
+        });
+
+        // Se tiver mensagem nova, acende a bolinha vermelha e balança o sino!
+        if(numNaoLidas > 0) {
+            if(badge.innerText != numNaoLidas) {
+                emoji.classList.remove('ringing');
+                void emoji.offsetWidth; // Truque para forçar a animação a reiniciar
+                emoji.classList.add('ringing');
+            }
+            badge.innerText = numNaoLidas;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function lerNotificacoes() {
+        if(listaNotificacoesGlobais.length > 0) {
+            let maiorIdNotificacao = Math.max(...listaNotificacoesGlobais.map(n => n.id));
+            localStorage.setItem('ultima_notif_lida', maiorIdNotificacao);
+            ultimaNotifLida = maiorIdNotificacao;
+            document.getElementById('notif-badge').style.display = 'none';
+        }
+    }
+
 
     // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
@@ -683,28 +736,6 @@
         
         iniciarMonitoramento(); 
         iniciarLeituraDeDados(); 
-
-        // Simulação de Notificação de Boas-Vindas para testar o sino animado
-        setTimeout(() => {
-            dispararNotificacaoExemplo(`Olá, <strong>${localStorage.getItem('fgb_user').toUpperCase()}</strong>! Seu painel foi carregado com sucesso e está pronto para uso.`);
-        }, 2500);
-    }
-
-    // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
-    function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
-    function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; document.getElementById('texto-sugestao').value = ''; }
-
-    function enviarSugestao() {
-        const texto = document.getElementById('texto-sugestao').value.trim();
-        if (!texto) return alert("Escreva algo antes de enviar!");
-
-        const usuarioAtual = localStorage.getItem('fgb_user') || 'Usuário Não Logado';
-        const idSugestao = Date.now();
-        const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
-
-        db.ref('sugestoes/' + idSugestao).set({ id: idSugestao, usuario: usuarioAtual, mensagem: texto, data: dataEnvio })
-        .then(() => { alert("✅ Sua sugestão foi enviada com sucesso! Muito obrigado."); fecharModalSugestao(); })
-        .catch(e => alert("Erro ao enviar: " + e.message));
     }
 
     // --- 6. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
@@ -799,16 +830,30 @@
         });
     }
 
-    // --- 7. MOTOR DE LEITURA DUPLA ---
+    // --- 7. MOTOR DE LEITURA (PROCESSOS, USUARIOS E NOTIFICAÇÕES) ---
     function iniciarLeituraDeDados() {
+        // Puxa Perfis
         db.ref('usuarios').on('value', snap => {
             dbUsuarios = snap.val() || {};
             if (dbProcessos !== null) renderizarTela(); 
         });
 
+        // Puxa Processos
         db.ref('processos').on('value', snap => {
             dbProcessos = snap.val();
             renderizarTela(); 
+        });
+
+        // Puxa as Notificações Globais em Tempo Real
+        db.ref('notificacoes_globais').on('value', snap => {
+            const dadosNotificacao = snap.val();
+            listaNotificacoesGlobais = [];
+            if(dadosNotificacao) {
+                Object.keys(dadosNotificacao).forEach(key => {
+                    listaNotificacoesGlobais.push(dadosNotificacao[key]);
+                });
+            }
+            renderizarNotificacoes();
         });
     }
 
@@ -820,6 +865,14 @@
 
         document.getElementById('user-display').innerText = `Painel de ${meuNivel}: ${usuarioAtual.toUpperCase()} | 🏢 ${meuSetor.split(' -')[0]}`;
 
+        // VERIFICAÇÃO DO DONO DO SISTEMA (JOSEEMINEM)
+        if (usuarioAtual === 'joseeminem') {
+            document.getElementById('admin-container').classList.add('visible');
+        } else {
+            document.getElementById('admin-container').classList.remove('visible');
+        }
+
+        // CONTROLE DE EXIBIÇÃO DE RECURSOS DO COORDENADOR
         const dashSetor = document.getElementById('dash-setor');
         const btnReport = document.getElementById('btn-report');
         const btnLimparLixeira = document.getElementById('btn-limpar-lixeira');
