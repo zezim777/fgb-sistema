@@ -49,10 +49,39 @@ body.dark-mode .login-footer { border-top-color: #444; color: #7f8c8d; }
 .assinatura-lws { font-weight: bold; color: var(--primary); display: block; margin-top: 5px; font-size: 0.8rem; }
 
 /* SISTEMA PRINCIPAL (PAINEL DE LICITAÇÕES) */
-#main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; position: relative; }
-header { text-align: center; padding: 20px 15px 15px 15px; background: #2c3e50; color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
-body.dark-mode header { background: #0f171e; }
-header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
+#main-system { 
+    display: none; 
+    width: 90%; /* Ocupa quase a tela toda */
+    padding: 20px; 
+    box-sizing: border-box; 
+    align-self: flex-start; /* Alinha no topo */
+    margin: 0; /* Remove a centralização automática */
+    position: relative; 
+    transition: 0.3s;
+}
+
+/* --- AJUSTE DA SIDEBAR (FORÇANDO O ESPAÇO) --- */
+@media (min-width: 800px) {
+    .sidebar { 
+        display: flex !important; 
+        width: 260px; /* Largura fixa do menu */
+    }
+    #main-system { 
+        /* O site agora começa exatamente onde o menu termina + respiro */
+        margin-left: 280px !important; 
+        max-width: calc(100% - 300px); 
+    }
+}
+
+/* --- AJUSTE PARA CELULAR (SIDEBAR SOME E SITE CENTRALIZA) --- */
+@media (max-width: 799px) {
+    .sidebar { display: none !important; }
+    #main-system { 
+        margin: 0 auto !important; 
+        width: 95% !important; 
+        max-width: 100%;
+    }
+}
 
 /* --- MENUS E BOTÕES DO CABEÇALHO --- */
 .user-menu-container { position: absolute; right: 15px; top: 15px; z-index: 200; }
