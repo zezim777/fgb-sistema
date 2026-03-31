@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.4</title>
+    <title>FGB Cloud - Gestão Oficial v12.5</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -69,7 +69,6 @@
         .user-menu-container { position: absolute; right: 15px; top: 15px; z-index: 200; }
         .notification-container { position: absolute; left: 15px; top: 15px; z-index: 200; }
         
-        /* NOVO: Botão Megafone do Admin (invisível por padrão) */
         .admin-container { position: absolute; left: 65px; top: 15px; z-index: 200; display: none; }
         .admin-container.visible { display: block; }
         
@@ -80,7 +79,7 @@
             user-select: none; -webkit-tap-highlight-color: transparent; position: relative;
         }
         
-        .admin-icon { background: rgba(243, 156, 18, 0.2); } /* Destaque leve em laranja */
+        .admin-icon { background: rgba(243, 156, 18, 0.2); }
         
         .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar,
         .notification-container:hover .bell-icon, .notification-container.active .bell-icon,
@@ -116,7 +115,7 @@
         .dropdown-item.danger:hover { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
 
         /* ITENS DA NOTIFICAÇÃO (REAL-TIME) */
-        .notif-item { padding: 12px 15px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; line-height: 1.4; color: var(--primary); transition: 0.2s; cursor: default; }
+        .notif-item { padding: 12px 15px; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; line-height: 1.4; color: var(--primary); transition: 0.2s; cursor: default; position: relative; }
         body.dark-mode .notif-item { border-bottom-color: #333; color: #ecf0f1; }
         .notif-item:last-child { border-bottom: none; }
         .notif-item.empty { font-weight: normal; color: #7f8c8d; text-align: center; }
@@ -128,6 +127,12 @@
             display: none; align-items: center; justify-content: center; border: 2px solid #2c3e50;
         }
         body.dark-mode .notif-badge { border-color: #0f171e; }
+        
+        .btn-excluir-notif {
+            position: absolute; right: 10px; top: 12px; background: none; border: none;
+            color: var(--danger); cursor: pointer; font-size: 0.8rem; opacity: 0.7; transition: 0.2s;
+        }
+        .btn-excluir-notif:hover { opacity: 1; transform: scale(1.1); }
 
         /* ANIMAÇÃO DO SINO */
         @keyframes ring {
@@ -242,7 +247,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.4<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.5<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -508,7 +513,7 @@
         if (notifCont && !notifCont.contains(event.target)) notifCont.classList.remove('active');
     };
 
-    // --- NOVO: FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) ---
+    // --- FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) E EXCLUSÃO ---
     function abrirModalAdminNotif() {
         document.getElementById('modal-admin-notif').style.display = 'flex';
     }
@@ -533,11 +538,19 @@
         .catch(e => alert("Erro ao transmitir: " + e.message));
     }
 
+    // NOVO: Função exclusiva do Admin para deletar a notificação
+    function deletarNotificacaoGlobal(idMsg) {
+        if(confirm("Tem certeza que deseja APAGAR este aviso para toda a equipe? Ele sumirá da tela de todos instantaneamente.")) {
+            db.ref('notificacoes_globais/' + idMsg).remove();
+        }
+    }
+
     // --- PROCESSADOR DE NOTIFICAÇÕES (RECEBIMENTO) ---
     function renderizarNotificacoes() {
         const listaDiv = document.getElementById('notif-list');
         const badge = document.getElementById('notif-badge');
         const emoji = document.getElementById('bell-emoji');
+        const usuarioAtual = localStorage.getItem('fgb_user');
         
         listaDiv.innerHTML = '';
         let numNaoLidas = 0;
@@ -554,8 +567,15 @@
             if(notif.id > maiorIdNotificacao) maiorIdNotificacao = notif.id;
             if(notif.id > ultimaNotifLida) numNaoLidas++;
             
+            // Se for o admin logado, renderiza o botão de excluir
+            let btnExcluir = '';
+            if(usuarioAtual === 'joseeminem') {
+                btnExcluir = `<button class="btn-excluir-notif" onclick="deletarNotificacaoGlobal(${notif.id})" title="Apagar aviso globalmente">✖</button>`;
+            }
+            
             listaDiv.innerHTML += `
                 <div class="notif-item">
+                    ${btnExcluir}
                     <strong style="color: var(--danger);">📢 FGB Cloud Informa:</strong><br>
                     ${notif.msg}<br>
                     <span style="font-size:0.7rem; color:#95a5a6; display:block; margin-top:3px;">Recebido em: ${notif.data}</span>
