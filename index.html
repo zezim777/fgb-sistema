@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.7</title>
+    <title>FGB Cloud - Gestão Oficial v11.8</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -73,7 +73,42 @@
         header { text-align: center; padding: 20px 15px 15px 15px; background: #2c3e50; color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
         body.dark-mode header { background: #0f171e; }
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
-        .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+
+        /* --- NOVO: MENU DO USUÁRIO ANIMADO --- */
+        .user-menu-container {
+            position: absolute; right: 15px; top: 15px; z-index: 200;
+        }
+        .user-avatar {
+            width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white;
+        }
+        .user-menu-container:hover .user-avatar {
+            background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05);
+        }
+        .user-dropdown {
+            position: absolute; right: 0; top: 48px; background: var(--card-bg);
+            color: var(--primary); border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            width: 170px; overflow: hidden; opacity: 0; visibility: hidden;
+            transform: translateY(-15px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-align: left;
+        }
+        body.dark-mode .user-dropdown { background: #1e1e1e; border: 1px solid #333; }
+        .user-menu-container:hover .user-dropdown {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+        .dropdown-item {
+            padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+            transition: 0.2s; border-bottom: 1px solid #f0f0f0;
+        }
+        body.dark-mode .dropdown-item { border-bottom-color: #333; color: #ecf0f1; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: rgba(0,0,0,0.05); padding-left: 20px; color: var(--accent); }
+        body.dark-mode .dropdown-item:hover { background: rgba(255,255,255,0.05); color: var(--accent); }
+        
+        .dropdown-item.danger { color: var(--danger); }
+        body.dark-mode .dropdown-item.danger { color: #ff6b6b; }
+        .dropdown-item.danger:hover { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
 
         /* ESTILOS DO DASHBOARD E RELATÓRIO */
         .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -154,7 +189,7 @@
         /* REGRAS PARA IMPRESSÃO LIMPA */
         @media print {
             body { background: white; color: black; }
-            .btn-tema, .btn-sair, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
+            .btn-tema, .user-menu-container, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
             #main-system { max-width: 100%; width: 100%; padding: 0; }
             header { background: transparent; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
             .processo-card { border: 1px solid #ddd; page-break-inside: avoid; box-shadow: none; }
@@ -188,7 +223,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.7<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.8<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -243,7 +278,16 @@
 
     <div id="main-system">
         <header>
-            <button class="btn-sair" onclick="fazerLogout(false)">Sair da Conta</button>
+            <div class="user-menu-container">
+                <div class="user-avatar" title="Menu de Opções">👤</div>
+                <div class="user-dropdown">
+                    <div class="dropdown-item" onclick="alert('Módulo de Perfil em desenvolvimento!')">Perfil</div>
+                    <div class="dropdown-item" onclick="alert('Módulo de Configurações em desenvolvimento!')">Configurações</div>
+                    <div class="dropdown-item" onclick="alert('Módulo de Personalização em desenvolvimento!')">Personalizar</div>
+                    <div class="dropdown-item danger" onclick="fazerLogout(false)">Sair da conta</div>
+                </div>
+            </div>
+            
             <h1>FGB Cloud - Gestão de Processos</h1>
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
