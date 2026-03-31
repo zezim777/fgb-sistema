@@ -11,30 +11,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <div id="sidebar-menu" class="sidebar">
-        <div class="sidebar-header">
-            <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 50px;">
-            <span>MENU</span>
-        </div>
-        
-        <div class="sidebar-content">
-            <div class="sidebar-item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <span class="icon">🏠</span> Início / Subir
-            </div>
-            
-            <div class="sidebar-item" onclick="document.querySelector('.lixeira-section').scrollIntoView({behavior: 'smooth'})">
-                <span class="icon">⬇️</span> Ir para Base
-            </div>
-
-            <hr class="sidebar-divider">
-
-            <div class="sidebar-title">HISTÓRICO RECENTE</div>
-            <div id="historico-lista" class="historico-container">
-                <p class="empty-hist">Nenhuma ação recente...</p>
-            </div>
-        </div>
-    </div>
 
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
@@ -121,6 +97,50 @@
     </div>
 
     <div id="main-system">
+
+        <div id="sidebar-menu" class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 50px;">
+                <span>MENU</span>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="sidebar-item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <span class="icon">🏠</span> Início / Subir
+                </div>
+                
+                <div class="sidebar-item" onclick="document.querySelector('.lixeira-section').scrollIntoView({behavior: 'smooth'})">
+                    <span class="icon">⬇️</span> Ir para Base
+                </div>
+
+                <hr class="sidebar-divider">
+
+                <div class="sidebar-title">HISTÓRICO RECENTE</div>
+                <div id="historico-lista" class="historico-container">
+                    <p class="empty-hist">Nenhuma ação recente...</p>
+                </div>
+            </div>
+        </div>
+
+        <header>
+            <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar()">
+                ☰
+            </div>
+
+            <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
+                <div class="bell-icon" title="Notificações">
+                    <span id="bell-emoji">🔔</span>
+                    <div class="notif-badge" id="notif-badge">0</div>
+                </div>
+                <div class="notif-dropdown" id="notif-list">
+                    <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova.</div>
+                </div>
+            </div>
+
+            <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
+                <div class="admin-icon" title="Megafone do Sistema (Somente Admin)">📢</div>
+            </div>
+            
         <header>
 
             <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar()">

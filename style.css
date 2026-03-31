@@ -303,80 +303,81 @@ body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
 .hist-time { display: block; font-size: 0.65rem; color: #95a5a6; margin-top: 4px; }
 .empty-hist { font-size: 0.75rem; color: #bdc3c7; text-align: center; margin-top: 10px; }
 
-/* AJUSTE PARA O CONTEÚDO NÃO FICAR EMBAIXO DO MENU NO PC */
-@media (min-width: 1000px) {
-    #main-system { margin-left: calc(var(--sidebar-width) + 20px) !important; }
+/* --- CONFIGURAÇÃO DA SIDEBAR (BASE) --- */
+.sidebar {
+    position: fixed; 
+    left: 0; 
+    top: 0; 
+    width: 260px; 
+    height: 100vh;
+    background-color: var(--card-bg) !important;
+    border-right: 1px solid #ddd;
+    display: flex; 
+    flex-direction: column; 
+    z-index: 9999; 
+    transition: transform 0.3s ease-in-out;
 }
 
-/* AJUSTE PROFISSIONAL DE VISIBILIDADE (SIDEBAR) */
-@media (min-width: 800px) {
-    .sidebar { 
-        transform: translateX(0) !important; 
-        display: flex !important; 
-    }
-    #main-system { 
-        margin-left: calc(var(--sidebar-width) + 40px) !important; 
-    }
+/* ÍCONE DO MENU MOBILE (HAMBÚRGUER) */
+.mobile-menu-icon {
+    display: none;
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    margin-right: 15px;
+    z-index: 1001;
+    user-select: none;
 }
 
-/* ESCONDER APENAS EM CELULARES PEQUENOS */
-@media (max-width: 799px) {
-    .sidebar { 
-        display: none !important; 
-    }
-    #main-system { 
-        margin-left: auto !important; 
-        width: 95% !important;
-    }
-}
-
-/* --- REGRA CORRIGIDA: LISTA VERTICAL ÚNICA --- */
+/* --- REGRA DE LISTA VERTICAL (OCUPA A LINHA TODA) --- */
 #lista-ativos, #lista-lixeira {
     display: flex !important;
-    flex-direction: column !important; /* FORÇA A LISTA PARA BAIXO */
+    flex-direction: column !important;
     gap: 15px !important;
     padding-top: 20px;
     width: 100% !important;
 }
 
 .processo-card {
-    width: 100% !important;   /* Ocupa a largura total disponível */
-    max-width: 900px;         /* Limite para não esticar demais em telas gigantes */
+    width: 100% !important;
+    max-width: 900px;
     display: block !important;
     margin-bottom: 5px;
 }
 
-/* Garante que o conteúdo principal respeite a Sidebar */
+/* --- COMPORTAMENTO PARA PC (DESKTOP) --- */
 @media (min-width: 800px) {
+    .sidebar { 
+        transform: translateX(0) !important; 
+    }
     #main-system { 
         margin-left: 280px !important; 
         width: calc(100% - 300px) !important;
     }
 }
 
-/* --- ESTILOS PARA MENU MOBILE --- */
-.mobile-menu-icon {
-    display: none; /* Escondido no PC */
-    font-size: 1.8rem;
-    color: white;
-    cursor: pointer;
-    margin-right: 15px;
-    z-index: 1001;
-}
-
+/* --- COMPORTAMENTO PARA CELULAR (ANDROID / IOS) --- */
 @media (max-width: 799px) {
-    .mobile-menu-icon { display: block; } /* Aparece no Celular */
-    
-    .sidebar {
-        transform: translateX(-100%); /* Esconde fora da tela */
-        transition: transform 0.3s ease-in-out;
-        display: flex !important; /* Força o flex mas mantém o transform */
-        width: 280px;
+    .mobile-menu-icon { 
+        display: block !important; 
     }
-
-    /* Classe que será adicionada via JS para abrir */
-    .sidebar.active {
-        transform: translateX(0);
+    .sidebar {
+        transform: translateX(-100%);
         box-shadow: 5px 0 15px rgba(0,0,0,0.3);
     }
+    .sidebar.active {
+        transform: translateX(0) !important;
+    }
+    #main-system { 
+        margin-left: 0 !important; 
+        width: 100% !important;
+    }
+}
+
+/* --- BLINDAGEM DA TELA DE LOGIN (MANTÉM CENTRALIZADO) --- */
+body:not(:has(#main-system[style*="display: block"])) {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column;
 }
