@@ -1,4 +1,4 @@
-// --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
+/ --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
     authDomain: "sistema-de-licitacoes.firebaseapp.com",
@@ -24,7 +24,6 @@ const setoresFGB = [
     "FGB-SGP - Seção de Gestão de Pessoas"
 ];
 let temporizadorInatividade;
-
 let dbUsuarios = {};
 let dbProcessos = null;
 
@@ -32,10 +31,31 @@ let dbProcessos = null;
 let listaNotificacoesGlobais = [];
 let ultimaNotifLida = localStorage.getItem('ultima_notif_lida') || 0;
 
-const regSetor = document.getElementById('reg-setor');
-if (regSetor) {
-    setoresFGB.forEach(s => { regSetor.innerHTML += `<option value="${s}">${s}</option>`; });
-}
+// --- GATILHOS INICIAIS (BLINDAGEM PARA IPHONE/SAFARI) ---
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Carregando os setores do cadastro usando o método oficial que a Apple exige
+    const regSetor = document.getElementById('reg-setor');
+    if (regSetor) {
+        setoresFGB.forEach(s => { 
+            const novaOpcao = new Option(s, s);
+            regSetor.add(novaOpcao); 
+        });
+    }
+
+    // 2. Aplicando o Modo Noturno se estiver salvo no celular
+    if (localStorage.getItem('fgb_tema') === 'dark') {
+        document.body.classList.add('dark-mode');
+        const btnModalTema = document.getElementById('btn-modal-tema');
+        if (btnModalTema) btnModalTema.innerText = '☀️ Ativar Modo Claro';
+    }
+
+    // 3. Verificando se o usuário já estava logado
+    if (localStorage.getItem('fgb_logado') === 'true') {
+        abrirPainelCompleto();
+    }
+});
+
 
 // --- LÓGICA DO MODO NOTURNO E PERSONALIZAÇÃO ---
 function alternarTema() {
@@ -47,12 +67,6 @@ function alternarTema() {
     if (btnModalTema) {
         btnModalTema.innerText = modoEscuroAtivo ? '☀️ Ativar Modo Claro' : '🌙 Ativar Modo Escuro';
     }
-}
-
-if (localStorage.getItem('fgb_tema') === 'dark') {
-    document.body.classList.add('dark-mode');
-    const btnModalTema = document.getElementById('btn-modal-tema');
-    if (btnModalTema) btnModalTema.innerText = '☀️ Ativar Modo Claro';
 }
 
 function abrirModalPersonalizar() {
@@ -97,9 +111,7 @@ window.onclick = function(event) {
 };
 
 // --- FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) E EXCLUSÃO ---
-function abrirModalAdminNotif() {
-    document.getElementById('modal-admin-notif').style.display = 'flex';
-}
+function abrirModalAdminNotif() { document.getElementById('modal-admin-notif').style.display = 'flex'; }
 
 function fecharModalAdminNotif() {
     document.getElementById('modal-admin-notif').style.display = 'none';
