@@ -1,4 +1,4 @@
-/ --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
+// --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
     authDomain: "sistema-de-licitacoes.firebaseapp.com",
