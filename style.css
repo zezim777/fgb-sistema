@@ -14,7 +14,18 @@ body.dark-mode {
     --setor-bg: #002233; --setor-text: #5dade2;
 }
 
-body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
+body { 
+    font-family: 'Segoe UI', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--primary); 
+    margin: 0; 
+    display: flex; 
+    align-items: flex-start; /* Mudado de center para flex-start */
+    justify-content: flex-start; 
+    min-height: 100vh; 
+    flex-direction: row; /* Alinha Sidebar e Site lado a lado */
+    transition: background-color 0.3s, color 0.3s; 
+}
 
 /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
 .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
