@@ -268,8 +268,24 @@ body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
     #main-system { margin-left: calc(var(--sidebar-width) + 20px) !important; }
 }
 
-/* ESCONDER NO CELULAR PARA NÃO QUEBRAR O LAYOUT (Depois criaremos um botão para abrir) */
-@media (max-width: 999px) {
-    .sidebar { transform: translateX(-100%); }
-    #main-system { margin-left: auto !important; }
+/* AJUSTE PROFISSIONAL DE VISIBILIDADE (SIDEBAR) */
+@media (min-width: 800px) {
+    .sidebar { 
+        transform: translateX(0) !important; 
+        display: flex !important; 
+    }
+    #main-system { 
+        margin-left: calc(var(--sidebar-width) + 40px) !important; 
+    }
+}
+
+/* ESCONDER APENAS EM CELULARES PEQUENOS */
+@media (max-width: 799px) {
+    .sidebar { 
+        display: none !important; 
+    }
+    #main-system { 
+        margin-left: auto !important; 
+        width: 95% !important;
+    }
 }
