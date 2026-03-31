@@ -122,30 +122,28 @@
             </div>
         </div>
 
-        <header>
-            <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar()">
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; position: relative;">
+    
+            <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar(event)">
                 ☰
             </div>
 
-            <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
-                <div class="bell-icon" title="Notificações">
-                    <span id="bell-emoji">🔔</span>
-                    <div class="notif-badge" id="notif-badge">0</div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="notification-container" onclick="toggleNotificacoes(event)">
+                    <div class="bell-icon" title="Notificações">
+                        <span id="bell-emoji">🔔</span>
+                        <div class="notif-badge" id="notif-badge">0</div>
+                    </div>
+                    <div class="notif-dropdown" id="notif-list">
+                        <div class="notif-item empty">Nenhuma notificação nova.</div>
+                    </div>
                 </div>
-                <div class="notif-dropdown" id="notif-list">
-                    <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova.</div>
+
+                <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
+                    <div class="admin-icon" title="Megafone">📢</div>
                 </div>
             </div>
-
-            <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
-                <div class="admin-icon" title="Megafone do Sistema (Somente Admin)">📢</div>
-            </div>
-            
-        <header>
-
-            <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar()">
-                ☰
-            </div>
+        </header>
             
             <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
                 <div class="bell-icon" title="Notificações">
