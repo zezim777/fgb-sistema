@@ -1,4 +1,4 @@
-// --- 1. CONFIG E BANCO ---
+// --- 1. CONFIGURAÇÃO FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
     authDomain: "sistema-de-licitacoes.firebaseapp.com",
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('fgb_logado') === 'true') abrirPainelCompleto();
 });
 
-// --- NOVO: SISTEMA DE HISTÓRICO DE ATIVIDADES ---
+// --- SISTEMA DE HISTÓRICO ---
 function registrarAtividade(mensagem) {
     const u = localStorage.getItem('fgb_user');
     if (!u) return;
@@ -37,26 +37,47 @@ function carregarHistorico() {
     const u = localStorage.getItem('fgb_user');
     const listaDiv = document.getElementById('historico-lista');
     if(!listaDiv) return;
-
     db.ref(`historico/${u}`).limitToLast(5).on('value', snap => {
         listaDiv.innerHTML = '';
         const dados = snap.val();
-        if(!dados) {
-            listaDiv.innerHTML = '<p class="empty-hist">Nenhuma ação recente...</p>';
-            return;
-        }
+        if(!dados) { listaDiv.innerHTML = '<p class="empty-hist">Nenhuma ação recente...</p>'; return; }
         Object.values(dados).reverse().forEach(h => {
-            listaDiv.innerHTML += `
-                <div class="hist-card">
-                    ${h.msg}
-                    <span class="hist-time">🕒 ${h.data.split(' ')[1]}</span>
-                </div>
-            `;
+            listaDiv.innerHTML += `<div class="hist-card">${h.msg}<span class="hist-time">🕒 ${h.data.split(' ')[1]}</span></div>`;
         });
     });
 }
 
-// --- FUNÇÕES DE LOGIN E INTERFACE ---
+// --- FUNÇÕES DO MEGAFONE (ADMIN) - ESSENCIAIS ---
+function abrirModalAdminNotif() {
+    const modal = document.getElementById('modal-admin-notif');
+    if (modal) {
+        modal.style.display = 'flex';
+    } else {
+        console.error("Erro: Modal do Megafone não encontrado no HTML!");
+    }
+}
+
+function fecharModalAdminNotif() {
+    const modal = document.getElementById('modal-admin-notif');
+    if (modal) modal.style.display = 'none';
+    const campoTexto = document.getElementById('texto-admin-notif');
+    if (campoTexto) campoTexto.value = '';
+}
+
+function enviarNotificacaoGlobal() {
+    const texto = document.getElementById('texto-admin-notif').value.trim();
+    if (!texto) return alert("Digite o aviso oficial!");
+    const idMsg = Date.now();
+    const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+    db.ref('notificacoes_globais/' + idMsg).set({ id: idMsg, msg: texto, data: dataEnvio })
+    .then(() => { 
+        alert("📢 Transmissão realizada!"); 
+        fecharModalAdminNotif(); 
+        registrarAtividade("Enviou aviso global");
+    });
+}
+
+// --- LÓGICA DE LOGIN E TELAS ---
 function fazerLogin() {
     const u = document.getElementById('login-user').value.toLowerCase().trim();
     const p = document.getElementById('login-pass').value;
@@ -65,8 +86,6 @@ function fazerLogin() {
         if (d && d.senha === p) {
             localStorage.setItem('fgb_logado', 'true');
             localStorage.setItem('fgb_user', u);
-            localStorage.setItem('fgb_setor', d.setor || ""); 
-            localStorage.setItem('fgb_nivel', d.nivel || "Operador"); 
             abrirPainelCompleto();
         } else alert("Usuário ou senha incorretos!");
     });
@@ -75,127 +94,55 @@ function fazerLogin() {
 function abrirPainelCompleto() {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-system').style.display = 'block';
+    const sidebar = document.getElementById('sidebar-menu');
+    if (sidebar) sidebar.style.display = 'flex';
     iniciarLeituraDeDados();
-    carregarHistorico(); // Ativa o histórico no menu lateral
-}
-
-// --- MODAIS E CONFIGURAÇÕES ---
-function abrirModalPerfil() {
-    const u = localStorage.getItem('fgb_user'), dados = dbUsuarios[u] || {};
-    document.getElementById('profile-user-title').innerText = `@${u}`;
-    document.getElementById('profile-setor-tag').innerText = dados.setor ? dados.setor.split(' -')[0] : '---';
-    document.getElementById('p-full-name').value = dados.nomeReal || "";
-    document.getElementById('p-role').value = dados.cargo || "";
-    
-    let c = 0, v = 0;
-    if(dbProcessos) Object.values(dbProcessos).forEach(p => { if(p.dono === u && !p.excluido) { c++; v += parseFloat(p.valor?.replace(/[^\d,]/g, '').replace(',', '.') || 0); } });
-    document.getElementById('p-count').innerText = c;
-    document.getElementById('p-value').innerText = v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-    
-    document.getElementById('modal-perfil').style.display = 'flex';
-}
-function fecharModalPerfil() { document.getElementById('modal-perfil').style.display = 'none'; }
-function salvarPerfil() {
-    const u = localStorage.getItem('fgb_user');
-    db.ref('usuarios/' + u).update({ nomeReal: document.getElementById('p-full-name').value, cargo: document.getElementById('p-role').value })
-    .then(() => { alert("Perfil Atualizado!"); fecharModalPerfil(); });
-}
-
-function abrirModalConfig() { document.getElementById('modal-config').style.display = 'flex'; }
-function fecharModalConfig() { document.getElementById('modal-config').style.display = 'none'; }
-
-function alternarTema() {
-    document.body.classList.toggle('dark-mode');
-    const modo = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-    localStorage.setItem('fgb_tema', modo);
-    document.getElementById('btn-modal-tema').innerText = modo === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+    carregarHistorico();
 }
 
 // --- MOTOR DE DADOS ---
 function iniciarLeituraDeDados() {
     db.ref('usuarios').on('value', snap => { dbUsuarios = snap.val() || {}; renderizarTela(); });
     db.ref('processos').on('value', snap => { dbProcessos = snap.val(); renderizarTela(); });
-    db.ref('notificacoes_globais').on('value', snap => { listaNotificacoesGlobais = snap.val() ? Object.values(snap.val()) : []; renderizarNotificacoes(); });
-}
-
-function adicionarProcesso() {
-    const e = document.getElementById('input-empresa').value, o = document.getElementById('input-objeto').value, d = document.getElementById('input-data').value, u = localStorage.getItem('fgb_user');
-    if (!e || !o || d.length < 10) return alert("Preencha tudo!");
-    const id = Date.now();
-    db.ref('processos/' + id).set({ id: id, dono: u, setorOrigem: dbUsuarios[u].setor, empresa: e, objeto: o, data: d, fase: "", setor: dbUsuarios[u].setor, valor: "", excluido: false })
-    .then(() => registrarAtividade(`Criou processo: ${e.substring(0,15)}...`));
-}
-
-function atualizarCampo(id, campo, valor) {
-    db.ref('processos/' + id).update({ [campo]: valor })
-    .then(() => {
-        if(campo === 'fase') registrarAtividade(`Alterou fase p/ ${valor}`);
-        if(campo === 'valor') registrarAtividade(`Atualizou valor de um processo`);
+    db.ref('notificacoes_globais').on('value', snap => { 
+        const d = snap.val();
+        listaNotificacoesGlobais = d ? Object.values(d) : []; 
+        renderizarNotificacoes(); 
     });
 }
 
-function moverParaLixeira(id, estado) {
-    db.ref('processos/' + id).update({ excluido: estado })
-    .then(() => registrarAtividade(estado ? "Moveu item para lixeira" : "Restaurou item da lixeira"));
-}
-
-function transferirProcesso(id, novoDono) {
-    if(novoDono && confirm("Delegar processo?")) {
-        db.ref('processos/' + id).update({ dono: novoDono })
-        .then(() => registrarAtividade(`Delegou processo para ${novoDono.toUpperCase()}`));
-    }
-}
-
-// --- RENDERIZAÇÃO ---
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user'), meuP = dbUsuarios[u] || {}, meuS = (meuP.setor || "").trim(), meuN = meuP.nivel || "Operador";
     document.getElementById('user-display').innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-    if (u === 'joseeminem') document.getElementById('admin-container').classList.add('visible');
-    if (meuN === 'Coordenador') { 
-        document.getElementById('dash-setor').classList.remove('hidden'); 
-        document.getElementById('btn-report').classList.remove('hidden'); 
-        document.getElementById('btn-limpar-lixeira').classList.remove('hidden'); 
+    
+    // VISIBILIDADE DO MEGAFONE (SÓ PARA VOCÊ)
+    const adminCont = document.getElementById('admin-container');
+    if (u === 'joseeminem' && adminCont) adminCont.classList.add('visible');
+
+    if (meuN === 'Coordenador') {
+        const d = document.getElementById('dash-setor');
+        if (d) d.classList.remove('hidden');
     }
 
     const ativosDiv = document.getElementById('lista-ativos'), lixeiraDiv = document.getElementById('lista-lixeira');
+    if (!ativosDiv || !lixeiraDiv) return;
     ativosDiv.innerHTML = ''; lixeiraDiv.innerHTML = '';
     if (!dbProcessos) return;
 
-    let tSetor = 0, vSetor = 0;
     Object.values(dbProcessos).reverse().forEach(p => {
-        const setorDono = (dbUsuarios[p.dono]?.setor || p.setorOrigem || "").trim();
-        if (!(p.dono === u || (meuN === 'Coordenador' && (setorDono === meuS || p.setor === meuS)))) return;
-        if (!p.excluido && (setorDono === meuS || p.setor === meuS)) {
-            tSetor++;
-            vSetor += parseFloat(p.valor?.replace(/[^\d,]/g, '').replace(',', '.') || 0);
-        }
-        const sF = `<option disabled ${!p.fase?'selected':''}>Fase...</option>` + fasesPadrao.map(f => `<option ${p.fase===f?'selected':''}>${f}</option>`).join('');
-        const sS = `<option disabled ${!p.setor?'selected':''}>Setor...</option>` + setoresFGB.map(s => `<option ${p.setor===s?'selected':''}>${s}</option>`).join('');
-        let trans = '';
-        if (meuN === 'Coordenador' && !p.excluido) {
-            let opts = `<option selected disabled>Delegar...</option>`;
-            Object.keys(dbUsuarios).forEach(k => { if (dbUsuarios[k].setor?.trim() === meuS && dbUsuarios[k].nivel !== "Coordenador") opts += `<option value="${k}">${k.toUpperCase()}</option>`; });
-            trans = `<div class="transfer-box"><select onchange="transferirProcesso(${p.id}, this.value)">${opts}</select></div>`;
-        }
-        const card = `<div class="processo-card ${p.excluido?'na-lixeira':''}">
-            <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})">${p.excluido?'↺':'✖'}</button>
+        const perfilDono = dbUsuarios[p.dono] || {};
+        const setorDono = (perfilDono.setor || "").trim();
+        if (!(p.dono === u || (meuN === 'Coordenador' && setorDono === meuS))) return;
+
+        const card = `<div class="processo-card">
+            <button onclick="moverParaLixeira(${p.id}, ${!p.excluido})">${p.excluido?'↺':'✖'}</button>
             <div class="empresa">${p.empresa}</div><div class="objeto">${p.objeto}</div>
-            <div class="tag-box status-box">📍 <select onchange="atualizarCampo(${p.id},'fase',this.value)">${sF}</select></div>
-            <div class="tag-box setor-box">🏢 <select onchange="atualizarCampo(${p.id},'setor',this.value)">${sS}</select></div>
-            <div class="detalhes">
-                <span>📅</span><input type="text" class="input-card" value="${p.data}" onchange="atualizarCampo(${p.id},'data',this.value)">
-                <span>💰</span><input type="text" class="input-card" value="${p.valor}" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id},'valor',this.value)">
-            </div>${trans}</div>`;
+        </div>`;
         if (p.excluido) lixeiraDiv.innerHTML += card; else ativosDiv.innerHTML += card;
     });
-
-    if (meuN === 'Coordenador') {
-        document.getElementById('stat-total').innerText = tSetor;
-        document.getElementById('stat-valor').innerText = vSetor.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    }
 }
 
-// --- FUNÇÕES DE AUXÍLIO REPETIDAS (Ver Senha, Cadastro, etc - RESTAURADAS) ---
+// --- FUNÇÕES AUXILIARES ---
 function toggleSenha(id, btn) { const input = document.getElementById(id); if (input.type === "password") { input.type = "text"; btn.innerText = "OCULTAR"; } else { input.type = "password"; btn.innerText = "VER"; } }
 function alternarTela(id) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('cadastro-screen').classList.add('hidden'); document.getElementById('recuperar-screen').classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
 function fazerLogout() { localStorage.clear(); location.reload(); }
@@ -203,23 +150,12 @@ function mascaraData(c) { let v = c.value.replace(/\D/g, ""); if (v.length > 2) 
 function mascaraMoeda(c) { let v = c.value.replace(/\D/g, ""); if (v === "") return; v = (parseInt(v) / 100).toFixed(2) + ""; v = v.replace(".", ",").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); c.value = "R$ " + v; }
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
 function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.notification-container').classList.toggle('active'); }
-function filtrarProcessos() { const t = document.getElementById('input-pesquisa').value.toLowerCase(); document.querySelectorAll('.processo-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? 'block' : 'none'); }
-function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; }
-function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
-function fecharModalAdminNotif() { document.getElementById('modal-admin-notif').style.display = 'none'; }
-function fecharModalConfig() { document.getElementById('modal-config').style.display = 'none'; }
-function lerNotificacoes() { localStorage.setItem('ultima_notif_lida', Date.now()); document.getElementById('notif-badge').style.display = 'none'; }
-
-// Funções de Cadastro e Recuperação (Restauradas)
+function renderizarNotificacoes() {
+    const b = document.getElementById('notif-badge');
+    if(b) { b.innerText = listaNotificacoesGlobais.length; b.style.display = listaNotificacoesGlobais.length > 0 ? 'flex' : 'none'; }
+}
 function cadastrarUsuario() {
     const u = document.getElementById('reg-user').value.toLowerCase().trim(), p = document.getElementById('reg-pass').value, k = document.getElementById('reg-keyword').value, s = document.getElementById('reg-setor').value, n = document.getElementById('reg-nivel').value;
-    if (!u || !p || !k || !s) return alert("Preencha tudo!");
     db.ref('usuarios/' + u).set({ usuario: u, senha: p, palavraChave: k, setor: s, nivel: n }).then(() => { alert("Cadastrado!"); alternarTela('login-screen'); });
 }
-function alterarSenha() {
-    const u = document.getElementById('rec-user').value.toLowerCase().trim(), k = document.getElementById('rec-keyword').value, p = document.getElementById('rec-pass').value;
-    db.ref('usuarios/' + u).once('value', snap => {
-        if (snap.exists() && snap.val().palavraChave === k) { db.ref('usuarios/' + u).update({ senha: p }).then(() => { alert("Senha Alterada!"); alternarTela('login-screen'); }); }
-        else alert("Dados incorretos!");
-    });
-}
+function moverParaLixeira(id, s) { db.ref('processos/' + id).update({ excluido: s }).then(() => registrarAtividade(s ? "Excluiu item" : "Restaurou item")); }
