@@ -237,3 +237,22 @@ function abrirModalConfig() { document.getElementById('modal-config').style.disp
 function fecharModalConfig() { document.getElementById('modal-config').style.display = 'none'; }
 function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
 function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; }
+
+// --- FUNÇÃO PARA ABRIR/FECHAR MENU LATERAL NO CELULAR ---
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar-menu');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+}
+
+// Fechar o menu automaticamente ao clicar em um item (opcional)
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar-menu');
+    const btn = document.getElementById('btn-menu-mobile');
+    if (window.innerWidth < 800 && sidebar.classList.contains('active')) {
+        if (!sidebar.contains(e.target) && e.target !== btn) {
+            sidebar.classList.remove('active');
+        }
+    }
+});

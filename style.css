@@ -353,3 +353,30 @@ body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
         width: calc(100% - 300px) !important;
     }
 }
+
+/* --- ESTILOS PARA MENU MOBILE --- */
+.mobile-menu-icon {
+    display: none; /* Escondido no PC */
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    margin-right: 15px;
+    z-index: 1001;
+}
+
+@media (max-width: 799px) {
+    .mobile-menu-icon { display: block; } /* Aparece no Celular */
+    
+    .sidebar {
+        transform: translateX(-100%); /* Esconde fora da tela */
+        transition: transform 0.3s ease-in-out;
+        display: flex !important; /* Força o flex mas mantém o transform */
+        width: 280px;
+    }
+
+    /* Classe que será adicionada via JS para abrir */
+    .sidebar.active {
+        transform: translateX(0);
+        box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+    }
+}
