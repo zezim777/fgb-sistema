@@ -154,6 +154,11 @@
                     <div class="user-dropdown">
                         <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
                         <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
+
+                        <div class="dropdown-item admin-only" id="admin-menu-item" onclick="abrirModalAdminNotif()" style="display: none; color: #f39c12;">
+                            📢 Transmissão Global
+                        </div>
+                        
                         <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair da conta</div>
                     </div>
                 </div>
