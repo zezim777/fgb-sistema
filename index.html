@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v10.1</title>
+    <title>FGB Cloud - Gestão Oficial v10.2</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -416,19 +416,19 @@
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
-        const usuarioAtual = localStorage.getItem('fgb_user'); // RECUPERA QUEM ESTÁ CRIANDO
+        const usuarioAtual = localStorage.getItem('fgb_user'); 
         
         if (!emp || !obj || dat.length < 10) return alert("Preencha todos os campos corretamente (Data com 8 dígitos)!");
         
         const novoId = Date.now();
         db.ref('processos/' + novoId).set({
             id: novoId, 
-            dono: usuarioAtual, // GRAVA O DONO DO PROCESSO
+            dono: usuarioAtual, 
             empresa: emp, 
             objeto: obj, 
             data: dat,
-            fase: "Confecção do QDD",
-            setor: "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira",
+            fase: "", // NOVO: Nasce vazio para o usuário escolher manualmente
+            setor: "", // NOVO: Nasce vazio para o usuário escolher manualmente
             valor: "", 
             excluido: false
         });
@@ -452,7 +452,6 @@
             db.ref('processos').once('value', snapshot => {
                 snapshot.forEach(child => {
                     const p = child.val();
-                    // APAGA APENAS SE ESTIVER EXCLUIDO E FOR DO USUÁRIO ATUAL
                     if(p.excluido && p.dono === usuarioAtual) child.ref.remove();
                 });
             });
@@ -473,9 +472,9 @@
         });
     }
 
-    // --- 7. RENDERIZAÇÃO EM TEMPO REAL (AGORA COM FILTRO PRIVADO) ---
+    // --- 7. RENDERIZAÇÃO EM TEMPO REAL ---
     function carregarProcessos() {
-        const usuarioAtual = localStorage.getItem('fgb_user'); // Identifica quem está logado
+        const usuarioAtual = localStorage.getItem('fgb_user'); 
 
         db.ref('processos').on('value', snapshot => {
             const ativosDiv = document.getElementById('lista-ativos');
@@ -493,12 +492,14 @@
             let temProcessos = false;
 
             Object.values(dataSnapshot).reverse().forEach(p => {
-                // TRAVA DE SEGURANÇA: Se o processo não for desse usuário, ignora o card e vai pro próximo.
                 if (p.dono !== usuarioAtual) return; 
 
                 temProcessos = true;
-                const selectFase = fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
-                const selectSetor = setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+                
+                // NOVO: Adiciona a opção neutra "Selecione..." que vem marcada se o campo estiver vazio
+                const selectFase = `<option value="" disabled ${!p.fase ? 'selected' : ''}>Selecione a Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
+                const selectSetor = `<option value="" disabled ${!p.setor ? 'selected' : ''}>Selecione o Setor...</option>` + setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+                
                 const valorAtual = p.valor ? p.valor : ''; 
                 
                 const htmlCard = `
