@@ -128,7 +128,17 @@
                 ☰
             </div>
 
-            <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="text-align: center; flex: 1;">
+                <h1 style="margin: 0; font-size: 1.2rem;">FGB Cloud - Gestão de Processos</h1>
+                <p id="user-display" style="font-size: 0.8rem; margin: 0; opacity: 0.9;"></p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                
+                <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
+                    <div class="admin-icon" title="Megafone">📢</div>
+                </div>
+
                 <div class="notification-container" onclick="toggleNotificacoes(event)">
                     <div class="bell-icon" title="Notificações">
                         <span id="bell-emoji">🔔</span>
@@ -139,37 +149,15 @@
                     </div>
                 </div>
 
-                <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
-                    <div class="admin-icon" title="Megafone">📢</div>
+                <div class="user-menu-container">
+                    <div class="user-avatar" title="Menu de Opções" onclick="toggleMenuUsuario(event)">👤</div>
+                    <div class="user-dropdown">
+                        <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
+                        <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
+                        <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair da conta</div>
+                    </div>
                 </div>
             </div>
-        </header>
-            
-            <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
-                <div class="bell-icon" title="Notificações">
-                    <span id="bell-emoji">🔔</span>
-                    <div class="notif-badge" id="notif-badge">0</div>
-                </div>
-                <div class="notif-dropdown" id="notif-list">
-                    <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova no momento.</div>
-                </div>
-            </div>
-
-            <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
-                <div class="admin-icon" title="Megafone do Sistema (Somente Admin)">📢</div>
-            </div>
-
-            <div class="user-menu-container">
-                <div class="user-avatar" title="Menu de Opções" onclick="toggleMenuUsuario(event)">👤</div>
-                <div class="user-dropdown">
-                    <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
-                    <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
-                    <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair da conta</div>
-                </div>
-            </div>
-            
-            <h1>FGB Cloud - Gestão de Processos</h1>
-            <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
 
         <div id="dash-setor" class="dashboard hidden">
