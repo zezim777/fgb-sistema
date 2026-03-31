@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.8</title>
+    <title>FGB Cloud - Gestão Oficial v11.9</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -74,7 +74,7 @@
         body.dark-mode header { background: #0f171e; }
         header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
 
-        /* --- NOVO: MENU DO USUÁRIO ANIMADO --- */
+        /* --- MENU DO USUÁRIO ANIMADO --- */
         .user-menu-container {
             position: absolute; right: 15px; top: 15px; z-index: 200;
         }
@@ -82,8 +82,9 @@
             width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 50%;
             display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
             cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
-        .user-menu-container:hover .user-avatar {
+        .user-menu-container:hover .user-avatar, .user-menu-container.active .user-avatar {
             background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05);
         }
         .user-dropdown {
@@ -94,9 +95,13 @@
             text-align: left;
         }
         body.dark-mode .user-dropdown { background: #1e1e1e; border: 1px solid #333; }
-        .user-menu-container:hover .user-dropdown {
+        
+        /* NOVO: Classe .active garante que funcione com o clique no celular */
+        .user-menu-container:hover .user-dropdown, 
+        .user-menu-container.active .user-dropdown {
             opacity: 1; visibility: visible; transform: translateY(0);
         }
+        
         .dropdown-item {
             padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
             transition: 0.2s; border-bottom: 1px solid #f0f0f0;
@@ -223,7 +228,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.8<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.9<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -279,7 +284,7 @@
     <div id="main-system">
         <header>
             <div class="user-menu-container">
-                <div class="user-avatar" title="Menu de Opções">👤</div>
+                <div class="user-avatar" title="Menu de Opções" onclick="toggleMenuUsuario(event)">👤</div>
                 <div class="user-dropdown">
                     <div class="dropdown-item" onclick="alert('Módulo de Perfil em desenvolvimento!')">Perfil</div>
                     <div class="dropdown-item" onclick="alert('Módulo de Configurações em desenvolvimento!')">Configurações</div>
@@ -401,6 +406,20 @@
             btn.innerText = "VER";
         }
     }
+
+    // --- NOVO: LÓGICA DO MENU DO USUÁRIO (MOBILE/CLICK) ---
+    function toggleMenuUsuario(event) {
+        event.stopPropagation(); // Evita que o clique feche imediatamente pelo window.onclick
+        document.querySelector('.user-menu-container').classList.toggle('active');
+    }
+
+    // Fecha o menu se a pessoa clicar fora dele (comportamento de app)
+    window.onclick = function(event) {
+        const menuCont = document.querySelector('.user-menu-container');
+        if (menuCont && !menuCont.contains(event.target)) {
+            menuCont.classList.remove('active');
+        }
+    };
 
     // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
