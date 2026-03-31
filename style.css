@@ -330,17 +330,26 @@ body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
     }
 }
 
-/* AJUSTE DOS CARDS PARA O NOVO LAYOUT */
+/* --- REGRA CORRIGIDA: LISTA VERTICAL ÚNICA --- */
 #lista-ativos, #lista-lixeira {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
+    display: flex !important;
+    flex-direction: column !important; /* FORÇA A LISTA PARA BAIXO */
+    gap: 15px !important;
     padding-top: 20px;
+    width: 100% !important;
 }
 
 .processo-card {
-    width: 100%;
-    max-width: 400px; /* Mantém o tamanho que você já gostava */
-    flex-grow: 0;
+    width: 100% !important;   /* Ocupa a largura total disponível */
+    max-width: 900px;         /* Limite para não esticar demais em telas gigantes */
+    display: block !important;
+    margin-bottom: 5px;
+}
+
+/* Garante que o conteúdo principal respeite a Sidebar */
+@media (min-width: 800px) {
+    #main-system { 
+        margin-left: 280px !important; 
+        width: calc(100% - 300px) !important;
+    }
 }
