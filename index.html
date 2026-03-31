@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Premium v11.0</title>
+    <title>FGB Cloud - Gestão Oficial v11.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -16,156 +16,232 @@
             --setor-bg: #e8f4fd; --setor-text: #2980b9;
         }
         
+        /* REGRAS DO MODO NOTURNO */
         body.dark-mode {
-            --primary: #ecf0f1; --bg: #121212; --card-bg: #1e1e1e;
+            --primary: #ecf0f1; 
+            --bg: #121212; 
+            --card-bg: #1e1e1e;
             --status-bg: #332b00; --status-text: #f39c12;
             --setor-bg: #002233; --setor-text: #5dade2;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; transition: 0.3s; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
         
-        .btn-tema { position: fixed; top: 15px; left: 15px; background: rgba(0,0,0,0.1); border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer; z-index: 2000; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        /* BOTÃO TEMA MODO NOTURNO */
+        .btn-tema {
+            position: fixed; top: 15px; left: 15px; background: rgba(0,0,0,0.1); color: var(--primary);
+            border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem; cursor: pointer;
+            z-index: 2000; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
         body.dark-mode .btn-tema { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-tema:hover { transform: scale(1.1); }
 
-        /* PAINEL DE ESTATÍSTICAS (DASHBOARD) */
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; width: 100%; }
-        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--accent); }
-        .stat-card h4 { margin: 0; font-size: 0.8rem; color: #7f8c8d; text-transform: uppercase; }
-        .stat-card p { margin: 10px 0 0 0; font-size: 1.2rem; font-weight: bold; color: var(--primary); }
-
-        /* BOTÃO DE RELATÓRIO */
-        .btn-report { background: #34495e; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-
-        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; }
+        /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
+        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
         .hidden { display: none !important; }
-        .auth-card input, .auth-card select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; }
+        .auth-card input, .auth-card select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
         .auth-card button { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-link { background: none; color: var(--primary); border: none; font-size: 0.9rem; text-decoration: underline; margin-top: 20px; cursor: pointer; display: inline-block; width: 100%; }
+        .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
 
-        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; }
-        header { text-align: center; padding: 20px 15px; background: #2c3e50; color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
+        /* SISTEMA PRINCIPAL (PAINEL DE LICITAÇÕES) */
+        #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; position: relative; }
+        header { text-align: center; padding: 20px 15px 15px 15px; background: #2c3e50; color: white; border-radius: 8px; margin-bottom: 20px; position: relative; }
+        body.dark-mode header { background: #0f171e; }
+        header h1 { font-size: 1.5rem; margin: 15px 0 5px 0; }
         .btn-sair { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
 
-        .search-container { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .search-container input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
-        .btn-search { background: #2c3e50; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; }
+        /* --- NOVO: ESTILOS DO DASHBOARD E RELATÓRIO --- */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; border-bottom: 4px solid var(--accent); transition: 0.3s; }
+        .stat-card h4 { margin: 0 0 5px 0; font-size: 0.85rem; color: #7f8c8d; text-transform: uppercase; }
+        .stat-card p { margin: 0; font-size: 1.3rem; font-weight: bold; color: var(--primary); }
+        .btn-report { background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem; margin-bottom: 20px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-report:hover { background: #2c3e50; }
 
-        .form-cadastro { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        /* BARRA DE PESQUISA COM LUPA */
+        .search-container { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; transition: 0.3s; }
+        .search-container input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; outline: none; width: 100%; }
+        .search-container input:focus { border-color: var(--accent); }
+        .btn-search { background: #2c3e50; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
+        body.dark-mode .btn-search { background: var(--accent); }
+
+        /* FORMULÁRIO DE CADASTRO */
+        .form-cadastro { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 10px; transition: 0.3s; }
         @media (min-width: 600px) { .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } .full-width { grid-column: span 2; } }
-        .form-cadastro input, .form-cadastro button { padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
-        .form-cadastro button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; border: none; }
+        .form-cadastro input, .form-cadastro button { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
+        .form-cadastro button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; border: none; width: 100%; margin-top: 0; }
+        
+        /* AJUSTES DE INPUTS PARA MODO NOTURNO */
+        body.dark-mode input, body.dark-mode textarea, body.dark-mode .auth-card select { background: #2c3e50; color: #ecf0f1; border-color: #444; }
+        body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color: #95a5a6; }
 
-        .processo-card { background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        /* CARDS DOS PROCESSOS */
+        .processo-card { background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); word-wrap: break-word; transition: 0.3s; }
+        .btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; z-index: 2; }
+        body.dark-mode .btn-excluir { background: rgba(231, 76, 60, 0.1); border-color: var(--danger); }
         .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; }
         .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; line-height: 1.3; }
         
+        /* TAGS E SELECTS */
         .tag-box { display: block; padding: 8px; border-radius: 8px; font-size: 0.85rem; margin: 8px 0; font-weight: bold; max-width: 100%; box-sizing: border-box; }
         .status-box { background: var(--status-bg); border: 1px solid #f39c12; color: var(--status-text); }
         .setor-box { background: var(--setor-bg); border: 1px solid #2980b9; color: var(--setor-text); }
-        select { border: none; background: none; font-weight: bold; color: inherit; cursor: pointer; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; }
+        select { border: none; background: none; font-weight: bold; color: inherit; cursor: pointer; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+        body.dark-mode select { background-color: var(--bg); color: var(--primary); padding: 5px; border-radius: 5px; }
+        
+        input.input-card { border: none; background: none; font-weight: bold; color: inherit; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; box-sizing: border-box; }
         
         .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; display: flex; flex-direction: column; gap: 5px; }
         body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
+        .detalhes span { color: #7f8c8d; font-weight: bold; }
+        body.dark-mode .detalhes span { color: #bdc3c7; }
         .autor-badge { font-size: 0.7rem; background: var(--primary); color: white; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px; }
-
-        /* ESTILO TRANSFERÊNCIA */
-        .transfer-box { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; font-size: 0.75rem; color: #7f8c8d; }
-        .transfer-box select { width: auto; font-size: 0.75rem; padding: 2px; border: 1px solid #ddd; border-radius: 4px; }
-
+        
+        /* LIXEIRA */
         .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } 
+        .na-lixeira { border-left-color: #95a5a6; filter: grayscale(0.5); }
 
-        .btn-flutuante { position: fixed; bottom: 20px; right: 20px; background: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; }
+        /* BOTÃO FLUTUANTE DE SUGESTÕES E MODAL */
+        .btn-flutuante {
+            position: fixed; bottom: 20px; right: 20px; background: #f39c12; color: white; border: none;
+            padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-flutuante:hover { background: #e67e22; transform: scale(1.05); }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
-        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; }
-        .modal-content textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin: 15px 0; outline: none; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; box-sizing: border-box;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: 0.3s;
+        }
+        .modal-content h3 { margin-top: 0; color: var(--primary); }
+        .modal-content textarea {
+            width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.9rem;
+            resize: none; box-sizing: border-box; margin: 15px 0; outline: none;
+        }
+        .modal-btn-enviar { background: #f39c12; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .modal-btn-cancelar { background: #ecf0f1; color: #7f8c8d; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        body.dark-mode .modal-btn-cancelar { background: #2c3e50; color: #ecf0f1; }
 
-        /* REGRAS DE IMPRESSÃO (RELATÓRIO) */
+        /* --- NOVO: REGRAS PARA IMPRESSÃO LIMPA --- */
         @media print {
             body { background: white; color: black; }
-            .btn-tema, .btn-sair, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, select, .transfer-box { display: none !important; }
-            #main-system { max-width: 100%; width: 100%; }
-            .processo-card { border: 1px solid #ddd; page-break-inside: avoid; }
+            .btn-tema, .btn-sair, .search-container, .form-cadastro, .btn-excluir, .lixeira-section, .btn-flutuante, .btn-report, .transfer-box { display: none !important; }
+            #main-system { max-width: 100%; width: 100%; padding: 0; }
+            header { background: transparent; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
+            .processo-card { border: 1px solid #ddd; page-break-inside: avoid; box-shadow: none; }
             .tag-box { border: 1px solid #000; color: black !important; background: none !important; }
-            input { border: none !important; color: black !important; background: none !important; }
+            input, select { border: none !important; color: black !important; background: none !important; appearance: none; -webkit-appearance: none; }
         }
     </style>
 </head>
 <body>
 
-    <button class="btn-tema" id="btn-tema" onclick="alternarTema()">🌙</button>
+    <button class="btn-tema" id="btn-tema" onclick="alternarTema()" title="Alternar Modo Claro/Escuro">🌙</button>
 
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
-        <h2>Acesso FGB Cloud</h2>
-        <input type="text" id="login-user" placeholder="Usuário">
+        <h2>Acesso Pessoal</h2>
+        <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
         <input type="password" id="login-pass" placeholder="Senha">
         <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
+        <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
     </div>
 
     <div id="cadastro-screen" class="auth-card hidden">
+        <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Criar Credencial</h2>
-        <input type="text" id="reg-user" placeholder="Nome de Usuário">
-        <input type="password" id="reg-pass" placeholder="Senha">
-        <select id="reg-setor"><option value="" disabled selected>Escolha seu Setor...</option></select>
-        <select id="reg-nivel">
-            <option value="Operador" selected>Nível: Operador</option>
-            <option value="Coordenador">Nível: Coordenador (Gestor do Setor)</option>
+        <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
+        <input type="password" id="reg-pass" placeholder="Definir Senha">
+        
+        <select id="reg-setor">
+            <option value="" disabled selected>Qual o seu Setor?</option>
         </select>
-        <button id="btn-cadastrar" onclick="cadastrarUsuario()">CADASTRAR E ENTRAR</button>
+
+        <select id="reg-nivel">
+            <option value="Operador" selected>Nível: Operador (Apenas meus processos)</option>
+            <option value="Coordenador">Nível: Coordenador (Ver todos do meu setor)</option>
+        </select>
+
+        <button id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
+        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
+    </div>
+
+    <div id="recuperar-screen" class="auth-card hidden">
+        <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
+        <h2>Redefinir Senha</h2>
+        <p style="font-size: 0.8rem; margin-bottom: 15px;">Digite seu usuário exato para cadastrar uma nova senha.</p>
+        <input type="text" id="rec-user" placeholder="Seu Usuário (Ex: josefgb)">
+        <input type="password" id="rec-pass" placeholder="Nova Senha">
+        <button onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
 
     <div id="main-system">
         <header>
-            <button class="btn-sair" onclick="fazerLogout(false)">Sair</button>
-            <h1 id="sys-title">FGB Cloud</h1>
+            <button class="btn-sair" onclick="fazerLogout(false)">Sair da Conta</button>
+            <h1>FGB Cloud - Gestão de Processos</h1>
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
 
         <div id="dash-setor" class="dashboard hidden">
-            <div class="stat-card"><h4>Ativos no Setor</h4><p id="stat-total">0</p></div>
-            <div class="stat-card"><h4>Valor Estimado</h4><p id="stat-valor">R$ 0,00</p></div>
-            <div class="stat-card"><h4>Fase Crítica</h4><p id="stat-fase">-</p></div>
+            <div class="stat-card">
+                <h4>Processos Ativos</h4>
+                <p id="stat-total">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Valor Total Estimado</h4>
+                <p id="stat-valor">R$ 0,00</p>
+            </div>
+            <div class="stat-card">
+                <h4>Fase Principal</h4>
+                <p id="stat-fase">-</p>
+            </div>
         </div>
-
-        <button class="btn-report" onclick="window.print()">📊 Gerar Relatório do Setor</button>
+        
+        <button id="btn-report" class="btn-report hidden" onclick="window.print()">📊 Gerar Relatório de Processos (PDF/Imprimir)</button>
 
         <div class="search-container">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar..." onkeyup="filtrarProcessos()">
-            <button class="btn-search" onclick="filtrarProcessos()">🔍</button>
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar processos..." onkeyup="filtrarProcessos()">
+            <button class="btn-search" onclick="filtrarProcessos()" title="Pesquisar">🔍</button>
         </div>
 
         <div class="form-cadastro">
-            <input type="text" id="input-empresa" placeholder="Empresa">
+            <input type="text" id="input-empresa" placeholder="Nome da Empresa">
             <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
             <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
-            <button onclick="adicionarProcesso()" class="full-width">SALVAR NA NUVEM</button>
+            <button onclick="adicionarProcesso()" class="full-width">ADICIONAR À MINHA LISTA</button>
         </div>
 
-        <h3 id="lista-titulo">📦 Meus Processos</h3>
-        <div id="lista-ativos"></div>
+        <h3>📦 Processos em Andamento</h3>
+        <div id="lista-ativos">Carregando dados...</div>
 
         <div class="lixeira-section">
             <h3>🗑️ Lixeira</h3>
             <div id="lista-lixeira"></div>
-            <button id="btn-limpar-lixeira" class="hidden" onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold;">Esvaziar Lixeira do Setor (Definitivo)</button>
+            <button id="btn-limpar-lixeira" class="hidden" onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Lixeira do Setor (Definitivo)</button>
         </div>
 
         <button class="btn-flutuante" onclick="abrirModalSugestao()">💡 Sugestões</button>
-    </div>
 
-    <div class="modal-overlay" id="modal-sugestao">
-        <div class="modal-content">
-            <h3>Sugestões / Reclamações</h3>
-            <textarea id="texto-sugestao" placeholder="Descreva aqui..."></textarea>
-            <button onclick="enviarSugestao()" style="background: #f39c12; color: white; padding: 10px; border: none; border-radius: 6px; width: 100%; margin-bottom: 10px; cursor: pointer;">ENVIAR</button>
-            <button onclick="fecharModalSugestao()" style="background: #eee; border: none; padding: 10px; width: 100%; border-radius: 6px; cursor: pointer;">Cancelar</button>
+        <div class="modal-overlay" id="modal-sugestao">
+            <div class="modal-content">
+                <h3>Envie sua Sugestão</h3>
+                <p style="font-size: 0.8rem; margin: 0;">Tem uma ideia ou encontrou um problema? Nos avise abaixo!</p>
+                <textarea id="texto-sugestao" placeholder="Digite sua mensagem aqui..."></textarea>
+                <button class="modal-btn-enviar" onclick="enviarSugestao()">ENVIAR MENSAGEM</button>
+                <button class="modal-btn-cancelar" onclick="fecharModalSugestao()">Cancelar</button>
+            </div>
         </div>
     </div>
 
 <script>
+    // --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
         authDomain: "sistema-de-licitacoes.firebaseapp.com",
@@ -178,25 +254,65 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // --- 2. DADOS DA FGB E VARIÁVEIS DE SISTEMA ---
     const fasesPadrao = ["Confecção do QDD", "Parecer Jurídico", "Publicação de Edital", "Abertura de Certame", "Homologação"];
-    const setoresFGB = ["FGB-AC - Assessoria de Comunicação", "FGB-AJ - Assessoria Jurídica", "FGB-AP - Assessoria de Planejamento", "FGB-CA - Coordenadora Administrativa", "FGB-CEC - Coordenadoria de Equipamentos Culturais", "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira", "FGB-CG - Chefia de Gabinete", "FGB-CI - Controle Interno", "FGB-CMPC - Conselho Municipal de Políticas Culturais", "FGB-COA - Coordenadoria de Artes", "FGB-CPHC - Coordenadoria de Patrimônio Histórico", "FGB-DG - Diretoria de Gestão", "FGB-DPC - Diretoria de Políticas Culturais", "FGB-PR - Presidência", "FGB-SAP - Seção de Almoxarifado e Patrimônio", "FGB-SEC - Secretaria Executiva dos Conselhos", "FGB-SGP - Seção de Gestão de Pessoas"];
+    const setoresFGB = [
+        "FGB-AC - Assessoria de Comunicação", "FGB-AJ - Assessoria Jurídica", "FGB-AP - Assessoria de Planejamento",
+        "FGB-CA - Coordenadora Administrativa", "FGB-CEC - Coordenadoria de Equipamentos Culturais",
+        "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira", "FGB-CG - Chefia de Gabinete",
+        "FGB-CI - Controle Interno", "FGB-CMPC - Conselho Municipal de Políticas Culturais",
+        "FGB-COA - Coordenadoria de Artes", "FGB-CPHC - Coordenadoria de Patrimônio Histórico",
+        "FGB-DG - Diretoria de Gestão", "FGB-DPC - Diretoria de Políticas Culturais", "FGB-PR - Presidência",
+        "FGB-SAP - Seção de Almoxarifado e Patrimônio", "FGB-SEC - Secretaria Executiva dos Conselhos",
+        "FGB-SGP - Seção de Gestão de Pessoas"
+    ];
+    let temporizadorInatividade;
+    
+    let dbUsuarios = {};
+    let dbProcessos = null;
 
-    let dbUsuarios = {}, dbProcessos = {}, temporizadorInatividade;
+    const regSetor = document.getElementById('reg-setor');
+    setoresFGB.forEach(s => { regSetor.innerHTML += `<option value="${s}">${s}</option>`; });
 
-    // Popula Setores
-    setoresFGB.forEach(s => { document.getElementById('reg-setor').innerHTML += `<option value="${s}">${s}</option>`; });
-
+    // --- LÓGICA DO MODO NOTURNO ---
     function alternarTema() {
         document.body.classList.toggle('dark-mode');
-        localStorage.setItem('fgb_tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        document.getElementById('btn-tema').innerText = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        const modoEscuroAtivo = document.body.classList.contains('dark-mode');
+        localStorage.setItem('fgb_tema', modoEscuroAtivo ? 'dark' : 'light');
+        document.getElementById('btn-tema').innerText = modoEscuroAtivo ? '☀️' : '🌙';
     }
-    if(localStorage.getItem('fgb_tema')==='dark') alternarTema();
 
+    if (localStorage.getItem('fgb_tema') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('btn-tema').innerText = '☀️';
+    }
+
+    // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('cadastro-screen').classList.add('hidden');
+        document.getElementById('recuperar-screen').classList.add('hidden');
         document.getElementById(id).classList.remove('hidden');
+    }
+
+    function alterarSenha() {
+        const u = document.getElementById('rec-user').value.toLowerCase().trim();
+        const novaSenha = document.getElementById('rec-pass').value;
+
+        if (!u || !novaSenha) return alert("Preencha o Usuário e a Nova Senha!");
+
+        db.ref('usuarios/' + u).once('value', snap => {
+            if (snap.exists()) {
+                db.ref('usuarios/' + u).update({ senha: novaSenha }).then(() => {
+                    alert("✅ Senha alterada com sucesso! Faça seu login.");
+                    document.getElementById('rec-user').value = '';
+                    document.getElementById('rec-pass').value = '';
+                    alternarTela('login-screen');
+                });
+            } else {
+                alert("❌ Usuário não encontrado no sistema. Verifique se digitou corretamente.");
+            }
+        });
     }
 
     function cadastrarUsuario() {
@@ -204,16 +320,55 @@
         const p = document.getElementById('reg-pass').value;
         const s = document.getElementById('reg-setor').value;
         const n = document.getElementById('reg-nivel').value;
-        if (!u || !p || !s) return alert("Preencha tudo!");
+        const btn = document.getElementById('btn-cadastrar');
 
-        db.ref('usuarios').once('value', snap => {
-            let existe = false;
-            snap.forEach(c => { if(c.val().nivel === "Coordenador" && c.val().setor === s && n === "Coordenador") existe = true; });
-            if(existe) return alert("Já existe um Coordenador para este setor!");
+        if (!u || !p || !s) return alert("Preencha Usuário, Senha e selecione o Setor!");
 
-            db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n }).then(() => {
-                alert("Sucesso! Faça login.");
+        const caracteresInvalidos = /[.#$\[\]\/\s]/;
+        if (caracteresInvalidos.test(u)) {
+            return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos.");
+        }
+
+        btn.innerText = "VERIFICANDO...";
+        btn.disabled = true;
+
+        db.ref('usuarios').once('value', snapshot => {
+            let coordenadorJaExiste = false;
+
+            if (n === "Coordenador" && snapshot.exists()) {
+                snapshot.forEach(child => {
+                    const userDb = child.val();
+                    if (userDb.nivel === "Coordenador" && userDb.setor === s) {
+                        coordenadorJaExiste = true;
+                    }
+                });
+            }
+
+            if (coordenadorJaExiste) {
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                return alert(`❌ ERRO: Já existe um Coordenador cadastrado para o setor selecionado (${s}). Escolha o nível de Operador ou fale com a administração.`);
+            }
+
+            const timeoutEmergencia = setTimeout(() => {
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                alert("A conexão falhou. Verifique sua internet.");
+            }, 10000);
+
+            db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n })
+            .then(() => {
+                clearTimeout(timeoutEmergencia); 
+                alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
                 alternarTela('login-screen');
+            })
+            .catch(error => {
+                clearTimeout(timeoutEmergencia);
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                alert("❌ ERRO DO SERVIDOR: " + error.message);
             });
         });
     }
@@ -221,163 +376,336 @@
     function fazerLogin() {
         const u = document.getElementById('login-user').value.toLowerCase().trim();
         const p = document.getElementById('login-pass').value;
+        
+        if (!u || !p) return alert("Preencha Usuário e Senha!");
+
         db.ref('usuarios/' + u).once('value', snap => {
             const d = snap.val();
             if (d && d.senha === p) {
                 localStorage.setItem('fgb_logado', 'true');
                 localStorage.setItem('fgb_user', u);
-                abrirPainel();
-            } else alert("Erro!");
+                localStorage.setItem('fgb_setor', d.setor || ""); 
+                localStorage.setItem('fgb_nivel', d.nivel || "Operador"); 
+                abrirPainelCompleto();
+            } else {
+                alert("Usuário ou senha incorretos! Tente novamente.");
+            }
         });
     }
 
-    function fazerLogout(inativo = false) { if(inativo) alert("Sessão expirada!"); localStorage.clear(); location.reload(); }
+    function fazerLogout(porInatividade = false) { 
+        if(porInatividade) {
+            alert("⏱️ Sua sessão expirou devido a 1 hora de inatividade. Por segurança, você foi desconectado.");
+        }
+        localStorage.clear(); 
+        location.reload(); 
+    }
 
-    function resetTimer() { clearTimeout(temporizadorInatividade); temporizadorInatividade = setTimeout(() => fazerLogout(true), 3600000); }
-    document.onmousemove = resetTimer; document.onkeypress = resetTimer;
+    // --- 4. SISTEMA DE SEGURANÇA: MONITORAMENTO DE INATIVIDADE ---
+    function resetarTimerInatividade() {
+        clearTimeout(temporizadorInatividade);
+        temporizadorInatividade = setTimeout(() => fazerLogout(true), 3600000); 
+    }
 
-    function abrirPainel() {
+    function iniciarMonitoramento() {
+        window.onload = resetarTimerInatividade;
+        document.onmousemove = resetarTimerInatividade;
+        document.onkeypress = resetarTimerInatividade;
+        document.onclick = resetarTimerInatividade;
+        document.ontouchstart = resetarTimerInatividade;
+        window.addEventListener('scroll', resetarTimerInatividade, true);
+        resetarTimerInatividade(); 
+    }
+
+    // --- 5. INICIAR O PAINEL DE LICITAÇÕES ---
+    function abrirPainelCompleto() {
         document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('cadastro-screen').classList.add('hidden');
+        document.getElementById('recuperar-screen').classList.add('hidden');
         document.getElementById('main-system').style.display = 'block';
-        iniciarLeitura();
+        document.body.style.justifyContent = 'flex-start';
+        
+        iniciarMonitoramento(); 
+        iniciarLeituraDeDados(); 
     }
 
-    function iniciarLeitura() {
-        db.ref('usuarios').on('value', s => { dbUsuarios = s.val() || {}; renderizar(); });
-        db.ref('processos').on('value', s => { dbProcessos = s.val() || {}; renderizar(); });
+    // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
+    function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
+    function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; document.getElementById('texto-sugestao').value = ''; }
+
+    function enviarSugestao() {
+        const texto = document.getElementById('texto-sugestao').value.trim();
+        if (!texto) return alert("Escreva algo antes de enviar!");
+
+        const usuarioAtual = localStorage.getItem('fgb_user') || 'Usuário Não Logado';
+        const idSugestao = Date.now();
+        const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+
+        db.ref('sugestoes/' + idSugestao).set({ id: idSugestao, usuario: usuarioAtual, mensagem: texto, data: dataEnvio })
+        .then(() => { alert("✅ Sua sugestão foi enviada com sucesso! Muito obrigado."); fecharModalSugestao(); })
+        .catch(e => alert("Erro ao enviar: " + e.message));
     }
 
-    // --- FUNÇÕES DE NEGÓCIO ---
+    // --- 6. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
+    function mascaraData(campo) {
+        let v = campo.value.replace(/\D/g, "");
+        if (v.length > 2) v = v.substring(0,2) + "/" + v.substring(2);
+        if (v.length > 5) v = v.substring(0,5) + "/" + v.substring(5,10);
+        campo.value = v;
+    }
+
+    function mascaraMoeda(campo) {
+        let valor = campo.value.replace(/\D/g, "");
+        if (valor === "") { campo.value = ""; return; }
+        valor = (parseInt(valor) / 100).toFixed(2) + "";
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        campo.value = "R$ " + valor;
+    }
 
     function adicionarProcesso() {
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
-        const user = localStorage.getItem('fgb_user');
-        const meuSetor = dbUsuarios[user].setor;
-
-        if (!emp || !obj || dat.length < 10) return alert("Preencha tudo!");
-
-        const id = Date.now();
-        db.ref('processos/' + id).set({
-            id, dono: user, setorOrigem: meuSetor, empresa: emp, objeto: obj, data: dat, fase: "", setor: meuSetor, valor: "", excluido: false
+        const usuarioAtual = localStorage.getItem('fgb_user'); 
+        
+        const meuPerfil = dbUsuarios[usuarioAtual] || {};
+        const setorDoDono = meuPerfil.setor || ""; 
+        
+        if (!emp || !obj || dat.length < 10) return alert("Preencha todos os campos corretamente (Data com 8 dígitos)!");
+        
+        const novoId = Date.now();
+        db.ref('processos/' + novoId).set({
+            id: novoId, 
+            dono: usuarioAtual, 
+            setorOrigem: setorDoDono, 
+            empresa: emp, 
+            objeto: obj, 
+            data: dat,
+            fase: "", 
+            setor: setorDoDono, 
+            valor: "", 
+            excluido: false
         });
-        document.getElementById('input-empresa').value = ''; document.getElementById('input-objeto').value = ''; document.getElementById('input-data').value = '';
+        
+        document.getElementById('input-empresa').value = ''; 
+        document.getElementById('input-objeto').value = ''; 
+        document.getElementById('input-data').value = '';
     }
 
-    function atualizarCampo(id, campo, valor) { db.ref('processos/' + id).update({ [campo]: valor }); }
-    function moverParaLixeira(id, estado) { db.ref('processos/' + id).update({ excluido: estado }); }
-
-    function limparLixeiraPermanente() {
-        if(confirm("Deseja apagar definitivamente todos os processos da lixeira do setor?")) {
-            const meuSetor = dbUsuarios[localStorage.getItem('fgb_user')].setor;
-            Object.values(dbProcessos).forEach(p => {
-                if(p.excluido && p.setor === meuSetor) db.ref('processos/' + p.id).remove();
-            });
-        }
+    function atualizarCampo(id, campo, valor) {
+        db.ref('processos/' + id).update({ [campo]: valor });
     }
 
+    function moverParaLixeira(id, estado) {
+        db.ref('processos/' + id).update({ excluido: estado });
+    }
+
+    // NOVO: DELEGAR/TRANSFERIR PROCESSO
     function transferirProcesso(id, novoDono) {
-        if(confirm(`Deseja transferir este processo para ${novoDono}?`)) {
+        if(novoDono === "") return;
+        if(confirm(`Tem certeza que deseja delegar este processo para o operador '${novoDono.toUpperCase()}'?`)) {
             db.ref('processos/' + id).update({ dono: novoDono });
         }
     }
 
-    function renderizar() {
-        const user = localStorage.getItem('fgb_user');
-        const meuPerfil = dbUsuarios[user] || {};
+    function limparLixeiraPermanente() {
+        const usuarioAtual = localStorage.getItem('fgb_user');
+        const meuSetor = dbUsuarios[usuarioAtual].setor || "";
+        
+        if(confirm("ATENÇÃO COORDENADOR: Tem certeza que deseja apagar permanentemente TODOS os processos da lixeira do seu setor? Isso não pode ser desfeito.")) {
+            db.ref('processos').once('value', snapshot => {
+                snapshot.forEach(child => {
+                    const p = child.val();
+                    const donoProcesso = p.dono;
+                    const perfilDono = dbUsuarios[donoProcesso] || {};
+                    const setorOficialDono = perfilDono.setor || p.setorOrigem || "";
+
+                    // Apaga se for do mesmo setor
+                    if(p.excluido && (setorOficialDono === meuSetor || p.setor === meuSetor)) {
+                        child.ref.remove();
+                    }
+                });
+            });
+        }
+    }
+
+    function filtrarProcessos() {
+        const termo = document.getElementById('input-pesquisa').value.toLowerCase();
+        const cards = document.querySelectorAll('.processo-card');
+        
+        cards.forEach(card => {
+            const textoCard = card.innerText.toLowerCase(); 
+            if (textoCard.includes(termo)) { card.style.display = 'block'; } else { card.style.display = 'none'; }
+        });
+    }
+
+    // --- 7. MOTOR DE LEITURA DUPLA ---
+    function iniciarLeituraDeDados() {
+        db.ref('usuarios').on('value', snap => {
+            dbUsuarios = snap.val() || {};
+            if (dbProcessos !== null) renderizarTela(); 
+        });
+
+        db.ref('processos').on('value', snap => {
+            dbProcessos = snap.val();
+            renderizarTela(); 
+        });
+    }
+
+    function renderizarTela() {
+        const usuarioAtual = localStorage.getItem('fgb_user'); 
+        const meuPerfil = dbUsuarios[usuarioAtual] || {};
         const meuSetor = meuPerfil.setor || "";
         const meuNivel = meuPerfil.nivel || "Operador";
 
-        document.getElementById('user-display').innerText = `Logado como ${meuNivel}: ${user.toUpperCase()} (${meuSetor})`;
-        
-        // Regras de Interface Coordenador
-        if(meuNivel === 'Coordenador') {
-            document.getElementById('dash-setor').classList.remove('hidden');
-            document.getElementById('btn-limpar-lixeira').classList.remove('hidden');
+        document.getElementById('user-display').innerText = `Painel de ${meuNivel}: ${usuarioAtual.toUpperCase()} | 🏢 ${meuSetor.split(' -')[0]}`;
+
+        // --- CONTROLE DE EXIBIÇÃO DE RECURSOS DO COORDENADOR ---
+        const dashSetor = document.getElementById('dash-setor');
+        const btnReport = document.getElementById('btn-report');
+        const btnLimparLixeira = document.getElementById('btn-limpar-lixeira');
+
+        if (meuNivel === 'Coordenador') {
+            dashSetor.classList.remove('hidden');
+            btnReport.classList.remove('hidden');
+            btnLimparLixeira.classList.remove('hidden');
+        } else {
+            dashSetor.classList.add('hidden');
+            btnReport.classList.add('hidden');
+            btnLimparLixeira.classList.add('hidden');
         }
 
         const ativosDiv = document.getElementById('lista-ativos');
         const lixeiraDiv = document.getElementById('lista-lixeira');
-        ativosDiv.innerHTML = ''; lixeiraDiv.innerHTML = '';
+        ativosDiv.innerHTML = ''; 
+        lixeiraDiv.innerHTML = '';
+        
+        if (!dbProcessos) { 
+            ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; 
+            return; 
+        }
 
-        let totalSetor = 0, valorTotal = 0, fasesCount = {};
+        let temProcessos = false;
+        
+        // VARIÁVEIS PARA O DASHBOARD
+        let totalSetor = 0;
+        let valorTotal = 0;
+        let fasesCount = {};
 
         Object.values(dbProcessos).reverse().forEach(p => {
-            const donoInfo = dbUsuarios[p.dono] || {};
-            const setorDono = donoInfo.setor || p.setorOrigem;
+            const donoDoProcesso = p.dono;
+            const perfilDoDono = dbUsuarios[donoDoProcesso] || {};
+            const setorOficialDoDono = perfilDoDono.setor || p.setorOrigem || "";
 
-            // Filtro de Visibilidade
-            if (p.dono !== user && (meuNivel !== 'Coordenador' || setorDono !== meuSetor)) return;
-
-            // Contabilização para Dashboard
-            if(!p.excluido && setorDono === meuSetor) {
-                totalSetor++;
-                const valNum = parseFloat(p.valor.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-                valorTotal += valNum;
-                if(p.fase) fasesCount[p.fase] = (fasesCount[p.fase] || 0) + 1;
+            let temPermissaoParaVer = false;
+            
+            if (donoDoProcesso === usuarioAtual) {
+                temPermissaoParaVer = true;
+            } else if (meuNivel === 'Coordenador' && meuSetor !== "" && setorOficialDoDono === meuSetor) {
+                temPermissaoParaVer = true;
+            } else if (meuNivel === 'Coordenador' && meuSetor !== "" && p.setor === meuSetor) {
+                temPermissaoParaVer = true;
             }
 
-            const selectFase = `<option value="" disabled ${!p.fase?'selected':''}>Escolher Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase===f?'selected':''}>${f}</option>`).join('');
-            const selectSetor = setoresFGB.map(s => `<option value="${s}" ${p.setor===s?'selected':''}>${s}</option>`).join('');
-            
-            // Lista de Operadores do Setor para Transferência
-            let selectTransfer = `<option value="">Transferir para...</option>`;
-            Object.keys(dbUsuarios).forEach(uKey => {
-                if(dbUsuarios[uKey].setor === meuSetor && uKey !== p.dono) {
-                    selectTransfer += `<option value="${uKey}">${uKey.toUpperCase()}</option>`;
-                }
-            });
+            if (!temPermissaoParaVer) return; 
 
+            temProcessos = true;
+
+            // --- ALIMENTAR DADOS DO DASHBOARD (Apenas ativos do setor do coordenador) ---
+            if (!p.excluido && (setorOficialDoDono === meuSetor || p.setor === meuSetor)) {
+                totalSetor++;
+                
+                if (p.valor) {
+                    let valLimpo = parseFloat(p.valor.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                    valorTotal += valLimpo;
+                }
+
+                if (p.fase) {
+                    fasesCount[p.fase] = (fasesCount[p.fase] || 0) + 1;
+                }
+            }
+            
+            const selectFase = `<option value="" disabled ${!p.fase ? 'selected' : ''}>Selecione a Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
+            const selectSetor = `<option value="" disabled ${!p.setor ? 'selected' : ''}>Selecione o Setor...</option>` + setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+            const valorAtual = p.valor ? p.valor : ''; 
+            
+            const etiquetaDono = (donoDoProcesso !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${donoDoProcesso.toUpperCase()}</span>` : '';
+
+            // --- CAIXA DE TRANSFERÊNCIA (Só Coordenador vê e só se não estiver na lixeira) ---
+            let transferHTML = '';
+            if (meuNivel === 'Coordenador' && !p.excluido) {
+                let selectTransfer = `<option value="" selected disabled>Transferir para...</option>`;
+                Object.keys(dbUsuarios).forEach(uKey => {
+                    if (dbUsuarios[uKey].setor === meuSetor && uKey !== donoDoProcesso) {
+                        selectTransfer += `<option value="${uKey}">${uKey.toUpperCase()}</option>`;
+                    }
+                });
+                transferHTML = `
+                    <div class="transfer-box" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd;">
+                        <span style="font-size: 0.85rem; color: #7f8c8d; font-weight: bold;">🔄 Delegar Processo:</span>
+                        <select onchange="transferirProcesso(${p.id}, this.value)" style="margin-top: 5px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; width: 100%;">
+                            ${selectTransfer}
+                        </select>
+                    </div>
+                `;
+            }
+            
             const htmlCard = `
                 <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
-                    <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})">${p.excluido?'Restaurar':'✖ Excluir'}</button>
+                    <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})" title="${p.excluido ? 'Restaurar' : 'Mover para lixeira'}">
+                        ${p.excluido ? '↺ Restaurar' : '✖ Excluir'}
+                    </button>
+                    
                     <div class="empresa">${p.empresa}</div>
                     <div class="objeto">${p.objeto}</div>
-                    ${p.dono!==user ? `<span class="autor-badge">Operador: ${p.dono.toUpperCase()}</span>` : ''}
+                    ${etiquetaDono}
                     
-                    <div class="tag-box status-box">📍 <select onchange="atualizarCampo(${p.id}, 'fase', this.value)">${selectFase}</select></div>
-                    <div class="tag-box setor-box">🏢 <select onchange="atualizarCampo(${p.id}, 'setor', this.value)">${selectSetor}</select></div>
+                    <div class="tag-box status-box" style="margin-top: 15px;">
+                        📍 Fase atual: 
+                        <select onchange="atualizarCampo(${p.id}, 'fase', this.value)">${selectFase}</select>
+                    </div>
+                    
+                    <div class="tag-box setor-box">
+                        🏢 Setor: 
+                        <select onchange="atualizarCampo(${p.id}, 'setor', this.value)">${selectSetor}</select>
+                    </div>
                     
                     <div class="detalhes">
-                        <span>📅 Data: <input type="text" value="${p.data}" onchange="atualizarCampo(${p.id}, 'data', this.value)"></span>
-                        <span>💰 Valor: <input type="text" value="${p.valor}" placeholder="R$ 0,00" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id}, 'valor', this.value)"></span>
+                        <span>📅 Data do Processo:</span>
+                        <input type="text" class="input-card" value="${p.data}" maxlength="10" onkeyup="mascaraData(this)" onchange="atualizarCampo(${p.id}, 'data', this.value)">
+                        
+                        <span>💰 Valor do Processo:</span>
+                        <input type="text" class="input-card" value="${valorAtual}" placeholder="R$ 0,00" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id}, 'valor', this.value)">
                     </div>
 
-                    ${meuNivel === 'Coordenador' && !p.excluido ? `
-                        <div class="transfer-box">
-                            🔄 Gerir Processo: <select onchange="transferirProcesso(${p.id}, this.value)">${selectTransfer}</select>
-                        </div>
-                    ` : ''}
+                    ${transferHTML}
                 </div>
             `;
-            if(p.excluido) lixeiraDiv.innerHTML += htmlCard; else ativosDiv.innerHTML += htmlCard;
+            
+            if (p.excluido) { lixeiraDiv.innerHTML += htmlCard; } else { ativosDiv.innerHTML += htmlCard; }
         });
 
-        // Atualiza Dashboard
-        if(meuNivel === 'Coordenador') {
+        // --- ATUALIZA O DASHBOARD NA TELA ---
+        if (meuNivel === 'Coordenador') {
             document.getElementById('stat-total').innerText = totalSetor;
             document.getElementById('stat-valor').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            let faseTop = Object.entries(fasesCount).sort((a,b) => b[1]-a[1])[0];
-            document.getElementById('stat-fase').innerText = faseTop ? faseTop[0] : '-';
+            
+            let faseMaisComum = "-";
+            let maxCount = 0;
+            for (const [fase, count] of Object.entries(fasesCount)) {
+                if (count > maxCount) { maxCount = count; faseMaisComum = fase; }
+            }
+            document.getElementById('stat-fase').innerText = faseMaisComum;
         }
+
+        if (!temProcessos) { ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; }
+        filtrarProcessos();
     }
 
-    // MÁSCARAS
-    function mascaraData(c){ let v=c.value.replace(/\D/g,""); if(v.length>2) v=v.substring(0,2)+"/"+v.substring(2); if(v.length>5) v=v.substring(0,5)+"/"+v.substring(5,10); c.value=v; }
-    function mascaraMoeda(c){ let v=c.value.replace(/\D/g,""); v=(parseInt(v)/100).toFixed(2).replace(".",","); v=v.replace(/(\d)(?=(\d{3})+(?!\d))/g,"$1."); c.value="R$ "+v; }
-
-    // SUGESTÕES
-    function abrirModalSugestao(){ document.getElementById('modal-sugestao').style.display='flex'; }
-    function fecharModalSugestao(){ document.getElementById('modal-sugestao').style.display='none'; }
-    function enviarSugestao(){ 
-        const t = document.getElementById('texto-sugestao').value;
-        if(!t) return;
-        db.ref('sugestoes/'+Date.now()).set({ user: localStorage.getItem('fgb_user'), msg: t, data: new Date().toLocaleString() })
-        .then(() => { alert("Enviado!"); fecharModalSugestao(); });
+    if (localStorage.getItem('fgb_logado') === 'true') {
+        abrirPainelCompleto();
     }
-
-    if(localStorage.getItem('fgb_logado')) abrirPainel();
 </script>
 </body>
 </html>
