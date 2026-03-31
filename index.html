@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v12.5</title>
+    <title>FGB Cloud - Gestão Oficial v12.6</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -247,7 +247,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.5<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v12.6<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
@@ -538,7 +538,6 @@
         .catch(e => alert("Erro ao transmitir: " + e.message));
     }
 
-    // NOVO: Função exclusiva do Admin para deletar a notificação
     function deletarNotificacaoGlobal(idMsg) {
         if(confirm("Tem certeza que deseja APAGAR este aviso para toda a equipe? Ele sumirá da tela de todos instantaneamente.")) {
             db.ref('notificacoes_globais/' + idMsg).remove();
@@ -606,6 +605,22 @@
         }
     }
 
+    // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
+    function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
+    function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; document.getElementById('texto-sugestao').value = ''; }
+
+    function enviarSugestao() {
+        const texto = document.getElementById('texto-sugestao').value.trim();
+        if (!texto) return alert("Escreva algo antes de enviar!");
+
+        const usuarioAtual = localStorage.getItem('fgb_user') || 'Usuário Não Logado';
+        const idSugestao = Date.now();
+        const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+
+        db.ref('sugestoes/' + idSugestao).set({ id: idSugestao, usuario: usuarioAtual, mensagem: texto, data: dataEnvio })
+        .then(() => { alert("✅ Sua sugestão foi enviada com sucesso! Muito obrigado."); fecharModalSugestao(); })
+        .catch(e => alert("Erro ao enviar: " + e.message));
+    }
 
     // --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
     function alternarTela(id) {
