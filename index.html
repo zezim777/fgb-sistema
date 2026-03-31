@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v10.0</title>
+    <title>FGB Cloud - Gestão Oficial v10.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -86,7 +86,7 @@
         
         .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; display: flex; flex-direction: column; gap: 5px; }
         body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
-        .detalhes span { color: #7f8c8d; }
+        .detalhes span { color: #7f8c8d; font-weight: bold; }
         body.dark-mode .detalhes span { color: #bdc3c7; }
         
         /* LIXEIRA */
@@ -125,10 +125,10 @@
 
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
-        <h2>Acesso Restrito</h2>
+        <h2>Acesso Pessoal</h2>
         <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
         <input type="password" id="login-pass" placeholder="Senha">
-        <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+        <button onclick="fazerLogin()">ENTRAR NA MINHA AGENDA</button>
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
     </div>
@@ -155,12 +155,12 @@
     <div id="main-system">
         <header>
             <button class="btn-sair" onclick="fazerLogout(false)">Sair da Conta</button>
-            <h1>FGB Cloud - Gestão</h1>
+            <h1>FGB Cloud - Agenda de Processos</h1>
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar por empresa, objeto, setor ou fase..." onkeyup="filtrarProcessos()">
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar em meus processos..." onkeyup="filtrarProcessos()">
             <button class="btn-search" onclick="filtrarProcessos()" title="Pesquisar">🔍</button>
         </div>
 
@@ -168,16 +168,16 @@
             <input type="text" id="input-empresa" placeholder="Nome da Empresa">
             <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
             <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
-            <button onclick="adicionarProcesso()" class="full-width">SALVAR PROCESSO NA NUVEM</button>
+            <button onclick="adicionarProcesso()" class="full-width">ADICIONAR À MINHA LISTA</button>
         </div>
 
-        <h3>📦 Processos em Andamento</h3>
-        <div id="lista-ativos">Carregando dados sincronizados...</div>
+        <h3>📦 Meus Processos em Andamento</h3>
+        <div id="lista-ativos">Carregando seus dados...</div>
 
         <div class="lixeira-section">
-            <h3>🗑️ Lixeira de Processos</h3>
+            <h3>🗑️ Minha Lixeira</h3>
             <div id="lista-lixeira"></div>
-            <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Lixeira Permanentemente</button>
+            <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Minha Lixeira</button>
         </div>
 
         <button class="btn-flutuante" onclick="abrirModalSugestao()">💡 Sugestões</button>
@@ -271,7 +271,7 @@
 
         const caracteresInvalidos = /[.#$\[\]\/\s]/;
         if (caracteresInvalidos.test(u)) {
-            return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos. Use apenas letras e números (Ex: jose123).");
+            return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos.");
         }
 
         btn.innerText = "SALVANDO...";
@@ -280,7 +280,7 @@
         const timeoutEmergencia = setTimeout(() => {
             btn.innerText = "SALVAR E ENTRAR";
             btn.disabled = false;
-            alert("A conexão falhou ou demorou muito. Verifique sua internet ou as regras do Firebase.");
+            alert("A conexão falhou. Verifique sua internet.");
         }, 10000);
 
         try {
@@ -357,7 +357,7 @@
         document.body.style.justifyContent = 'flex-start';
         
         const nomeOperador = localStorage.getItem('fgb_user').toUpperCase();
-        document.getElementById('user-display').innerText = "Operador(a) Logado(a): " + nomeOperador + " | ☁️ Online";
+        document.getElementById('user-display').innerText = "Agenda Pessoal: " + nomeOperador + " | ☁️ Online";
         
         carregarProcessos(); 
         iniciarMonitoramento(); 
@@ -400,7 +400,6 @@
         campo.value = v;
     }
 
-    // MÁSCARA DE MOEDA (NOVO)
     function mascaraMoeda(campo) {
         let valor = campo.value.replace(/\D/g, "");
         if (valor === "") {
@@ -417,18 +416,20 @@
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
         const dat = document.getElementById('input-data').value;
+        const usuarioAtual = localStorage.getItem('fgb_user'); // RECUPERA QUEM ESTÁ CRIANDO
         
         if (!emp || !obj || dat.length < 10) return alert("Preencha todos os campos corretamente (Data com 8 dígitos)!");
         
         const novoId = Date.now();
         db.ref('processos/' + novoId).set({
             id: novoId, 
+            dono: usuarioAtual, // GRAVA O DONO DO PROCESSO
             empresa: emp, 
             objeto: obj, 
             data: dat,
             fase: "Confecção do QDD",
             setor: "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira",
-            valor: "", // Nasce vazio para preencher depois
+            valor: "", 
             excluido: false
         });
         
@@ -446,10 +447,13 @@
     }
 
     function limparLixeiraPermanente() {
-        if(confirm("CUIDADO: Tem certeza que deseja apagar permanentemente os processos da lixeira? Isso não pode ser desfeito.")) {
+        const usuarioAtual = localStorage.getItem('fgb_user');
+        if(confirm("CUIDADO: Tem certeza que deseja apagar permanentemente os SEUS processos da lixeira?")) {
             db.ref('processos').once('value', snapshot => {
                 snapshot.forEach(child => {
-                    if(child.val().excluido) child.ref.remove();
+                    const p = child.val();
+                    // APAGA APENAS SE ESTIVER EXCLUIDO E FOR DO USUÁRIO ATUAL
+                    if(p.excluido && p.dono === usuarioAtual) child.ref.remove();
                 });
             });
         }
@@ -469,8 +473,10 @@
         });
     }
 
-    // --- 7. RENDERIZAÇÃO EM TEMPO REAL ---
+    // --- 7. RENDERIZAÇÃO EM TEMPO REAL (AGORA COM FILTRO PRIVADO) ---
     function carregarProcessos() {
+        const usuarioAtual = localStorage.getItem('fgb_user'); // Identifica quem está logado
+
         db.ref('processos').on('value', snapshot => {
             const ativosDiv = document.getElementById('lista-ativos');
             const lixeiraDiv = document.getElementById('lista-lixeira');
@@ -480,14 +486,20 @@
             const dataSnapshot = snapshot.val();
             
             if (!dataSnapshot) { 
-                ativosDiv.innerHTML = '<p>Nenhum processo no momento.</p>'; 
+                ativosDiv.innerHTML = '<p>Você ainda não tem processos criados.</p>'; 
                 return; 
             }
 
+            let temProcessos = false;
+
             Object.values(dataSnapshot).reverse().forEach(p => {
+                // TRAVA DE SEGURANÇA: Se o processo não for desse usuário, ignora o card e vai pro próximo.
+                if (p.dono !== usuarioAtual) return; 
+
+                temProcessos = true;
                 const selectFase = fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
                 const selectSetor = setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
-                const valorAtual = p.valor ? p.valor : ''; // Puxa o valor se já existir
+                const valorAtual = p.valor ? p.valor : ''; 
                 
                 const htmlCard = `
                     <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
@@ -524,6 +536,10 @@
                     ativosDiv.innerHTML += htmlCard;
                 }
             });
+
+            if (!temProcessos) {
+                ativosDiv.innerHTML = '<p>Você ainda não tem processos criados.</p>'; 
+            }
             
             filtrarProcessos();
         });
