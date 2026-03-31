@@ -31,9 +31,8 @@ let dbProcessos = null;
 let listaNotificacoesGlobais = [];
 let ultimaNotifLida = localStorage.getItem('ultima_notif_lida') || 0;
 
-// --- GATILHOS INICIAIS (BLINDAGEM PARA IPHONE/SAFARI) ---
+// --- GATILHOS INICIAIS (BLINDAGEM PARA NAVEGADORES) ---
 document.addEventListener('DOMContentLoaded', () => {
-    
     const regSetor = document.getElementById('reg-setor');
     if (regSetor) {
         setoresFGB.forEach(s => { 
@@ -105,7 +104,7 @@ window.onclick = function(event) {
     if (notifCont && !notifCont.contains(event.target)) notifCont.classList.remove('active');
 };
 
-// --- FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) ---
+// --- FUNÇÕES DE TRANSMISSÃO GLOBAL (ADMIN) E EXCLUSÃO ---
 function abrirModalAdminNotif() { document.getElementById('modal-admin-notif').style.display = 'flex'; }
 
 function fecharModalAdminNotif() {
@@ -193,6 +192,7 @@ function lerNotificacoes() {
     }
 }
 
+// --- LÓGICA DO SISTEMA DE SUGESTÕES ---
 function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
 function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; document.getElementById('texto-sugestao').value = ''; }
 
@@ -209,6 +209,7 @@ function enviarSugestao() {
     .catch(e => alert("Erro ao enviar: " + e.message));
 }
 
+// --- 3. LÓGICA DE TELAS E AUTENTICAÇÃO ---
 function alternarTela(id) {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('cadastro-screen').classList.add('hidden');
@@ -420,80 +421,145 @@ function renderizarTela() {
     const displayUser = document.getElementById('user-display');
     if (displayUser) displayUser.innerText = `Painel de ${meuNivel}: ${usuarioAtual.toUpperCase()} | 🏢 ${meuSetor.split(' -')[0]}`;
 
-    if (usuarioAtual === 'joseeminem') document.getElementById('admin-container').classList.add('visible');
+    const adminContainer = document.getElementById('admin-container');
+    if (adminContainer) {
+        if (usuarioAtual === 'joseeminem') {
+            adminContainer.classList.add('visible');
+        } else {
+            adminContainer.classList.remove('visible');
+        }
+    }
 
     const dashSetor = document.getElementById('dash-setor');
     const btnReport = document.getElementById('btn-report');
     const btnLimparLixeira = document.getElementById('btn-limpar-lixeira');
 
     if (meuNivel === 'Coordenador') {
-        dashSetor.classList.remove('hidden');
-        btnReport.classList.remove('hidden');
-        btnLimparLixeira.classList.remove('hidden');
+        if (dashSetor) dashSetor.classList.remove('hidden');
+        if (btnReport) btnReport.classList.remove('hidden');
+        if (btnLimparLixeira) btnLimparLixeira.classList.remove('hidden');
+    } else {
+        if (dashSetor) dashSetor.classList.add('hidden');
+        if (btnReport) btnReport.classList.add('hidden');
+        if (btnLimparLixeira) btnLimparLixeira.classList.add('hidden');
     }
 
     const ativosDiv = document.getElementById('lista-ativos');
     const lixeiraDiv = document.getElementById('lista-lixeira');
-    ativosDiv.innerHTML = ''; lixeiraDiv.innerHTML = '';
     
-    if (!dbProcessos) { ativosDiv.innerHTML = '<p>Nenhum processo encontrado.</p>'; return; }
+    if (!ativosDiv || !lixeiraDiv) return;
 
-    let totalSetor = 0, valorTotal = 0, fasesCount = {};
+    ativosDiv.innerHTML = ''; 
+    lixeiraDiv.innerHTML = '';
+    
+    if (!dbProcessos) { 
+        ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; 
+        return; 
+    }
+
+    let temProcessos = false;
+    let totalSetor = 0;
+    let valorTotal = 0;
+    let fasesCount = {};
 
     Object.values(dbProcessos).reverse().forEach(p => {
         const donoDoProcesso = p.dono;
         const perfilDoDono = dbUsuarios[donoDoProcesso] || {};
-        const setorDono = (perfilDoDono.setor || p.setorOrigem || "").trim();
+        const setorOficialDoDono = (perfilDoDono.setor || p.setorOrigem || "").trim();
 
-        let temPermissao = (donoDoProcesso === usuarioAtual || (meuNivel === 'Coordenador' && (setorDono === meuSetor || p.setor === meuSetor)));
-        if (!temPermissao) return;
+        let temPermissaoParaVer = false;
+        
+        if (donoDoProcesso === usuarioAtual) {
+            temPermissaoParaVer = true;
+        } else if (meuNivel === 'Coordenador' && meuSetor !== "" && setorOficialDoDono === meuSetor) {
+            temPermissaoParaVer = true;
+        } else if (meuNivel === 'Coordenador' && meuSetor !== "" && p.setor === meuSetor) {
+            temPermissaoParaVer = true;
+        }
 
-        if (!p.excluido && (setorDono === meuSetor || p.setor === meuSetor)) {
+        if (!temPermissaoParaVer) return; 
+
+        temProcessos = true;
+
+        if (!p.excluido && (setorOficialDoDono === meuSetor || p.setor === meuSetor)) {
             totalSetor++;
             if (p.valor) valorTotal += parseFloat(p.valor.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
             if (p.fase) fasesCount[p.fase] = (fasesCount[p.fase] || 0) + 1;
         }
         
-        const selectFase = `<option value="" disabled ${!p.fase ? 'selected' : ''}>Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
-        const selectSetor = `<option value="" disabled ${!p.setor ? 'selected' : ''}>Setor...</option>` + setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+        const selectFase = `<option value="" disabled ${!p.fase ? 'selected' : ''}>Selecione a Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
+        const selectSetor = `<option value="" disabled ${!p.setor ? 'selected' : ''}>Selecione o Setor...</option>` + setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+        const valorAtual = p.valor ? p.valor : ''; 
         
-        // --- LÓGICA DE DELEGAÇÃO CORRIGIDA ---
+        const etiquetaDono = (donoDoProcesso !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${donoDoProcesso.toUpperCase()}</span>` : '';
+
+        // --- CAIXA DE TRANSFERÊNCIA ATUALIZADA ---
         let transferHTML = '';
         if (meuNivel === 'Coordenador' && !p.excluido) {
-            let options = `<option value="" selected disabled>Transferir para Operador...</option>`;
+            let selectTransfer = `<option value="" selected disabled>Transferir para Operador...</option>`;
             Object.keys(dbUsuarios).forEach(uKey => {
                 const u = dbUsuarios[uKey];
-                // Regra: Mesmo setor && NÃO ser o dono atual && Ser nível OPERADOR
-                if (u.setor.trim() === meuSetor && uKey !== donoDoProcesso && u.nivel === "Operador") {
-                    options += `<option value="${uKey}">${uKey.toUpperCase()}</option>`;
+                const setorDestaPessoa = (u.setor || "").trim();
+                
+                // Regra: Mesmo setor E NÃO ser Coordenador
+                if (setorDestaPessoa === meuSetor && u.nivel !== "Coordenador") {
+                    selectTransfer += `<option value="${uKey}">${uKey.toUpperCase()}</option>`;
                 }
             });
-            transferHTML = `<div style="margin-top:10px;border-top:1px dashed #ddd;padding-top:5px;"><span style="font-size:0.8rem;color:#7f8c8d;font-weight:bold;">🔄 Delegar para:</span><select onchange="transferirProcesso(${p.id}, this.value)" style="width:100%;margin-top:5px;border:1px solid #ddd;">${options}</select></div>`;
+            
+            transferHTML = `
+                <div class="transfer-box" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd;">
+                    <span style="font-size: 0.85rem; color: #7f8c8d; font-weight: bold;">🔄 Delegar Processo:</span>
+                    <select onchange="transferirProcesso(${p.id}, this.value)" style="margin-top: 5px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; width: 100%;">
+                        ${selectTransfer}
+                    </select>
+                </div>
+            `;
         }
         
         const htmlCard = `
             <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
-                <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})">${p.excluido ? '↺' : '✖'}</button>
+                <button class="btn-excluir" onclick="moverParaLixeira(${p.id}, ${!p.excluido})" title="${p.excluido ? 'Restaurar' : 'Mover para lixeira'}">
+                    ${p.excluido ? '↺ Restaurar' : '✖ Excluir'}
+                </button>
                 <div class="empresa">${p.empresa}</div>
                 <div class="objeto">${p.objeto}</div>
-                ${donoDoProcesso !== usuarioAtual ? `<span class="autor-badge">Por: ${donoDoProcesso.toUpperCase()}</span>` : ''}
-                <div class="tag-box status-box">📍 Fase: <select onchange="atualizarCampo(${p.id}, 'fase', this.value)">${selectFase}</select></div>
-                <div class="tag-box setor-box">🏢 Setor: <select onchange="atualizarCampo(${p.id}, 'setor', this.value)">${selectSetor}</select></div>
+                ${etiquetaDono}
+                <div class="tag-box status-box" style="margin-top: 15px;">
+                    📍 Fase atual: <select onchange="atualizarCampo(${p.id}, 'fase', this.value)">${selectFase}</select>
+                </div>
+                <div class="tag-box setor-box">
+                    🏢 Setor: <select onchange="atualizarCampo(${p.id}, 'setor', this.value)">${selectSetor}</select>
+                </div>
                 <div class="detalhes">
-                    <span>📅 Data:</span><input type="text" class="input-card" value="${p.data}" onchange="atualizarCampo(${p.id}, 'data', this.value)">
-                    <span>💰 Valor:</span><input type="text" class="input-card" value="${p.valor}" placeholder="R$ 0,00" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id}, 'valor', this.value)">
+                    <span>📅 Data do Processo:</span>
+                    <input type="text" class="input-card" value="${p.data}" maxlength="10" onkeyup="mascaraData(this)" onchange="atualizarCampo(${p.id}, 'data', this.value)">
+                    <span>💰 Valor do Processo:</span>
+                    <input type="text" class="input-card" value="${valorAtual}" placeholder="R$ 0,00" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id}, 'valor', this.value)">
                 </div>
                 ${transferHTML}
-            </div>`;
-        if (p.excluido) lixeiraDiv.innerHTML += htmlCard; else ativosDiv.innerHTML += htmlCard;
+            </div>
+        `;
+        
+        if (p.excluido) { lixeiraDiv.innerHTML += htmlCard; } else { ativosDiv.innerHTML += htmlCard; }
     });
 
     if (meuNivel === 'Coordenador') {
         document.getElementById('stat-total').innerText = totalSetor;
         document.getElementById('stat-valor').innerText = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        let max = 0, f = "-";
-        for (const key in fasesCount) { if (fasesCount[key] > max) { max = fasesCount[key]; f = key; } }
-        document.getElementById('stat-fase').innerText = f;
+        
+        let faseMaisComum = "-";
+        let maxCount = 0;
+        for (const [fase, count] of Object.entries(fasesCount)) {
+            if (count > maxCount) { maxCount = count; faseMaisComum = fase; }
+        }
+        document.getElementById('stat-fase').innerText = faseMaisComum;
     }
+
+    if (!temProcessos) { ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; }
     filtrarProcessos();
+}
+
+if (localStorage.getItem('fgb_logado') === 'true') {
+    abrirPainelCompleto();
 }
