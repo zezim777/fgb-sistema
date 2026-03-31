@@ -211,3 +211,23 @@ body.dark-mode #btn-modal-tema { color: #121212; }
     .tag-box { border: 1px solid #000; color: black !important; background: none !important; }
     input, select { border: none !important; color: black !important; background: none !important; appearance: none; -webkit-appearance: none; }
 }
+
+/* --- ESTILOS DO PERFIL --- */
+.profile-card { max-width: 450px !important; padding: 0 !important; overflow: hidden; }
+.profile-header { background: var(--primary); color: white; padding: 30px 20px; text-align: center; }
+.profile-avatar-big { width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 10px; border: 3px solid rgba(255,255,255,0.4); }
+.badge-setor { background: var(--accent); font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; font-weight: bold; text-transform: uppercase; }
+
+.profile-stats-grid { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg); border-bottom: 1px solid #ddd; }
+.p-stat { padding: 15px; border-right: 1px solid #ddd; }
+.p-stat:last-child { border-right: none; }
+.p-stat small { display: block; font-size: 0.65rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 3px; }
+.p-stat strong { font-size: 1.1rem; color: var(--primary); }
+
+.profile-form { padding: 25px; text-align: left; }
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #7f8c8d; }
+.input-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+
+.config-item { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+.config-item span { font-weight: bold; font-size: 0.9rem; color: var(--primary); }

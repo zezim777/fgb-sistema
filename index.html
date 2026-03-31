@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v13.0</title>
-    
+    <title>FGB Cloud - Gestão Oficial v14.0</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,194 +13,168 @@
     <div id="login-screen" class="auth-card">
         <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 120px; margin-bottom: 10px;">
         <h2>Acesso Pessoal</h2>
-        
         <div class="input-wrapper">
             <span class="input-icon">👤</span>
-            <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)" onkeydown="if(event.key === 'Enter' || event.keyCode === 13) fazerLogin()">
+            <input type="text" id="login-user" placeholder="Usuário">
         </div>
-        
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="login-pass" class="pass-text" placeholder="Senha" onkeydown="if(event.key === 'Enter' || event.keyCode === 13) fazerLogin()">
+            <input type="password" id="login-pass" class="pass-text" placeholder="Senha">
             <button type="button" class="toggle-pass" onclick="toggleSenha('login-pass', this)">VER</button>
         </div>
-
         <button class="btn-principal" onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
-        
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
-
-        <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v13.0<br>
-            <span class="assinatura-lws">LWS Soluções Digitais</span>
-        </div>
+        <div class="login-footer">© 2026 FGB | LWS Soluções Digitais</div>
     </div>
 
     <div id="cadastro-screen" class="auth-card hidden">
-        <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Criar Credencial</h2>
-        
         <div class="input-wrapper">
             <span class="input-icon">👤</span>
             <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
         </div>
-        
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="reg-pass" class="pass-text" placeholder="Definir Senha">
-            <button type="button" class="toggle-pass" onclick="toggleSenha('reg-pass', this)">VER</button>
+            <input type="password" id="reg-pass" class="pass-text" placeholder="Senha">
         </div>
-
         <div class="input-wrapper">
             <span class="input-icon">🔑</span>
-            <input type="text" id="reg-keyword" placeholder="Palavra-Chave Secreta (Ex: nome da mãe)">
+            <input type="text" id="reg-keyword" placeholder="Palavra-Chave Secreta">
         </div>
-        
-        <select id="reg-setor" style="margin-top: 10px;">
-            <option value="" disabled selected>Qual o seu Setor?</option>
-        </select>
-
+        <select id="reg-setor" style="margin-top: 10px;"></select>
         <select id="reg-nivel">
-            <option value="Operador" selected>Nível: Operador (Apenas meus processos)</option>
-            <option value="Coordenador">Nível: Coordenador (Ver todos do meu setor)</option>
+            <option value="Operador">Nível: Operador</option>
+            <option value="Coordenador">Nível: Coordenador</option>
         </select>
-
         <button class="btn-principal" id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
-        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
+        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar</div>
     </div>
 
     <div id="recuperar-screen" class="auth-card hidden">
-        <img src="https://fgb.riobranco.ac.gov.br/wp-content/uploads/2021/04/Logo-FGB-2021.png" alt="FGB" style="width: 80px; margin-bottom: 10px;">
         <h2>Redefinir Senha</h2>
-        <p style="font-size: 0.8rem; margin-bottom: 15px;">Digite seu usuário e sua Palavra-Chave para cadastrar a nova senha.</p>
-        
-        <div class="input-wrapper">
-            <span class="input-icon">👤</span>
-            <input type="text" id="rec-user" placeholder="Seu Usuário (Ex: josefgb)">
-        </div>
-
-        <div class="input-wrapper">
-            <span class="input-icon">🔑</span>
-            <input type="text" id="rec-keyword" placeholder="Sua Palavra-Chave Secreta">
-        </div>
-        
-        <div class="input-wrapper">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="rec-pass" class="pass-text" placeholder="Sua Nova Senha">
-            <button type="button" class="toggle-pass" onclick="toggleSenha('rec-pass', this)">VER</button>
-        </div>
-
+        <div class="input-wrapper"><input type="text" id="rec-user" placeholder="Usuário"></div>
+        <div class="input-wrapper"><input type="text" id="rec-keyword" placeholder="Palavra-Chave"></div>
+        <div class="input-wrapper"><input type="password" id="rec-pass" placeholder="Nova Senha"></div>
         <button class="btn-principal" onclick="alterarSenha()" style="background: #f39c12;">ALTERAR SENHA</button>
-        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
+        <div class="btn-link" onclick="alternarTela('login-screen')">Voltar</div>
     </div>
 
     <div id="main-system">
         <header>
-            
             <div class="notification-container" onmouseenter="lerNotificacoes()" onclick="toggleNotificacoes(event)">
-                <div class="bell-icon" title="Notificações">
-                    <span id="bell-emoji">🔔</span>
-                    <div class="notif-badge" id="notif-badge">0</div>
-                </div>
-                <div class="notif-dropdown" id="notif-list">
-                    <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova no momento.</div>
-                </div>
+                <div class="bell-icon"><span id="bell-emoji">🔔</span><div class="notif-badge" id="notif-badge">0</div></div>
+                <div class="notif-dropdown" id="notif-list"></div>
             </div>
-
             <div class="admin-container" id="admin-container" onclick="abrirModalAdminNotif()">
-                <div class="admin-icon" title="Megafone do Sistema (Somente Admin)">📢</div>
+                <div class="admin-icon">📢</div>
             </div>
-
             <div class="user-menu-container">
-                <div class="user-avatar" title="Menu de Opções" onclick="toggleMenuUsuario(event)">👤</div>
+                <div class="user-avatar" onclick="toggleMenuUsuario(event)">👤</div>
                 <div class="user-dropdown">
-                    <div class="dropdown-item" onclick="alert('Módulo de Perfil em desenvolvimento!')">Perfil</div>
-                    <div class="dropdown-item" onclick="alert('Módulo de Configurações em desenvolvimento!')">Configurações</div>
-                    <div class="dropdown-item" onclick="abrirModalPersonalizar()">Personalizar</div>
-                    <div class="dropdown-item danger" onclick="fazerLogout(false)">Sair da conta</div>
+                    <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
+                    <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
+                    <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair</div>
                 </div>
             </div>
-            
-            <h1>FGB Cloud - Gestão de Processos</h1>
-            <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
+            <h1>FGB Cloud</h1>
+            <p id="user-display"></p>
         </header>
 
         <div id="dash-setor" class="dashboard hidden">
-            <div class="stat-card">
-                <h4>Processos Ativos</h4>
-                <p id="stat-total">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>Valor Total Estimado</h4>
-                <p id="stat-valor">R$ 0,00</p>
-            </div>
-            <div class="stat-card">
-                <h4>Fase Principal</h4>
-                <p id="stat-fase">-</p>
-            </div>
+            <div class="stat-card"><h4>Ativos no Setor</h4><p id="stat-total">0</p></div>
+            <div class="stat-card"><h4>Valor Total</h4><p id="stat-valor">R$ 0,00</p></div>
         </div>
         
-        <button id="btn-report" class="btn-report hidden" onclick="window.print()">📊 Gerar Relatório de Processos (PDF/Imprimir)</button>
+        <button id="btn-report" class="btn-report hidden" onclick="window.print()">📊 Relatório do Setor (PDF)</button>
 
         <div class="search-container">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar processos..." onkeyup="filtrarProcessos()">
-            <button class="btn-search" onclick="filtrarProcessos()" title="Pesquisar">🔍</button>
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar..." onkeyup="filtrarProcessos()">
         </div>
 
         <div class="form-cadastro">
-            <input type="text" id="input-empresa" placeholder="Nome da Empresa">
-            <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
-            <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
-            <button onclick="adicionarProcesso()" class="full-width">ADICIONAR À MINHA LISTA</button>
+            <input type="text" id="input-empresa" placeholder="Empresa">
+            <input type="text" id="input-data" placeholder="Data" maxlength="10" onkeyup="mascaraData(this)">
+            <input type="text" id="input-objeto" placeholder="Objeto" class="full-width">
+            <button onclick="adicionarProcesso()" class="full-width">ADICIONAR PROCESSO</button>
         </div>
 
-        <h3>📦 Processos em Andamento</h3>
-        <div id="lista-ativos">Carregando dados...</div>
-
+        <div id="lista-ativos">Carregando...</div>
         <div class="lixeira-section">
             <h3>🗑️ Lixeira</h3>
             <div id="lista-lixeira"></div>
-            <button id="btn-limpar-lixeira" class="hidden" onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Lixeira do Setor (Definitivo)</button>
+            <button id="btn-limpar-lixeira" class="hidden" onclick="limparLixeiraPermanente()">ESVAZIAR LIXEIRA</button>
         </div>
 
         <button class="btn-flutuante" onclick="abrirModalSugestao()">💡 Sugestões</button>
 
-        <div class="modal-overlay" id="modal-sugestao">
-            <div class="modal-content">
-                <h3>Envie sua Sugestão</h3>
-                <p style="font-size: 0.8rem; margin: 0;">Tem uma ideia ou encontrou um problema? Nos avise abaixo!</p>
-                <textarea id="texto-sugestao" placeholder="Digite sua mensagem aqui..."></textarea>
-                <button class="modal-btn-enviar" onclick="enviarSugestao()">ENVIAR MENSAGEM</button>
-                <button class="modal-btn-cancelar" onclick="fecharModalSugestao()">Cancelar</button>
+        <div class="modal-overlay" id="modal-perfil">
+            <div class="modal-content profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar-big">👤</div>
+                    <h3 id="profile-user-title">@joseeminem</h3>
+                    <span class="badge-setor" id="profile-setor-tag">-</span>
+                </div>
+                
+                <div class="profile-stats-grid">
+                    <div class="p-stat">
+                        <small>Meus Processos</small>
+                        <strong id="p-count">0</strong>
+                    </div>
+                    <div class="p-stat">
+                        <small>Valor Sob Gestão</small>
+                        <strong id="p-value">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <div class="profile-form">
+                    <div class="input-group">
+                        <label>Nome Completo:</label>
+                        <input type="text" id="p-full-name" placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="input-group">
+                        <label>Cargo / Função:</label>
+                        <input type="text" id="p-role" placeholder="Ex: Assessor Técnico">
+                    </div>
+                    <button class="modal-btn-enviar" onclick="salvarPerfil()">ATUALIZAR MEUS DADOS</button>
+                </div>
+                <button class="modal-btn-cancelar" onclick="fecharModalPerfil()">Fechar</button>
             </div>
         </div>
 
-        <div class="modal-overlay" id="modal-personalizar">
+        <div class="modal-overlay" id="modal-config">
             <div class="modal-content">
-                <h3>Personalizar Sistema</h3>
-                <p style="font-size: 0.8rem; margin-bottom: 15px;">Ajuste a aparência do FGB Cloud para o seu conforto.</p>
-                
-                <button onclick="alternarTema()" id="btn-modal-tema">
-                    🌙 Ativar Modo Escuro
-                </button>
-                
-                <button class="modal-btn-cancelar" onclick="fecharModalPersonalizar()">Fechar</button>
+                <h3>Configurações do Sistema</h3>
+                <div class="config-item">
+                    <span>Aparência do Sistema</span>
+                    <button onclick="alternarTema()" id="btn-modal-tema" style="margin: 10px 0;">🌙 Modo Escuro</button>
+                </div>
+                <div class="config-item disabled" style="opacity: 0.5; margin-top: 15px;">
+                    <span style="display:block; font-size: 0.8rem; color: #7f8c8d;">Opção 5: Em breve</span>
+                </div>
+                <button class="modal-btn-cancelar" onclick="fecharModalConfig()" style="margin-top: 20px;">Fechar</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal-sugestao">
+            <div class="modal-content">
+                <h3>Sugestões</h3>
+                <textarea id="texto-sugestao" placeholder="Sua ideia..."></textarea>
+                <button class="modal-btn-enviar" onclick="enviarSugestao()">ENVIAR</button>
+                <button class="modal-btn-cancelar" onclick="fecharModalSugestao()">Voltar</button>
             </div>
         </div>
 
         <div class="modal-overlay" id="modal-admin-notif">
             <div class="modal-content">
-                <h3>Painel de Transmissão 📢</h3>
-                <p style="font-size: 0.8rem; margin-bottom: 15px; color: var(--danger); font-weight: bold;">Atenção: Esta mensagem aparecerá para todos os usuários do sistema.</p>
-                <textarea id="texto-admin-notif" placeholder="Digite o aviso oficial (Ex: Sistema em manutenção às 18h)..."></textarea>
-                <button class="modal-btn-enviar" onclick="enviarNotificacaoGlobal()" style="background: var(--danger);">TRANSMITIR AVISO GLOBAL</button>
-                <button class="modal-btn-cancelar" onclick="fecharModalAdminNotif()">Cancelar</button>
+                <h3>Aviso Global 📢</h3>
+                <textarea id="texto-admin-notif" placeholder="Mensagem para todos..."></textarea>
+                <button class="modal-btn-enviar" onclick="enviarNotificacaoGlobal()" style="background: var(--danger);">TRANSMITIR</button>
+                <button class="modal-btn-cancelar" onclick="fecharModalAdminNotif()">Voltar</button>
             </div>
         </div>
-
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
