@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v9.9</title>
+    <title>FGB Cloud - Gestão Oficial v10.0</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -84,11 +84,12 @@
         
         input.input-card { border: none; background: none; font-weight: bold; color: inherit; outline: none; font-family: inherit; font-size: 0.85rem; width: 100%; box-sizing: border-box; }
         
-        .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; display: flex; flex-direction: column; }
+        .detalhes { font-size: 0.85rem; background: #f9f9f9; padding: 8px; border-radius: 5px; margin-top: 5px; border: 1px inset #eee; display: flex; flex-direction: column; gap: 5px; }
         body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
-        .detalhes span { margin-bottom: 4px; color: #7f8c8d; }
+        .detalhes span { color: #7f8c8d; }
         body.dark-mode .detalhes span { color: #bdc3c7; }
         
+        /* LIXEIRA */
         .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } 
         .na-lixeira { border-left-color: #95a5a6; filter: grayscale(0.5); }
 
@@ -167,7 +168,7 @@
             <input type="text" id="input-empresa" placeholder="Nome da Empresa">
             <input type="text" id="input-data" placeholder="Data (00/00/0000)" maxlength="10" onkeyup="mascaraData(this)">
             <input type="text" id="input-objeto" placeholder="Objeto da Licitação" class="full-width">
-            <button onclick="adicionarProcesso()" class="full-width">SALVAR PROCESSO</button>
+            <button onclick="adicionarProcesso()" class="full-width">SALVAR PROCESSO NA NUVEM</button>
         </div>
 
         <h3>📦 Processos em Andamento</h3>
@@ -228,7 +229,6 @@
         document.getElementById('btn-tema').innerText = modoEscuroAtivo ? '☀️' : '🌙';
     }
 
-    // Carrega o tema salvo assim que a página abre
     if (localStorage.getItem('fgb_tema') === 'dark') {
         document.body.classList.add('dark-mode');
         document.getElementById('btn-tema').innerText = '☀️';
@@ -400,6 +400,19 @@
         campo.value = v;
     }
 
+    // MÁSCARA DE MOEDA (NOVO)
+    function mascaraMoeda(campo) {
+        let valor = campo.value.replace(/\D/g, "");
+        if (valor === "") {
+            campo.value = "";
+            return;
+        }
+        valor = (parseInt(valor) / 100).toFixed(2) + "";
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        campo.value = "R$ " + valor;
+    }
+
     function adicionarProcesso() {
         const emp = document.getElementById('input-empresa').value;
         const obj = document.getElementById('input-objeto').value;
@@ -415,6 +428,7 @@
             data: dat,
             fase: "Confecção do QDD",
             setor: "FGB-CEOF - Coordenadoria de Execução Orçamentária Financeira",
+            valor: "", // Nasce vazio para preencher depois
             excluido: false
         });
         
@@ -473,6 +487,7 @@
             Object.values(dataSnapshot).reverse().forEach(p => {
                 const selectFase = fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
                 const selectSetor = setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
+                const valorAtual = p.valor ? p.valor : ''; // Puxa o valor se já existir
                 
                 const htmlCard = `
                     <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
@@ -494,8 +509,11 @@
                         </div>
                         
                         <div class="detalhes">
-                            <span>📅 Data de Cadastro/Atualização:</span>
+                            <span>📅 Data do Processo:</span>
                             <input type="text" class="input-card" value="${p.data}" maxlength="10" onkeyup="mascaraData(this)" onchange="atualizarCampo(${p.id}, 'data', this.value)">
+                            
+                            <span>💰 Valor do Processo:</span>
+                            <input type="text" class="input-card" value="${valorAtual}" placeholder="R$ 0,00" onkeyup="mascaraMoeda(this)" onchange="atualizarCampo(${p.id}, 'valor', this.value)">
                         </div>
                     </div>
                 `;
