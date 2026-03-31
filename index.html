@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.4</title>
+    <title>FGB Cloud - Gestão Oficial v11.5</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -44,7 +44,6 @@
         .input-wrapper { position: relative; width: 100%; margin: 8px 0; }
         .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #7f8c8d; z-index: 2; pointer-events: none; }
         
-        /* Forçando o botão de senha a ser apenas texto e sem fundo */
         .auth-card button.toggle-pass { 
             position: absolute; right: 5px; top: 50%; transform: translateY(-50%); 
             background: transparent !important; border: none; cursor: pointer; 
@@ -58,7 +57,6 @@
         
         .auth-card input, .auth-card select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
         .input-wrapper input { padding-left: 40px !important; margin: 0 !important; }
-        /* Dando espaço na direita para não encostar no botão VER */
         .input-wrapper input[type="password"], .input-wrapper input.pass-text { padding-right: 70px !important; }
         
         .auth-card button.btn-principal { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
@@ -66,8 +64,9 @@
         .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
 
         /* RODAPÉ DE LOGIN */
-        .login-footer { margin-top: 25px; font-size: 0.7rem; color: #95a5a6; line-height: 1.4; border-top: 1px solid #eee; padding-top: 15px; }
+        .login-footer { margin-top: 25px; font-size: 0.75rem; color: #95a5a6; line-height: 1.5; border-top: 1px solid #eee; padding-top: 15px; }
         body.dark-mode .login-footer { border-top-color: #444; color: #7f8c8d; }
+        .assinatura-lws { font-weight: bold; color: var(--primary); display: block; margin-top: 5px; font-size: 0.8rem; }
 
         /* SISTEMA PRINCIPAL (PAINEL DE LICITAÇÕES) */
         #main-system { display: none; width: 100%; max-width: 900px; padding: 15px; box-sizing: border-box; align-self: flex-start; margin: 0 auto; position: relative; }
@@ -189,7 +188,8 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.4
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.5<br>
+            <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
 
@@ -346,7 +346,7 @@
         document.getElementById('btn-tema').innerText = '☀️';
     }
 
-    // --- LÓGICA DE VER/OCULTAR SENHA (ATUALIZADA) ---
+    // --- LÓGICA DE VER/OCULTAR SENHA ---
     function toggleSenha(inputId, btn) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
@@ -682,7 +682,7 @@
 
             temProcessos = true;
 
-            // --- ALIMENTAR DADOS DO DASHBOARD (Apenas ativos do setor do coordenador) ---
+            // --- ALIMENTAR DADOS DO DASHBOARD ---
             if (!p.excluido && (setorOficialDoDono === meuSetor || p.setor === meuSetor)) {
                 totalSetor++;
                 
@@ -702,7 +702,7 @@
             
             const etiquetaDono = (donoDoProcesso !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${donoDoProcesso.toUpperCase()}</span>` : '';
 
-            // --- CAIXA DE TRANSFERÊNCIA (Só Coordenador vê e só se não estiver na lixeira) ---
+            // --- CAIXA DE TRANSFERÊNCIA ---
             let transferHTML = '';
             if (meuNivel === 'Coordenador' && !p.excluido) {
                 let selectTransfer = `<option value="" selected disabled>Transferir para...</option>`;
