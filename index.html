@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v10.2</title>
+    <title>FGB Cloud - Gestão Oficial v10.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -37,9 +37,9 @@
         .btn-tema:hover { transform: scale(1.1); }
 
         /* TELAS DE LOGIN, CADASTRO E RECUPERAÇÃO */
-        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 350px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
+        .auth-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; text-align: center; position: relative; z-index: 100; box-sizing: border-box; transition: background-color 0.3s; }
         .hidden { display: none !important; }
-        .auth-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
+        .auth-card input, .auth-card select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
         .auth-card button { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-link { background: none; color: var(--primary); border: none; font-size: 0.9rem; text-decoration: underline; margin-top: 20px; cursor: pointer; display: inline-block; width: 100%; }
         .btn-link-small { background: none; color: #7f8c8d; border: none; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; cursor: pointer; display: inline-block; width: 100%; }
@@ -65,7 +65,7 @@
         .form-cadastro button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; border: none; width: 100%; margin-top: 0; }
         
         /* AJUSTES DE INPUTS PARA MODO NOTURNO */
-        body.dark-mode input, body.dark-mode textarea { background: #2c3e50; color: #ecf0f1; border-color: #444; }
+        body.dark-mode input, body.dark-mode textarea, body.dark-mode .auth-card select { background: #2c3e50; color: #ecf0f1; border-color: #444; }
         body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color: #95a5a6; }
 
         /* CARDS DOS PROCESSOS */
@@ -88,6 +88,7 @@
         body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
         .detalhes span { color: #7f8c8d; font-weight: bold; }
         body.dark-mode .detalhes span { color: #bdc3c7; }
+        .autor-badge { font-size: 0.7rem; background: var(--primary); color: white; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px; }
         
         /* LIXEIRA */
         .lixeira-section { margin-top: 50px; border-top: 2px dashed #bdc3c7; padding-top: 20px; opacity: 0.8; padding-bottom: 80px; } 
@@ -128,7 +129,7 @@
         <h2>Acesso Pessoal</h2>
         <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
         <input type="password" id="login-pass" placeholder="Senha">
-        <button onclick="fazerLogin()">ENTRAR NA MINHA AGENDA</button>
+        <button onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
         <div class="btn-link" onclick="alternarTela('cadastro-screen')">Primeiro acesso? Criar conta</div>
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
     </div>
@@ -138,6 +139,16 @@
         <h2>Criar Credencial</h2>
         <input type="text" id="reg-user" placeholder="Usuário (Ex: josefgb)">
         <input type="password" id="reg-pass" placeholder="Definir Senha">
+        
+        <select id="reg-setor">
+            <option value="" disabled selected>Qual o seu Setor?</option>
+        </select>
+
+        <select id="reg-nivel">
+            <option value="Operador" selected>Nível: Operador (Apenas meus processos)</option>
+            <option value="Coordenador">Nível: Coordenador (Ver todos do meu setor)</option>
+        </select>
+
         <button id="btn-cadastrar" onclick="cadastrarUsuario()">SALVAR E ENTRAR</button>
         <div class="btn-link" onclick="alternarTela('login-screen')">Voltar ao Login</div>
     </div>
@@ -155,12 +166,12 @@
     <div id="main-system">
         <header>
             <button class="btn-sair" onclick="fazerLogout(false)">Sair da Conta</button>
-            <h1>FGB Cloud - Agenda de Processos</h1>
+            <h1>FGB Cloud - Gestão de Processos</h1>
             <p id="user-display" style="font-size: 0.8rem; margin: 0;"></p>
         </header>
 
         <div class="search-container">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar em meus processos..." onkeyup="filtrarProcessos()">
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar processos..." onkeyup="filtrarProcessos()">
             <button class="btn-search" onclick="filtrarProcessos()" title="Pesquisar">🔍</button>
         </div>
 
@@ -171,11 +182,11 @@
             <button onclick="adicionarProcesso()" class="full-width">ADICIONAR À MINHA LISTA</button>
         </div>
 
-        <h3>📦 Meus Processos em Andamento</h3>
-        <div id="lista-ativos">Carregando seus dados...</div>
+        <h3>📦 Processos em Andamento</h3>
+        <div id="lista-ativos">Carregando dados...</div>
 
         <div class="lixeira-section">
-            <h3>🗑️ Minha Lixeira</h3>
+            <h3>🗑️ Lixeira</h3>
             <div id="lista-lixeira"></div>
             <button onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Minha Lixeira</button>
         </div>
@@ -221,6 +232,10 @@
     ];
     let temporizadorInatividade;
 
+    // Popula as opções de Setor no formulário de Cadastro
+    const regSetor = document.getElementById('reg-setor');
+    setoresFGB.forEach(s => { regSetor.innerHTML += `<option value="${s}">${s}</option>`; });
+
     // --- LÓGICA DO MODO NOTURNO ---
     function alternarTema() {
         document.body.classList.toggle('dark-mode');
@@ -262,29 +277,52 @@
         });
     }
 
+    // --- VERIFICAÇÃO DE COORDENADOR ÚNICO NO CADASTRO ---
     function cadastrarUsuario() {
         const u = document.getElementById('reg-user').value.toLowerCase().trim();
         const p = document.getElementById('reg-pass').value;
+        const s = document.getElementById('reg-setor').value;
+        const n = document.getElementById('reg-nivel').value;
         const btn = document.getElementById('btn-cadastrar');
 
-        if (!u || !p) return alert("Preencha Usuário e Senha!");
+        if (!u || !p || !s) return alert("Preencha Usuário, Senha e selecione o Setor!");
 
         const caracteresInvalidos = /[.#$\[\]\/\s]/;
         if (caracteresInvalidos.test(u)) {
             return alert("ERRO: O nome de usuário não pode conter pontos, espaços ou símbolos.");
         }
 
-        btn.innerText = "SALVANDO...";
+        btn.innerText = "VERIFICANDO...";
         btn.disabled = true;
 
-        const timeoutEmergencia = setTimeout(() => {
-            btn.innerText = "SALVAR E ENTRAR";
-            btn.disabled = false;
-            alert("A conexão falhou. Verifique sua internet.");
-        }, 10000);
+        // Vai no banco checar se já tem coordenador neste setor
+        db.ref('usuarios').once('value', snapshot => {
+            let coordenadorJaExiste = false;
 
-        try {
-            db.ref('usuarios/' + u).set({ usuario: u, senha: p })
+            if (n === "Coordenador" && snapshot.exists()) {
+                snapshot.forEach(child => {
+                    const userDb = child.val();
+                    if (userDb.nivel === "Coordenador" && userDb.setor === s) {
+                        coordenadorJaExiste = true;
+                    }
+                });
+            }
+
+            // Se for coordenador e já existir alguém, bloqueia!
+            if (coordenadorJaExiste) {
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                return alert(`❌ ERRO: Já existe um Coordenador cadastrado para o setor selecionado (${s}). Escolha o nível de Operador ou fale com a administração.`);
+            }
+
+            // Se passou na verificação, segue com o cadastro normal
+            const timeoutEmergencia = setTimeout(() => {
+                btn.innerText = "SALVAR E ENTRAR";
+                btn.disabled = false;
+                alert("A conexão falhou. Verifique sua internet.");
+            }, 10000);
+
+            db.ref('usuarios/' + u).set({ usuario: u, senha: p, setor: s, nivel: n })
             .then(() => {
                 clearTimeout(timeoutEmergencia); 
                 alert("✅ Cadastro realizado com sucesso! Faça seu login para entrar.");
@@ -298,12 +336,7 @@
                 btn.disabled = false;
                 alert("❌ ERRO DO SERVIDOR: " + error.message);
             });
-        } catch (erroCritico) {
-            clearTimeout(timeoutEmergencia);
-            btn.innerText = "SALVAR E ENTRAR";
-            btn.disabled = false;
-            alert("❌ ERRO NO CÓDIGO: " + erroCritico.message);
-        }
+        });
     }
 
     function fazerLogin() {
@@ -317,6 +350,8 @@
             if (d && d.senha === p) {
                 localStorage.setItem('fgb_logado', 'true');
                 localStorage.setItem('fgb_user', u);
+                localStorage.setItem('fgb_setor', d.setor || ""); 
+                localStorage.setItem('fgb_nivel', d.nivel || "Operador"); 
                 abrirPainelCompleto();
             } else {
                 alert("Usuário ou senha incorretos! Tente novamente.");
@@ -335,7 +370,7 @@
     // --- 4. SISTEMA DE SEGURANÇA: MONITORAMENTO DE INATIVIDADE ---
     function resetarTimerInatividade() {
         clearTimeout(temporizadorInatividade);
-        temporizadorInatividade = setTimeout(() => fazerLogout(true), 3600000); // 1 hora
+        temporizadorInatividade = setTimeout(() => fazerLogout(true), 3600000); 
     }
 
     function iniciarMonitoramento() {
@@ -357,21 +392,16 @@
         document.body.style.justifyContent = 'flex-start';
         
         const nomeOperador = localStorage.getItem('fgb_user').toUpperCase();
-        document.getElementById('user-display').innerText = "Agenda Pessoal: " + nomeOperador + " | ☁️ Online";
+        const nivelAcesso = localStorage.getItem('fgb_nivel');
+        document.getElementById('user-display').innerText = `Painel de ${nivelAcesso}: ${nomeOperador} | ☁️ Online`;
         
         carregarProcessos(); 
         iniciarMonitoramento(); 
     }
 
     // --- LÓGICA DO SISTEMA DE SUGESTÕES ---
-    function abrirModalSugestao() {
-        document.getElementById('modal-sugestao').style.display = 'flex';
-    }
-
-    function fecharModalSugestao() {
-        document.getElementById('modal-sugestao').style.display = 'none';
-        document.getElementById('texto-sugestao').value = ''; 
-    }
+    function abrirModalSugestao() { document.getElementById('modal-sugestao').style.display = 'flex'; }
+    function fecharModalSugestao() { document.getElementById('modal-sugestao').style.display = 'none'; document.getElementById('texto-sugestao').value = ''; }
 
     function enviarSugestao() {
         const texto = document.getElementById('texto-sugestao').value.trim();
@@ -381,15 +411,9 @@
         const idSugestao = Date.now();
         const dataEnvio = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
 
-        db.ref('sugestoes/' + idSugestao).set({
-            id: idSugestao,
-            usuario: usuarioAtual,
-            mensagem: texto,
-            data: dataEnvio
-        }).then(() => {
-            alert("✅ Sua sugestão foi enviada com sucesso! Muito obrigado.");
-            fecharModalSugestao();
-        }).catch(e => alert("Erro ao enviar: " + e.message));
+        db.ref('sugestoes/' + idSugestao).set({ id: idSugestao, usuario: usuarioAtual, mensagem: texto, data: dataEnvio })
+        .then(() => { alert("✅ Sua sugestão foi enviada com sucesso! Muito obrigado."); fecharModalSugestao(); })
+        .catch(e => alert("Erro ao enviar: " + e.message));
     }
 
     // --- 6. FUNÇÕES DO SISTEMA DE LICITAÇÃO ---
@@ -402,10 +426,7 @@
 
     function mascaraMoeda(campo) {
         let valor = campo.value.replace(/\D/g, "");
-        if (valor === "") {
-            campo.value = "";
-            return;
-        }
+        if (valor === "") { campo.value = ""; return; }
         valor = (parseInt(valor) / 100).toFixed(2) + "";
         valor = valor.replace(".", ",");
         valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
@@ -427,8 +448,8 @@
             empresa: emp, 
             objeto: obj, 
             data: dat,
-            fase: "", // NOVO: Nasce vazio para o usuário escolher manualmente
-            setor: "", // NOVO: Nasce vazio para o usuário escolher manualmente
+            fase: "", 
+            setor: "", 
             valor: "", 
             excluido: false
         });
@@ -464,17 +485,15 @@
         
         cards.forEach(card => {
             const textoCard = card.innerText.toLowerCase(); 
-            if (textoCard.includes(termo)) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
+            if (textoCard.includes(termo)) { card.style.display = 'block'; } else { card.style.display = 'none'; }
         });
     }
 
-    // --- 7. RENDERIZAÇÃO EM TEMPO REAL ---
+    // --- 7. RENDERIZAÇÃO EM TEMPO REAL COM VERIFICAÇÃO DE HIERARQUIA ---
     function carregarProcessos() {
         const usuarioAtual = localStorage.getItem('fgb_user'); 
+        const setorAtual = localStorage.getItem('fgb_setor');
+        const nivelAtual = localStorage.getItem('fgb_nivel');
 
         db.ref('processos').on('value', snapshot => {
             const ativosDiv = document.getElementById('lista-ativos');
@@ -485,22 +504,31 @@
             const dataSnapshot = snapshot.val();
             
             if (!dataSnapshot) { 
-                ativosDiv.innerHTML = '<p>Você ainda não tem processos criados.</p>'; 
+                ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; 
                 return; 
             }
 
             let temProcessos = false;
 
             Object.values(dataSnapshot).reverse().forEach(p => {
-                if (p.dono !== usuarioAtual) return; 
+                
+                let temPermissaoParaVer = false;
+                
+                if (p.dono === usuarioAtual) {
+                    temPermissaoParaVer = true;
+                } else if (nivelAtual === 'Coordenador' && p.setor === setorAtual && p.setor !== "") {
+                    temPermissaoParaVer = true;
+                }
+
+                if (!temPermissaoParaVer) return; 
 
                 temProcessos = true;
                 
-                // NOVO: Adiciona a opção neutra "Selecione..." que vem marcada se o campo estiver vazio
                 const selectFase = `<option value="" disabled ${!p.fase ? 'selected' : ''}>Selecione a Fase...</option>` + fasesPadrao.map(f => `<option value="${f}" ${p.fase === f ? 'selected' : ''}>${f}</option>`).join('');
                 const selectSetor = `<option value="" disabled ${!p.setor ? 'selected' : ''}>Selecione o Setor...</option>` + setoresFGB.map(s => `<option value="${s}" ${p.setor === s ? 'selected' : ''}>${s}</option>`).join('');
-                
                 const valorAtual = p.valor ? p.valor : ''; 
+                
+                const etiquetaDono = (p.dono !== usuarioAtual) ? `<span class="autor-badge">Criado por: ${p.dono.toUpperCase()}</span>` : '';
                 
                 const htmlCard = `
                     <div class="processo-card ${p.excluido ? 'na-lixeira' : ''}">
@@ -510,8 +538,9 @@
                         
                         <div class="empresa">${p.empresa}</div>
                         <div class="objeto">${p.objeto}</div>
+                        ${etiquetaDono}
                         
-                        <div class="tag-box status-box">
+                        <div class="tag-box status-box" style="margin-top: 15px;">
                             📍 Fase atual: 
                             <select onchange="atualizarCampo(${p.id}, 'fase', this.value)">${selectFase}</select>
                         </div>
@@ -531,22 +560,14 @@
                     </div>
                 `;
                 
-                if (p.excluido) {
-                    lixeiraDiv.innerHTML += htmlCard;
-                } else {
-                    ativosDiv.innerHTML += htmlCard;
-                }
+                if (p.excluido) { lixeiraDiv.innerHTML += htmlCard; } else { ativosDiv.innerHTML += htmlCard; }
             });
 
-            if (!temProcessos) {
-                ativosDiv.innerHTML = '<p>Você ainda não tem processos criados.</p>'; 
-            }
-            
+            if (!temProcessos) { ativosDiv.innerHTML = '<p>Nenhum processo foi encontrado no seu acesso.</p>'; }
             filtrarProcessos();
         });
     }
 
-    // --- 8. VERIFICAÇÃO INICIAL ---
     if (localStorage.getItem('fgb_logado') === 'true') {
         abrirPainelCompleto();
     }
