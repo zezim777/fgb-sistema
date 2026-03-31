@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGB Cloud - Gestão Oficial v11.5</title>
+    <title>FGB Cloud - Gestão Oficial v11.6</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -173,12 +173,12 @@
         
         <div class="input-wrapper">
             <span class="input-icon">👤</span>
-            <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)">
+            <input type="text" id="login-user" placeholder="Usuário (Sem pontos ou espaços)" onkeypress="if(event.key === 'Enter') fazerLogin()">
         </div>
         
         <div class="input-wrapper">
             <span class="input-icon">🔒</span>
-            <input type="password" id="login-pass" class="pass-text" placeholder="Senha">
+            <input type="password" id="login-pass" class="pass-text" placeholder="Senha" onkeypress="if(event.key === 'Enter') fazerLogin()">
             <button type="button" class="toggle-pass" onclick="toggleSenha('login-pass', this)">VER</button>
         </div>
 
@@ -188,7 +188,7 @@
         <div class="btn-link-small" onclick="alternarTela('recuperar-screen')">Esqueceu a senha?</div>
 
         <div class="login-footer">
-            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.5<br>
+            © 2026 Fundação Municipal de Cultura Garibaldi Brasil<br>FGB Cloud v11.6<br>
             <span class="assinatura-lws">LWS Soluções Digitais</span>
         </div>
     </div>
