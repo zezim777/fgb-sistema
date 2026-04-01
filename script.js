@@ -174,35 +174,35 @@ function iniciarLeituraDeDados() {
 }
 
 function renderizarTela() {
-    try {
-        const u = localStorage.getItem('fgb_user'), 
-              meuP = dbUsuarios[u] || {}, 
-              meuS = (meuP.setor || "").trim(), 
-              meuN = meuP.nivel || "Operador";
-        
-        // --- APLICAÇÃO DO TEMA VINDO DO FIREBASE ---
-        if (meuP.tema === 'dark') {
-            document.body.classList.add('dark-mode');
-            localStorage.setItem('fgb_tema', 'dark');
-        } else if (meuP.tema === 'light') {
-            document.body.classList.remove('dark-mode');
-            localStorage.setItem('fgb_tema', 'light');
-        }
+    // 1. Pega o usuário logado
+    const u = localStorage.getItem('fgb_user');
+    if (!u || !dbUsuarios || !dbUsuarios[u]) return; // Se não houver usuário ou dados, para aqui e não trava o login
 
-        const display = document.getElementById('user-display');
-        if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-        
-        if (u === 'joseeminem') {
-            const adminMenu = document.getElementById('admin-menu-item');
-            if (adminMenu) adminMenu.style.display = 'block';
-        }
-        
-        if (meuN === 'Coordenador') {
-            document.getElementById('dash-setor')?.classList.remove('hidden');
-            document.getElementById('btn-report')?.classList.remove('hidden');
-        }
-    } catch (error) {
-        console.warn("Erro na renderização, mas mantendo funções ativas:", error);
+    const meuP = dbUsuarios[u];
+    const meuS = (meuP.setor || "").trim();
+    const meuN = meuP.nivel || "Operador";
+
+    // 2. Título e Identificação
+    const display = document.getElementById('user-display');
+    if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+
+    // 3. Aplica o Tema vindo do Firebase (Se existir)
+    if (meuP.tema === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (meuP.tema === 'light') {
+        document.body.classList.remove('dark-mode');
+    }
+
+    // 4. Botão Admin (Megafone)
+    if (u === 'joseeminem') {
+        const adminItem = document.getElementById('admin-menu-item');
+        if (adminItem) adminItem.style.display = 'block';
+    }
+
+    // 5. Coordenador
+    if (meuN === 'Coordenador') {
+        document.getElementById('dash-setor')?.classList.remove('hidden');
+        document.getElementById('btn-report')?.classList.remove('hidden');
     }
 }
 
@@ -258,13 +258,12 @@ function alternarTema() {
     const isDark = document.body.classList.toggle('dark-mode');
     const temaEscolhido = isDark ? 'dark' : 'light';
 
-    // 1. Salva no navegador para ser instantâneo
+    // Salva no navegador para o F5 funcionar
     localStorage.setItem('fgb_tema', temaEscolhido);
 
-    // 2. Salva no Firebase para o usuário levar para outros aparelhos
+    // Salva no Firebase para outros aparelhos (Sem travar se falhar)
     if (u && typeof db !== 'undefined') {
-        db.ref(`usuarios/${u}`).update({ tema: temaEscolhido })
-          .catch(e => console.error("Erro ao salvar tema no Firebase:", e));
+        db.ref(`usuarios/${u}`).update({ tema: temaEscolhido }).catch(e => console.log("Firebase Offline"));
     }
 }
 
