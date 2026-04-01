@@ -1,3 +1,9 @@
+// --- LEITURA AUTOMÁTICA DO TEMA AO ABRIR O SITE ---
+const temaSalvo = localStorage.getItem('fgb_tema');
+if (temaSalvo === 'dark') {
+    document.body.classList.add('dark-mode');
+}
+
 // --- 1. CONEXÃO COM O BANCO DE DADOS FIREBASE ---
 const firebaseConfig = {
     apiKey: "AIzaSyCnYlfhCCLj5btCZB86RhEKYc7kjFMwlaw",
