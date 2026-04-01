@@ -122,30 +122,29 @@
             </div>
         </div>
 
-<header>
-    <div>
-        <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar(event)">☰</div>
-        <div class="notification-container" onclick="toggleNotificacoes(event)">
-            <div class="bell-icon">🔔<div class="notif-badge" id="notif-badge">0</div></div>
-            <div class="notif-dropdown" id="notif-list"></div>
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 0 15px; min-height: 60px; background-color: #2c3e50; border-radius: 8px; color: white; margin-bottom: 20px;">
+        
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar(event)">☰</div>
+            <div class="notification-container" onclick="toggleNotificacoes(event)" style="display: flex; align-items: center; position: relative;">
+                <div class="bell-icon">🔔<div class="notif-badge" id="notif-badge">0</div></div>
+                <div class="notif-dropdown" id="notif-list"></div>
+            </div>
         </div>
-    </div>
 
-    <div style="flex: 1; text-align: center;">
-        <h1 style="margin: 0; font-size: 1.2rem; color: white;">FGB Cloud</h1>
-        <p id="user-display" style="font-size: 0.7rem; margin: 0; color: #ecf0f1;"></p>
-    </div>
-
-    <div class="user-menu-container">
-        <div class="user-avatar" onclick="toggleMenuUsuario(event)">👤</div>
-        <div class="user-dropdown">
-            <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
-            <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
-            <div class="dropdown-item" id="admin-menu-item" onclick="abrirModalAdminNotif()" style="display:none; color: #f39c12;">📢 Transmissão</div>
-            <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair</div>
+        <div style="flex: 1; text-align: center;">
+            <h1 style="margin: 0; font-size: 1.1rem; color: white;">FGB Cloud</h1>
         </div>
-    </div>
-</header>
+
+        <div class="user-menu-container" style="display: flex; align-items: center; position: relative;">
+            <div class="user-avatar" onclick="toggleMenuUsuario(event)">👤</div>
+            <div class="user-dropdown">
+                <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
+                <div class="dropdown-item" id="admin-menu-item" onclick="abrirModalAdminNotif()" style="display:none; color: #f39c12;">📢 Transmissão</div>
+                <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair</div>
+            </div>
+        </div>
+    </header>
 
         <div id="dash-setor" class="dashboard hidden">
             <div class="stat-card">

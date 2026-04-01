@@ -820,3 +820,19 @@ header > div:first-child {
         pointer-events: none !important;
     }
 }
+
+/* --- RESET DE POSIÇÃO DOS ÍCONES (PARA FICAREM DENTRO DA BARRA AZUL) --- */
+.notification-container, .user-menu-container, .admin-container {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin: 0 !important;
+}
+
+/* Garante que o sino e o avatar não tenham margens que os tirem do centro */
+.bell-icon, .user-avatar {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
