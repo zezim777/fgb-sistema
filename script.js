@@ -174,32 +174,28 @@ function iniciarLeituraDeDados() {
 }
 
 function renderizarTela() {
-    // 1. Pega o usuário logado
     const u = localStorage.getItem('fgb_user');
-    if (!u || !dbUsuarios || !dbUsuarios[u]) return; // Se não houver usuário ou dados, para aqui e não trava o login
+    
+    // SE NÃO TIVER USUÁRIO, PARA AQUI E NÃO TRAVA O LOGIN
+    if (!u || !dbUsuarios || !dbUsuarios[u]) return; 
 
     const meuP = dbUsuarios[u];
     const meuS = (meuP.setor || "").trim();
     const meuN = meuP.nivel || "Operador";
 
-    // 2. Título e Identificação
+    // Mostra o nome do usuário
     const display = document.getElementById('user-display');
     if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+    
+    // Se o Firebase disser que o tema é dark, ele aplica
+    if (meuP.tema === 'dark') document.body.classList.add('dark-mode');
+    else document.body.classList.remove('dark-mode');
 
-    // 3. Aplica o Tema vindo do Firebase (Se existir)
-    if (meuP.tema === 'dark') {
-        document.body.classList.add('dark-mode');
-    } else if (meuP.tema === 'light') {
-        document.body.classList.remove('dark-mode');
-    }
-
-    // 4. Botão Admin (Megafone)
     if (u === 'joseeminem') {
-        const adminItem = document.getElementById('admin-menu-item');
-        if (adminItem) adminItem.style.display = 'block';
+        const adminMenu = document.getElementById('admin-menu-item');
+        if (adminMenu) adminMenu.style.display = 'block';
     }
-
-    // 5. Coordenador
+    
     if (meuN === 'Coordenador') {
         document.getElementById('dash-setor')?.classList.remove('hidden');
         document.getElementById('btn-report')?.classList.remove('hidden');
@@ -295,3 +291,23 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// FUNÇÃO ISOLADA: Sincroniza o tema com o Firebase sem travar o login
+db.ref('usuarios').on('value', snap => {
+    const u = localStorage.getItem('fgb_user');
+    const dados = snap.val();
+    if (u && dados && dados[u] && dados[u].tema) {
+        if (dados[u].tema === 'dark') document.body.classList.add('dark-mode');
+        else document.body.classList.remove('dark-mode');
+    }
+});
+
+function alternarTema() {
+    const u = localStorage.getItem('fgb_user');
+    const isDark = document.body.classList.toggle('dark-mode');
+    const novoTema = isDark ? 'dark' : 'light';
+
+    if (u) {
+        db.ref(`usuarios/${u}`).update({ tema: novoTema });
+    }
+}
