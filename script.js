@@ -246,7 +246,7 @@ function renderizarTela() {
         if(t) t.innerText = tSetor;
         if(v) v.innerText = vSetor.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     }
-}
+
 
 // --- 8. OUTROS MODAIS E NOTIFICAÇÕES ---
 function alternarTema() {
