@@ -174,24 +174,36 @@ function iniciarLeituraDeDados() {
 }
 
 function renderizarTela() {
-    const u = localStorage.getItem('fgb_user'), meuP = dbUsuarios[u] || {}, meuS = (meuP.setor || "").trim(), meuN = meuP.nivel || "Operador";
-    
-    const display = document.getElementById('user-display');
-    if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-    
-    if (u === 'joseeminem') {
-        const adminMenu = document.getElementById('admin-menu-item');
-        if (adminMenu) adminMenu.style.display = 'block';
-    }
-    
-    if (meuN === 'Coordenador') {
-        document.getElementById('dash-setor')?.classList.remove('hidden');
-        document.getElementById('btn-report')?.classList.remove('hidden');
-    }
+    try {
+        const u = localStorage.getItem('fgb_user'), 
+              meuP = dbUsuarios[u] || {}, 
+              meuS = (meuP.setor || "").trim(), 
+              meuN = meuP.nivel || "Operador";
+        
+        // --- APLICAÇÃO DO TEMA VINDO DO FIREBASE ---
+        if (meuP.tema === 'dark') {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('fgb_tema', 'dark');
+        } else if (meuP.tema === 'light') {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('fgb_tema', 'light');
+        }
 
-    // --- ÚNICO ACRÉSCIMO PARA O TEMA ---
-    if (meuP.tema === 'dark') document.body.classList.add('dark-mode');
-    else if (meuP.tema === 'light') document.body.classList.remove('dark-mode');
+        const display = document.getElementById('user-display');
+        if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+        
+        if (u === 'joseeminem') {
+            const adminMenu = document.getElementById('admin-menu-item');
+            if (adminMenu) adminMenu.style.display = 'block';
+        }
+        
+        if (meuN === 'Coordenador') {
+            document.getElementById('dash-setor')?.classList.remove('hidden');
+            document.getElementById('btn-report')?.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.warn("Erro na renderização, mas mantendo funções ativas:", error);
+    }
 }
 
     const ativosDiv = document.getElementById('lista-ativos'), lixeiraDiv = document.getElementById('lista-lixeira');
@@ -244,10 +256,15 @@ function renderizarTela() {
 function alternarTema() {
     const u = localStorage.getItem('fgb_user');
     const isDark = document.body.classList.toggle('dark-mode');
-    const novoTema = isDark ? 'dark' : 'light';
+    const temaEscolhido = isDark ? 'dark' : 'light';
 
-    if (u && dbUsuarios[u]) {
-        db.ref(`usuarios/${u}`).update({ tema: novoTema });
+    // 1. Salva no navegador para ser instantâneo
+    localStorage.setItem('fgb_tema', temaEscolhido);
+
+    // 2. Salva no Firebase para o usuário levar para outros aparelhos
+    if (u && typeof db !== 'undefined') {
+        db.ref(`usuarios/${u}`).update({ tema: temaEscolhido })
+          .catch(e => console.error("Erro ao salvar tema no Firebase:", e));
     }
 }
 
