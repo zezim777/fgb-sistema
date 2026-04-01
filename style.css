@@ -836,3 +836,19 @@ header > div:first-child {
     align-items: center;
     justify-content: center;
 }
+
+/* --- CENTRALIZAÇÃO DOS ÍCONES NAS EXTREMIDADES --- */
+.notification-container, .user-menu-container {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Esconde o sino automaticamente quando o menu mobile abrir */
+body:has(.sidebar.active) .notification-container {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
