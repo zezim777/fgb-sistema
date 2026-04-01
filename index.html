@@ -9,6 +9,20 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <link rel="stylesheet" href="style.css">
+    
+    <script>
+        (function() {
+            const temaSalvo = localStorage.getItem('fgb_tema');
+            if (temaSalvo === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                // Também aplicamos ao body para garantir compatibilidade com seu CSS
+                window.addEventListener('DOMContentLoaded', () => {
+                    document.body.classList.add('dark-mode');
+                });
+            }
+        })();
+    </script>
+
 </head>
 <body>
 

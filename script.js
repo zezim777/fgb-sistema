@@ -231,8 +231,9 @@ function renderizarTela() {
 
 // --- 8. OUTROS MODAIS E NOTIFICAÇÕES ---
 function alternarTema() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('fgb_tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    const isDark = document.body.classList.toggle('dark-mode');
+    // Salva a escolha atualizada
+    localStorage.setItem('fgb_tema', isDark ? 'dark' : 'light');
 }
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
 function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.notification-container').classList.toggle('active'); }
