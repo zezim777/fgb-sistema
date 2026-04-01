@@ -122,27 +122,26 @@
             </div>
         </div>
 
-<header style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px;">
-    <div style="display: flex; align-items: center; gap: 15px;">
+<header>
+    <div>
         <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar(event)">☰</div>
         <div class="notification-container" onclick="toggleNotificacoes(event)">
-            <div class="bell-icon">
-                <span id="bell-emoji">🔔</span>
-                <div class="notif-badge" id="notif-badge">0</div>
-            </div>
-            <div class="notif-dropdown" id="notif-list">
-                <div class="notif-item empty">Sem notificações.</div>
-            </div>
+            <div class="bell-icon">🔔<div class="notif-badge" id="notif-badge">0</div></div>
+            <div class="notif-dropdown" id="notif-list"></div>
         </div>
+    </div>
+
+    <div style="flex: 1; text-align: center;">
+        <h1 style="margin: 0; font-size: 1.2rem; color: white;">FGB Cloud</h1>
+        <p id="user-display" style="font-size: 0.7rem; margin: 0; color: #ecf0f1;"></p>
     </div>
 
     <div class="user-menu-container">
         <div class="user-avatar" onclick="toggleMenuUsuario(event)">👤</div>
         <div class="user-dropdown">
             <div class="dropdown-item" onclick="abrirModalPerfil()">👤 Meu Perfil</div>
-            <div class="dropdown-item" onclick="abrirModalConfig()">⚙️ Configurações</div>
             <div class="dropdown-item" id="admin-menu-item" onclick="abrirModalAdminNotif()" style="display:none; color: #f39c12;">📢 Transmissão</div>
-            <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair da conta</div>
+            <div class="dropdown-item danger" onclick="fazerLogout(false)">🚪 Sair</div>
         </div>
     </div>
 </header>
