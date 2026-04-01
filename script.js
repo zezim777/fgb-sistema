@@ -176,30 +176,22 @@ function iniciarLeituraDeDados() {
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user'), meuP = dbUsuarios[u] || {}, meuS = (meuP.setor || "").trim(), meuN = meuP.nivel || "Operador";
     
-    // 1. Aplica o tema vindo do Firebase
-    if (meuP.tema === 'dark') {
-        document.body.classList.add('dark-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-    }
-
-    // 2. Atualiza Identificação do Usuário
     const display = document.getElementById('user-display');
-    if (display) {
-        display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-    }
-
-    // 3. Permissões de Admin (Megafone no Perfil)
+    if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+    
     if (u === 'joseeminem') {
         const adminMenu = document.getElementById('admin-menu-item');
         if (adminMenu) adminMenu.style.display = 'block';
     }
     
-    // 4. Permissões de Coordenador
     if (meuN === 'Coordenador') {
         document.getElementById('dash-setor')?.classList.remove('hidden');
         document.getElementById('btn-report')?.classList.remove('hidden');
     }
+
+    // --- ÚNICO ACRÉSCIMO PARA O TEMA ---
+    if (meuP.tema === 'dark') document.body.classList.add('dark-mode');
+    else if (meuP.tema === 'light') document.body.classList.remove('dark-mode');
 }
 
     const ativosDiv = document.getElementById('lista-ativos'), lixeiraDiv = document.getElementById('lista-lixeira');
@@ -254,11 +246,7 @@ function alternarTema() {
     const isDark = document.body.classList.toggle('dark-mode');
     const novoTema = isDark ? 'dark' : 'light';
 
-    // Salva no LocalStorage (para rapidez)
-    localStorage.setItem('fgb_tema', novoTema);
-
-    // Salva no Firebase (para persistência entre dispositivos)
-    if (u) {
+    if (u && dbUsuarios[u]) {
         db.ref(`usuarios/${u}`).update({ tema: novoTema });
     }
 }
