@@ -176,20 +176,23 @@ function iniciarLeituraDeDados() {
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user');
     
-    // SE NÃO TIVER USUÁRIO, PARA AQUI E NÃO TRAVA O LOGIN
-    if (!u || !dbUsuarios || !dbUsuarios[u]) return; 
-
-    const meuP = dbUsuarios[u];
+    // A sua forma original e segura: se não achar o usuário, vira um objeto vazio {} e não trava nada
+    const meuP = dbUsuarios[u] || {}; 
     const meuS = (meuP.setor || "").trim();
     const meuN = meuP.nivel || "Operador";
 
-    // Mostra o nome do usuário
+    // Mostra o nome do usuário (com proteção "&& u" para não travar na tela de login)
     const display = document.getElementById('user-display');
-    if (display) display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+    if (display && u) {
+        display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+    }
     
-    // Se o Firebase disser que o tema é dark, ele aplica
-    if (meuP.tema === 'dark') document.body.classList.add('dark-mode');
-    else document.body.classList.remove('dark-mode');
+    // Se o Firebase disser que o tema é dark, ele aplica com segurança
+    if (meuP.tema === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (meuP.tema === 'light') {
+        document.body.classList.remove('dark-mode');
+    }
 
     if (u === 'joseeminem') {
         const adminMenu = document.getElementById('admin-menu-item');
