@@ -782,3 +782,41 @@ body:not(:has(#main-system[style*="display: block"])) {
 /* Garante que o ícone do menu apareça no celular */
 .mobile-menu-icon { display: none; font-size: 2rem; cursor: pointer; color: white; }
 @media (max-width: 799px) { .mobile-menu-icon { display: block !important; } }
+
+/* --- CORREÇÃO CIRÚRGICA DO HEADER v18.2 --- */
+header {
+    background-color: #2c3e50 !important; /* Força a volta da barra azul */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    color: white !important;
+    min-height: 60px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Alinhamento dos ícones da esquerda */
+header > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+
+/* Garante que o menu hambúrguer apareça no celular */
+.mobile-menu-icon {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: white !important;
+}
+
+@media (max-width: 799px) {
+    .mobile-menu-icon { display: block !important; }
+    
+    /* Esconde o sino quando a sidebar estiver ativa */
+    body:has(.sidebar.active) .notification-container {
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
