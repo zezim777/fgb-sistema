@@ -175,13 +175,32 @@ function iniciarLeituraDeDados() {
 
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user'), meuP = dbUsuarios[u] || {}, meuS = (meuP.setor || "").trim(), meuN = meuP.nivel || "Operador";
-    document.getElementById('user-display').innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-    if (u === 'joseeminem') document.getElementById('admin-menu-item').style.display = 'block';
     
+    // 1. Aplica o tema vindo do Firebase
+    if (meuP.tema === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+
+    // 2. Atualiza Identificação do Usuário
+    const display = document.getElementById('user-display');
+    if (display) {
+        display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
+    }
+
+    // 3. Permissões de Admin (Megafone no Perfil)
+    if (u === 'joseeminem') {
+        const adminMenu = document.getElementById('admin-menu-item');
+        if (adminMenu) adminMenu.style.display = 'block';
+    }
+    
+    // 4. Permissões de Coordenador
     if (meuN === 'Coordenador') {
         document.getElementById('dash-setor')?.classList.remove('hidden');
         document.getElementById('btn-report')?.classList.remove('hidden');
     }
+}
 
     const ativosDiv = document.getElementById('lista-ativos'), lixeiraDiv = document.getElementById('lista-lixeira');
     if (!ativosDiv || !lixeiraDiv) return;
@@ -231,10 +250,19 @@ function renderizarTela() {
 
 // --- 8. OUTROS MODAIS E NOTIFICAÇÕES ---
 function alternarTema() {
+    const u = localStorage.getItem('fgb_user');
     const isDark = document.body.classList.toggle('dark-mode');
-    // Salva a escolha atualizada
-    localStorage.setItem('fgb_tema', isDark ? 'dark' : 'light');
+    const novoTema = isDark ? 'dark' : 'light';
+
+    // Salva no LocalStorage (para rapidez)
+    localStorage.setItem('fgb_tema', novoTema);
+
+    // Salva no Firebase (para persistência entre dispositivos)
+    if (u) {
+        db.ref(`usuarios/${u}`).update({ tema: novoTema });
+    }
 }
+
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
 function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.notification-container').classList.toggle('active'); }
 function renderizarNotificacoes() { const b = document.getElementById('notif-badge'); if(b) { b.innerText = listaNotificacoesGlobais.length; b.style.display = listaNotificacoesGlobais.length > 0 ? 'flex' : 'none'; } }
