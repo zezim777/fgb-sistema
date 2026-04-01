@@ -170,7 +170,7 @@ function iniciarLeituraDeDados() {
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user'), meuP = dbUsuarios[u] || {}, meuS = (meuP.setor || "").trim(), meuN = meuP.nivel || "Operador";
     document.getElementById('user-display').innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
-    if (u === 'joseeminem') document.getElementById('admin-container').classList.add('visible');
+    if (u === 'joseeminem') document.getElementById('admin-menu-item').style.display = 'block';
     
     if (meuN === 'Coordenador') {
         document.getElementById('dash-setor')?.classList.remove('hidden');
