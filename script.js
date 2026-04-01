@@ -250,17 +250,10 @@ function renderizarTela() {
 
 // --- 8. OUTROS MODAIS E NOTIFICAÇÕES ---
 function alternarTema() {
-    const u = localStorage.getItem('fgb_user');
-    const isDark = document.body.classList.toggle('dark-mode');
-    const temaEscolhido = isDark ? 'dark' : 'light';
 
-    // Salva no navegador para o F5 funcionar
-    localStorage.setItem('fgb_tema', temaEscolhido);
+    document.body.classList.toggle('dark-mode');
 
-    // Salva no Firebase para outros aparelhos (Sem travar se falhar)
-    if (u && typeof db !== 'undefined') {
-        db.ref(`usuarios/${u}`).update({ tema: temaEscolhido }).catch(e => console.log("Firebase Offline"));
-    }
+    localStorage.setItem('fgb_tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 }
 
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
@@ -291,23 +284,3 @@ document.addEventListener('click', (e) => {
         }
     }
 });
-
-// FUNÇÃO ISOLADA: Sincroniza o tema com o Firebase sem travar o login
-db.ref('usuarios').on('value', snap => {
-    const u = localStorage.getItem('fgb_user');
-    const dados = snap.val();
-    if (u && dados && dados[u] && dados[u].tema) {
-        if (dados[u].tema === 'dark') document.body.classList.add('dark-mode');
-        else document.body.classList.remove('dark-mode');
-    }
-});
-
-function alternarTema() {
-    const u = localStorage.getItem('fgb_user');
-    const isDark = document.body.classList.toggle('dark-mode');
-    const novoTema = isDark ? 'dark' : 'light';
-
-    if (u) {
-        db.ref(`usuarios/${u}`).update({ tema: novoTema });
-    }
-}
