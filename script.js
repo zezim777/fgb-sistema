@@ -176,22 +176,26 @@ function iniciarLeituraDeDados() {
 function renderizarTela() {
     const u = localStorage.getItem('fgb_user');
     
-    // A sua forma original e segura: se não achar o usuário, vira um objeto vazio {} e não trava nada
+    // ESCUDO DE PROTEÇÃO PARA O LOGIN (Se não estiver logado, não tenta renderizar a tela interna)
+    if (!u) return;
+
     const meuP = dbUsuarios[u] || {}; 
     const meuS = (meuP.setor || "").trim();
     const meuN = meuP.nivel || "Operador";
 
-    // Mostra o nome do usuário (com proteção "&& u" para não travar na tela de login)
+    // Mostra o nome do usuário
     const display = document.getElementById('user-display');
-    if (display && u) {
+    if (display) {
         display.innerText = `${meuN}: ${u.toUpperCase()} | ${meuS.split(' -')[0]}`;
     }
     
-    // Se o Firebase disser que o tema é dark, ele aplica com segurança
+    // VERIFICA O TEMA DO FIREBASE
     if (meuP.tema === 'dark') {
         document.body.classList.add('dark-mode');
+        localStorage.setItem('fgb_tema', 'dark');
     } else if (meuP.tema === 'light') {
         document.body.classList.remove('dark-mode');
+        localStorage.setItem('fgb_tema', 'light');
     }
 
     if (u === 'joseeminem') {
@@ -203,8 +207,8 @@ function renderizarTela() {
         document.getElementById('dash-setor')?.classList.remove('hidden');
         document.getElementById('btn-report')?.classList.remove('hidden');
     }
-}
 
+    // --- AQUI COMEÇA A PARTE DOS PROCESSOS QUE ESTAVA "SOLTA" E CAUSANDO O ERRO ---
     const ativosDiv = document.getElementById('lista-ativos'), lixeiraDiv = document.getElementById('lista-lixeira');
     if (!ativosDiv || !lixeiraDiv) return;
     ativosDiv.innerHTML = ''; lixeiraDiv.innerHTML = '';
@@ -249,14 +253,22 @@ function renderizarTela() {
         if(t) t.innerText = tSetor;
         if(v) v.innerText = vSetor.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     }
+} // <--- AGORA A FUNÇÃO ESTÁ FECHADA NO LUGAR CORRETO, PROTEGENDO TODO O CÓDIGO
 
 
 // --- 8. OUTROS MODAIS E NOTIFICAÇÕES ---
 function alternarTema() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    const temaEscolhido = isDark ? 'dark' : 'light';
+    
+    // Salva na memória do PC/Celular
+    localStorage.setItem('fgb_tema', temaEscolhido);
 
-    document.body.classList.toggle('dark-mode');
-
-    localStorage.setItem('fgb_tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    // Salva na Nuvem da Firebase
+    const u = localStorage.getItem('fgb_user');
+    if (u && typeof db !== 'undefined') {
+        db.ref(`usuarios/${u}`).update({ tema: temaEscolhido }).catch(e => console.log("Erro ao salvar tema"));
+    }
 }
 
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
