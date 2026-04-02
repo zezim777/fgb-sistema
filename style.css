@@ -947,3 +947,32 @@ body:has(.sidebar.active) .notification-container {
         margin-bottom: 10px;
     }
 }
+
+/* --- AJUSTES FINAIS PARA CELULAR (APENAS BUSCA E SUGESTÕES) --- */
+@media (max-width: 600px) {
+    /* Faz a barra de pesquisa crescer e a lupa ficar pequena ao lado */
+    .search-container { 
+        display: flex !important;
+        width: 100% !important;
+        gap: 5px !important;
+    }
+
+    #pesquisa-processos, .input-busca { 
+        flex: 1 !important; 
+    }
+
+    .btn-lupa { 
+        width: 60px !important; 
+        flex-shrink: 0 !important;
+    }
+
+    /* Devolve o botão de Sugestões para o canto inferior direito (Flutuante) */
+    .sugestoes-floating-btn, #btn-sugestoes {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 15px !important;
+        width: auto !important; 
+        padding: 10px 15px !important;
+        z-index: 1000 !important;
+    }
+}
