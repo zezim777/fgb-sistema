@@ -950,22 +950,26 @@ body:has(.sidebar.active) .notification-container {
 
 /* --- AJUSTES FINAIS PARA CELULAR (BUSCA E SUGESTÕES) --- */
 @media (max-width: 600px) {
-    /* 1. Faz a barra de pesquisa ocupar a largura e a lupa ficar pequena ao lado */
+    /* 1. AJUSTE DO CONTAINER (O fundo escuro que você mencionou) */
     .search-container { 
         display: flex !important;
-        width: 100% !important;
-        gap: 8px !important;
+        flex-direction: row !important; /* Mantém um ao lado do outro */
         align-items: center !important;
+        width: 100% !important;
+        height: auto !important; /* FAZ O FUNDO SE AJUSTAR À ALTURA DOS ITENS */
+        padding: 10px !important; /* DÁ O RESPIRO IGUAL EM VOLTA */
+        gap: 8px !important;
+        box-sizing: border-box !important; /* IMPEDE QUE A CAIXA "SAIA" DA TELA */
     }
 
     #input-pesquisa { 
         flex: 1 !important; /* Faz o campo de digitar esticar */
         min-width: 0 !important; 
-        height: 45px !important; /* Altura confortável para o dedo no celular */
+        height: 45px !important; /* Altura confortável */
     }
 
     .btn-search { 
-        width: 55px !important; /* Deixa a lupa quadradinha */
+        width: 55px !important; /* Lupa quadradinha */
         height: 45px !important;
         flex-shrink: 0 !important;
         display: flex !important;
@@ -979,10 +983,10 @@ body:has(.sidebar.active) .notification-container {
         position: fixed !important;
         bottom: 20px !important;
         right: 15px !important;
-        width: auto !important; /* Impede de esticar na tela toda */
+        width: auto !important;
         padding: 12px 20px !important;
-        z-index: 9999 !important; /* Garante que fique na frente de tudo */
-        border-radius: 50px !important; /* Deixa ele arredondado e profissional */
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; /* Dá um destaque de botão flutuante */
+        z-index: 9999 !important;
+        border-radius: 50px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
     }
 }
