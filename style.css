@@ -910,3 +910,40 @@ body:has(.sidebar.active) .notification-container {
     background: rgba(231, 76, 60, 0.1);
     transform: scale(1.1);
 }
+
+/* Ajustes para Celular (Telas menores que 600px) */
+@media (max-width: 600px) {
+    header {
+        flex-wrap: wrap; /* Permite que os itens se ajustem se não couberem */
+        padding: 10px !important;
+        height: auto !important;
+        min-height: 80px !important;
+    }
+
+    /* Diminui o título para caber no centro */
+    header h1 {
+        font-size: 0.9rem !important;
+        white-space: normal !important; /* Deixa o título quebrar linha se precisar */
+        line-height: 1.2;
+    }
+
+    header p {
+        font-size: 0.6rem !important;
+    }
+
+    /* Dá um pouco mais de espaço para as seções das pontas */
+    header > div {
+        flex: 1 !important;
+    }
+    
+    /* Garante que o sino e o avatar não fiquem gigantes */
+    .bell-icon, .user-avatar {
+        font-size: 1.2rem !important;
+    }
+
+    /* Ajusta o espaçamento do formulário e botões que aparecem no seu print */
+    input, button {
+        width: 100% !important; /* Garante que os campos ocupem a largura toda no celular */
+        margin-bottom: 10px;
+    }
+}
