@@ -127,17 +127,23 @@
     
     <div style="display: flex; align-items: center; gap: 15px;">
         <div id="btn-menu-mobile" class="mobile-menu-icon" onclick="toggleSidebar(event)">☰</div>
-        <div class="notification-container" onclick="toggleNotificacoes(event)" style="display: flex; align-items: center; position: relative;">
+
+        <div class="notification-container" 
+             onclick="toggleNotificacoes(event)" 
+             onmouseenter="marcarNotificacoesComoLidas()" 
+             style="display: flex; align-items: center; position: relative;">
+            
             <div class="bell-icon">
                 <span id="bell-emoji">🔔</span>
-                <div class="notif-badge" id="notif-badge">0</div>
+                <div id="notif-badge" class="notif-badge">0</div>
             </div>
+
             <div class="notif-dropdown" id="notif-list">
                 <div class="notif-item empty" id="notif-vazia">Nenhuma notificação nova no momento.</div>
             </div>
-        </div>
-    </div>
 
+        </div> ```
+        
     <div style="flex: 1; text-align: center;">
         <h1 style="margin: 0; font-size: 1.1rem; color: white;">FGB Cloud - Gestão de Processos</h1>
         <p id="user-display" style="font-size: 0.7rem; margin: 0; color: #ecf0f1;"></p>

@@ -321,39 +321,41 @@ function alternarTema() {
 
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
 
+// --- FUNÇÃO PARA LIMPAR O BADGE (VAI SER USADA NO CLIQUE E NO MOUSE) ---
+function marcarNotificacoesComoLidas() {
+    const u = localStorage.getItem('fgb_user');
+    
+    if (listaNotificacoesGlobais.length > 0) {
+        const idsNumericos = listaNotificacoesGlobais.map(n => Number(n.id));
+        const maisRecenteId = Math.max(...idsNumericos);
+
+        // 1. Limpeza local imediata no seu navegador
+        if (dbUsuarios && dbUsuarios[u]) {
+            // Só executa se houver algo realmente novo (evita chamadas repetidas ao Firebase)
+            if ((dbUsuarios[u].ultimaNotifLida || 0) < maisRecenteId) {
+                dbUsuarios[u].ultimaNotifLida = maisRecenteId;
+                renderizarNotificacoes(); // Faz o número sumir na hora no seu Acer
+
+                // 2. Sincroniza com o Firebase
+                db.ref(`usuarios/${u}`).update({ 
+                    ultimaNotifLida: maisRecenteId 
+                });
+            }
+        }
+    }
+}
+
+// --- FUNÇÃO DE CLIQUE (ABRIR/FECHAR) ---
 function toggleNotificacoes(e) {
     if (e) e.stopPropagation();
-    
     const container = document.querySelector('.notification-container');
-    const u = localStorage.getItem('fgb_user'); 
-
+    
     if (container) {
         const abrindo = !container.classList.contains('active');
         container.classList.toggle('active');
-
-        // Só executa a limpeza se estiver abrindo o sino e houver mensagens
-        if (abrindo && listaNotificacoesGlobais.length > 0) {
-            
-            // Garantimos que todos os IDs sejam tratados como números para o cálculo
-            const idsNumericos = listaNotificacoesGlobais.map(n => Number(n.id));
-            const maisRecenteId = Math.max(...idsNumericos);
-            
-            console.log("Limpando notificações até o ID:", maisRecenteId);
-
-            // 1. Atualização Local Imediata (Para o seu Acer ver o badge sumir na hora)
-            if (dbUsuarios && dbUsuarios[u]) {
-                dbUsuarios[u].ultimaNotifLida = maisRecenteId;
-                renderizarNotificacoes();
-            }
-
-            // 2. Atualização no Firebase (Para sincronizar com seu celular e outros PCs)
-            db.ref(`usuarios/${u}`).update({ 
-                ultimaNotifLida: maisRecenteId 
-            }).then(() => {
-                console.log("Sincronização com a nuvem concluída.");
-            }).catch(erro => {
-                console.error("Erro ao salvar no Firebase:", erro);
-            });
+        
+        if (abrindo) {
+            marcarNotificacoesComoLidas();
         }
     }
 }
