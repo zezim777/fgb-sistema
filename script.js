@@ -320,17 +320,53 @@ function alternarTema() {
 }
 
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
-function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.notification-container').classList.toggle('active'); }
+
+function toggleNotificacoes(e) {
+    if (e) e.stopPropagation();
+    
+    const container = document.querySelector('.notification-container');
+    const u = localStorage.getItem('fgb_user'); // Identifica quem está clicando
+
+    if (container) {
+        const abrindo = !container.classList.contains('active');
+        container.classList.toggle('active');
+
+        // REGRA: Se o usuário está ABRINDO o sino e existem mensagens...
+        if (abrindo && listaNotificacoesGlobais.length > 0) {
+            
+            // 1. Descobrimos qual o ID da notificação mais recente de todas
+            const maisRecenteId = Math.max(...listaNotificacoesGlobais.map(n => n.id));
+            
+            // 2. Enviamos para o Firebase: "Este usuário já leu até a mensagem X"
+            db.ref(`usuarios/${u}`).update({ 
+                ultimaNotifLida: maisRecenteId 
+            }).then(() => {
+                console.log("Notificações marcadas como lidas na nuvem.");
+            }).catch(erro => {
+                console.error("Erro ao sincronizar leitura:", erro);
+            });
+            
+            // O Firebase vai disparar o evento de mudança, e sua função 
+            // renderizarNotificacoes() será chamada automaticamente, zerando o badge.
+        }
+    }
+}
 
 function renderizarNotificacoes() {
     const b = document.getElementById('notif-badge');
     const listaDiv = document.getElementById('notif-list');
-    const u = localStorage.getItem('fgb_user'); // Pega quem está logado
+    const u = localStorage.getItem('fgb_user');
+
+    // --- AJUSTE 1: BUSCA A ÚLTIMA LIDA NO BANCO ---
+    const meuPerfil = dbUsuarios[u] || {};
+    const ultimaLidaNoBanco = meuPerfil.ultimaNotifLida || 0;
 
     if (b) {
-        const total = listaNotificacoesGlobais.length;
-        b.innerText = total;
-        b.style.display = total > 0 ? 'flex' : 'none';
+        // Agora o badge mostra apenas as notificações com ID maior que a última lida
+        const novas = listaNotificacoesGlobais.filter(n => n.id > ultimaLidaNoBanco).length;
+        
+        b.innerText = novas;
+        b.style.display = novas > 0 ? 'flex' : 'none';
     }
 
     if (listaDiv) {
@@ -341,15 +377,16 @@ function renderizarNotificacoes() {
 
         listaDiv.innerHTML = ''; 
 
-        // Mostra as notificações
         listaNotificacoesGlobais.slice().reverse().forEach(n => {
-            // SÓ CRIA O BOTÃO DE EXCLUIR SE FOR VOCÊ (JOSEEMINEM)
             const botaoExcluir = (u === 'joseeminem') 
                 ? `<button class="btn-excluir-notif" onclick="excluirNotificacaoGlobal('${n.id}', event)">🗑️</button>` 
                 : '';
 
+            // Opcional: Adiciona uma classe "nao-lida" para destacar visualmente
+            const classeNaoLida = n.id > ultimaLidaNoBanco ? 'nao-lida' : '';
+
             listaDiv.innerHTML += `
-                <div class="notif-item">
+                <div class="notif-item ${classeNaoLida}">
                     <div class="notif-header">
                         <span class="notif-time">🕒 ${n.data}</span>
                         ${botaoExcluir}
