@@ -112,49 +112,53 @@ function cadastrarUsuario() {
     const u = document.getElementById('reg-user').value.toLowerCase().trim();
     const p = document.getElementById('reg-pass').value;
     const k = document.getElementById('reg-keyword').value;
-    const s = document.getElementById('reg-setor').value;
+    const s = document.getElementById('reg-setor').value.trim(); // Limpa espaços extras
     const n = document.getElementById('reg-nivel').value;
 
-    // 1. Validação de preenchimento
-    if (!u || !p || !k || !s) return alert("Preencha todos os campos!");
+    if (!u || !p || !k || !s) return alert("Por favor, preencha todos os campos.");
 
-    // 2. TRAVA 1: Impede sobrescrever um usuário que já existe
-    if (dbUsuarios && dbUsuarios[u]) {
-        return alert("Erro: Esse nome de usuário já está em uso!");
-    }
+    // BUSCA OS DADOS MAIS RECENTES DIRETO DO FIREBASE
+    db.ref('usuarios').once('value', snap => {
+        const todosUsuarios = snap.val() || {};
 
-    // 3. TRAVA 2: Regra de Ouro do Coordenador Único
-    if (n === 'Coordenador') {
-        // Faz uma varredura em todos os usuários do banco
-        const temCoordenador = Object.values(dbUsuarios || {}).some(user => 
-            user.setor === s && user.nivel === 'Coordenador'
-        );
-
-        // Se a varredura achar alguém, bloqueia o cadastro na hora
-        if (temCoordenador) {
-            const nomeSetor = s.split(' -')[0]; // Pega só a sigla (Ex: FGB-AJ)
-            return alert(`ACESSO NEGADO: O setor ${nomeSetor} já possui um Coordenador registrado. Novos cadastros para este setor devem ser apenas de Operador.`);
+        // 1. Verificação de Usuário Duplicado
+        if (todosUsuarios[u]) {
+            return alert(`O nome de usuário "${u}" já existe no sistema.`);
         }
-    }
 
-    // 4. Salva no banco de dados com segurança
-    db.ref('usuarios/' + u).set({ 
-        usuario: u, 
-        senha: p, 
-        palavraChave: k, 
-        setor: s, 
-        nivel: n,
-        tema: 'light' // Já deixamos um tema padrão garantido
-    }).then(() => { 
-        alert("Usuário cadastrado com sucesso!"); 
-        alternarTela('login-screen'); 
-        
-        // Limpa os campos após sucesso
-        document.getElementById('reg-user').value = '';
-        document.getElementById('reg-pass').value = '';
-        document.getElementById('reg-keyword').value = '';
-    }).catch(erro => {
-        alert("Falha de conexão com o banco de dados.");
+        // 2. VARREDURA DE SEGURANÇA (Regra de 1 Coordenador por Setor)
+        if (n === 'Coordenador') {
+            let coordenadorExistente = null;
+
+            // Percorre todos os usuários cadastrados no banco
+            Object.values(todosUsuarios).forEach(user => {
+                if (user.setor.trim() === s && user.nivel === 'Coordenador') {
+                    coordenadorExistente = user.usuario;
+                }
+            });
+
+            // Se a varredura encontrou alguém, bloqueia imediatamente
+            if (coordenadorExistente) {
+                const siglaSetor = s.split(' -')[0];
+                return alert(`BLOQUEIO DE HIERARQUIA: O setor ${siglaSetor} já possui um Coordenador (${coordenadorExistente.toUpperCase()}). Não é permitido mais de um coordenador por setor.`);
+            }
+        }
+
+        // 3. GRAVAÇÃO SEURA (Só acontece se passar em todas as travas acima)
+        db.ref('usuarios/' + u).set({
+            usuario: u,
+            senha: p,
+            palavraChave: k,
+            setor: s,
+            nivel: n,
+            tema: 'light'
+        }).then(() => {
+            alert("Cadastro realizado com sucesso!");
+            alternarTela('login-screen');
+            // Limpa os campos
+            document.getElementById('reg-user').value = '';
+            document.getElementById('reg-pass').value = '';
+        });
     });
 }
 
