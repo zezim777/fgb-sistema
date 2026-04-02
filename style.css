@@ -948,31 +948,39 @@ body:has(.sidebar.active) .notification-container {
     }
 }
 
-/* --- AJUSTES FINAIS PARA CELULAR (APENAS BUSCA E SUGESTÕES) --- */
+/* --- AJUSTES FINAIS PARA CELULAR (BUSCA E SUGESTÕES) --- */
 @media (max-width: 600px) {
-    /* Faz a barra de pesquisa crescer e a lupa ficar pequena ao lado */
+    /* Faz a barra de pesquisa ocupar a largura e a lupa ficar pequena ao lado */
     .search-container { 
         display: flex !important;
         width: 100% !important;
         gap: 5px !important;
+        align-items: center !important;
     }
 
-    #pesquisa-processos, .input-busca { 
-        flex: 1 !important; 
+    #input-pesquisa { 
+        flex: 1 !important; /* Faz o campo de texto crescer */
+        min-width: 0 !important; /* Impede que o input "empurre" a lupa para fora */
     }
 
-    .btn-lupa { 
-        width: 60px !important; 
+    .btn-search { 
+        width: 50px !important; /* Garante que a lupa continue um quadradinho */
+        height: 40px !important; /* Ajuste a altura para bater com o seu input */
         flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     /* Devolve o botão de Sugestões para o canto inferior direito (Flutuante) */
-    .sugestoes-floating-btn, #btn-sugestoes {
+    /* Verifique se a classe do seu botão de sugestões é uma dessas abaixo */
+    .sugestoes-floating-btn, #btn-sugestoes, .btn-sugestao {
         position: fixed !important;
         bottom: 20px !important;
         right: 15px !important;
         width: auto !important; 
         padding: 10px 15px !important;
         z-index: 1000 !important;
+        border-radius: 30px !important; /* Mantém ele arredondado e bonito */
     }
 }
