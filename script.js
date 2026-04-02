@@ -321,7 +321,42 @@ function alternarTema() {
 
 function toggleMenuUsuario(e) { e.stopPropagation(); document.querySelector('.user-menu-container').classList.toggle('active'); }
 function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.notification-container').classList.toggle('active'); }
-function renderizarNotificacoes() { const b = document.getElementById('notif-badge'); if(b) { b.innerText = listaNotificacoesGlobais.length; b.style.display = listaNotificacoesGlobais.length > 0 ? 'flex' : 'none'; } }
+
+function renderizarNotificacoes() {
+    const b = document.getElementById('notif-badge');
+    const listaDiv = document.getElementById('notif-lista-container'); // Verifique se este ID existe no seu HTML
+
+    // 1. ATUALIZA O NÚMERO (O que você já fazia)
+    if (b) {
+        b.innerText = listaNotificacoesGlobais.length;
+        b.style.display = listaNotificacoesGlobais.length > 0 ? 'flex' : 'none';
+    }
+
+    // 2. PREENCHE A LISTA DE MENSAGENS
+    if (listaDiv) {
+        listaDiv.innerHTML = ''; // Limpa a lista anterior para não duplicar
+
+        if (listaNotificacoesGlobais.length === 0) {
+            listaDiv.innerHTML = '<p class="empty-notif">Nenhuma notificação nova.</p>';
+            return;
+        }
+
+        // Percorre as notificações do Firebase e cria o HTML de cada uma
+        // Usamos .reverse() para a mais recente aparecer no topo
+        listaNotificacoesGlobais.slice().reverse().forEach(n => {
+            const item = document.createElement('div');
+            item.className = 'notif-item';
+            item.innerHTML = `
+                <div class="notif-content">
+                    <span class="notif-msg">${n.msg}</span>
+                    <span class="notif-time">🕒 ${n.data.split(',')[1] || n.data}</span>
+                </div>
+            `;
+            listaDiv.appendChild(item);
+        });
+    }
+}
+
 function abrirModalPerfil() { document.getElementById('modal-perfil').style.display = 'flex'; }
 function fecharModalPerfil() { document.getElementById('modal-perfil').style.display = 'none'; }
 function abrirModalConfig() { document.getElementById('modal-config').style.display = 'flex'; }
