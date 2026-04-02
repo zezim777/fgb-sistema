@@ -888,3 +888,25 @@ body:has(.sidebar.active) .notification-container {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.btn-excluir-notif {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.btn-excluir-notif:hover {
+    background: rgba(231, 76, 60, 0.1);
+    transform: scale(1.1);
+}

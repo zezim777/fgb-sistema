@@ -324,37 +324,54 @@ function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.n
 
 function renderizarNotificacoes() {
     const b = document.getElementById('notif-badge');
-    const listaDiv = document.getElementById('notif-list'); // O ID que você tem no HTML
-    
-    // 1. Atualiza o número no badge
+    const listaDiv = document.getElementById('notif-list');
+    const u = localStorage.getItem('fgb_user'); // Pega quem está logado
+
     if (b) {
         const total = listaNotificacoesGlobais.length;
         b.innerText = total;
         b.style.display = total > 0 ? 'flex' : 'none';
     }
 
-    // 2. Preenche a lista de notificações
     if (listaDiv) {
-        // Se não tiver nada no Firebase, mostra a mensagem vazia
         if (listaNotificacoesGlobais.length === 0) {
             listaDiv.innerHTML = '<div class="notif-item empty">Nenhuma notificação nova no momento.</div>';
             return;
         }
 
-        // Se tiver notificações, limpa o "vazio" e coloca as novas
         listaDiv.innerHTML = ''; 
 
-        // Mostra da mais nova para a mais velha
+        // Mostra as notificações
         listaNotificacoesGlobais.slice().reverse().forEach(n => {
-            const dataHora = n.data ? n.data.split(',')[1] || n.data : "";
-            
+            // SÓ CRIA O BOTÃO DE EXCLUIR SE FOR VOCÊ (JOSEEMINEM)
+            const botaoExcluir = (u === 'joseeminem') 
+                ? `<button class="btn-excluir-notif" onclick="excluirNotificacaoGlobal('${n.id}', event)">🗑️</button>` 
+                : '';
+
             listaDiv.innerHTML += `
                 <div class="notif-item">
+                    <div class="notif-header">
+                        <span class="notif-time">🕒 ${n.data}</span>
+                        ${botaoExcluir}
+                    </div>
                     <div class="notif-text">${n.msg}</div>
-                    <div class="notif-time">🕒 ${dataHora}</div>
                 </div>
             `;
         });
+    }
+}
+
+// FUNÇÃO PARA DELETAR DO FIREBASE (SÓ ADMIN CONSEGUE EXECUTAR)
+function excluirNotificacaoGlobal(id, e) {
+    if (e) e.stopPropagation(); // Impede de fechar o sino ao clicar no lixo
+    
+    if (confirm("Deseja apagar esse aviso para todos os usuários?")) {
+        db.ref('notificacoes_globais/' + id).remove()
+        .then(() => {
+            registrarAtividade("Apagou aviso global");
+            // A lista vai se atualizar sozinha para todos por causa do .on('value')
+        })
+        .catch(erro => alert("Erro ao excluir: " + erro));
     }
 }
 
