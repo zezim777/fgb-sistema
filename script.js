@@ -325,19 +325,24 @@ function toggleNotificacoes(e) {
     if (e) e.stopPropagation();
     
     const container = document.querySelector('.notification-container');
-    const u = localStorage.getItem('fgb_user'); // Identifica quem está clicando
+    const u = localStorage.getItem('fgb_user'); 
 
     if (container) {
         const abrindo = !container.classList.contains('active');
         container.classList.toggle('active');
 
-        // REGRA: Se o usuário está ABRINDO o sino e existem mensagens...
         if (abrindo && listaNotificacoesGlobais.length > 0) {
             
-            // 1. Descobrimos qual o ID da notificação mais recente de todas
             const maisRecenteId = Math.max(...listaNotificacoesGlobais.map(n => n.id));
             
-            // 2. Enviamos para o Firebase: "Este usuário já leu até a mensagem X"
+            // --- AS DUAS LINHAS ENTRAM AQUI ---
+            // 1. Atualiza a memória local na hora (força o badge a zerar no seu PC)
+            if (dbUsuarios[u]) dbUsuarios[u].ultimaNotifLida = maisRecenteId;
+            // 2. Chama a função de desenho para esconder o número IMEDIATAMENTE
+            renderizarNotificacoes();
+            // ----------------------------------
+
+            // Continua enviando para o Firebase para sincronizar outros aparelhos
             db.ref(`usuarios/${u}`).update({ 
                 ultimaNotifLida: maisRecenteId 
             }).then(() => {
@@ -345,9 +350,6 @@ function toggleNotificacoes(e) {
             }).catch(erro => {
                 console.error("Erro ao sincronizar leitura:", erro);
             });
-            
-            // O Firebase vai disparar o evento de mudança, e sua função 
-            // renderizarNotificacoes() será chamada automaticamente, zerando o badge.
         }
     }
 }
