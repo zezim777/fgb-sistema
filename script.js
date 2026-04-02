@@ -324,35 +324,36 @@ function toggleNotificacoes(e) { e.stopPropagation(); document.querySelector('.n
 
 function renderizarNotificacoes() {
     const b = document.getElementById('notif-badge');
-    const listaDiv = document.getElementById('notif-lista-container'); // Verifique se este ID existe no seu HTML
-
-    // 1. ATUALIZA O NÚMERO (O que você já fazia)
+    const listaDiv = document.getElementById('notif-list'); // O ID que você tem no HTML
+    
+    // 1. Atualiza o número no badge
     if (b) {
-        b.innerText = listaNotificacoesGlobais.length;
-        b.style.display = listaNotificacoesGlobais.length > 0 ? 'flex' : 'none';
+        const total = listaNotificacoesGlobais.length;
+        b.innerText = total;
+        b.style.display = total > 0 ? 'flex' : 'none';
     }
 
-    // 2. PREENCHE A LISTA DE MENSAGENS
+    // 2. Preenche a lista de notificações
     if (listaDiv) {
-        listaDiv.innerHTML = ''; // Limpa a lista anterior para não duplicar
-
+        // Se não tiver nada no Firebase, mostra a mensagem vazia
         if (listaNotificacoesGlobais.length === 0) {
-            listaDiv.innerHTML = '<p class="empty-notif">Nenhuma notificação nova.</p>';
+            listaDiv.innerHTML = '<div class="notif-item empty">Nenhuma notificação nova no momento.</div>';
             return;
         }
 
-        // Percorre as notificações do Firebase e cria o HTML de cada uma
-        // Usamos .reverse() para a mais recente aparecer no topo
+        // Se tiver notificações, limpa o "vazio" e coloca as novas
+        listaDiv.innerHTML = ''; 
+
+        // Mostra da mais nova para a mais velha
         listaNotificacoesGlobais.slice().reverse().forEach(n => {
-            const item = document.createElement('div');
-            item.className = 'notif-item';
-            item.innerHTML = `
-                <div class="notif-content">
-                    <span class="notif-msg">${n.msg}</span>
-                    <span class="notif-time">🕒 ${n.data.split(',')[1] || n.data}</span>
+            const dataHora = n.data ? n.data.split(',')[1] || n.data : "";
+            
+            listaDiv.innerHTML += `
+                <div class="notif-item">
+                    <div class="notif-text">${n.msg}</div>
+                    <div class="notif-time">🕒 ${dataHora}</div>
                 </div>
             `;
-            listaDiv.appendChild(item);
         });
     }
 }
