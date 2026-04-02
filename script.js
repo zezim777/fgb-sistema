@@ -331,24 +331,28 @@ function toggleNotificacoes(e) {
         const abrindo = !container.classList.contains('active');
         container.classList.toggle('active');
 
+        // Só executa a limpeza se estiver abrindo o sino e houver mensagens
         if (abrindo && listaNotificacoesGlobais.length > 0) {
             
-            const maisRecenteId = Math.max(...listaNotificacoesGlobais.map(n => n.id));
+            // Garantimos que todos os IDs sejam tratados como números para o cálculo
+            const idsNumericos = listaNotificacoesGlobais.map(n => Number(n.id));
+            const maisRecenteId = Math.max(...idsNumericos);
             
-            // --- AS DUAS LINHAS ENTRAM AQUI ---
-            // 1. Atualiza a memória local na hora (força o badge a zerar no seu PC)
-            if (dbUsuarios[u]) dbUsuarios[u].ultimaNotifLida = maisRecenteId;
-            // 2. Chama a função de desenho para esconder o número IMEDIATAMENTE
-            renderizarNotificacoes();
-            // ----------------------------------
+            console.log("Limpando notificações até o ID:", maisRecenteId);
 
-            // Continua enviando para o Firebase para sincronizar outros aparelhos
+            // 1. Atualização Local Imediata (Para o seu Acer ver o badge sumir na hora)
+            if (dbUsuarios && dbUsuarios[u]) {
+                dbUsuarios[u].ultimaNotifLida = maisRecenteId;
+                renderizarNotificacoes();
+            }
+
+            // 2. Atualização no Firebase (Para sincronizar com seu celular e outros PCs)
             db.ref(`usuarios/${u}`).update({ 
                 ultimaNotifLida: maisRecenteId 
             }).then(() => {
-                console.log("Notificações marcadas como lidas na nuvem.");
+                console.log("Sincronização com a nuvem concluída.");
             }).catch(erro => {
-                console.error("Erro ao sincronizar leitura:", erro);
+                console.error("Erro ao salvar no Firebase:", erro);
             });
         }
     }
