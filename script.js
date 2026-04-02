@@ -109,9 +109,53 @@ function fazerLogin() {
 }
 
 function cadastrarUsuario() {
-    const u = document.getElementById('reg-user').value.toLowerCase().trim(), p = document.getElementById('reg-pass').value, k = document.getElementById('reg-keyword').value, s = document.getElementById('reg-setor').value, n = document.getElementById('reg-nivel').value;
-    if (!u || !p || !k || !s) return alert("Preencha tudo!");
-    db.ref('usuarios/' + u).set({ usuario: u, senha: p, palavraChave: k, setor: s, nivel: n }).then(() => { alert("Cadastrado!"); alternarTela('login-screen'); });
+    const u = document.getElementById('reg-user').value.toLowerCase().trim();
+    const p = document.getElementById('reg-pass').value;
+    const k = document.getElementById('reg-keyword').value;
+    const s = document.getElementById('reg-setor').value;
+    const n = document.getElementById('reg-nivel').value;
+
+    // 1. Validação de preenchimento
+    if (!u || !p || !k || !s) return alert("Preencha todos os campos!");
+
+    // 2. TRAVA 1: Impede sobrescrever um usuário que já existe
+    if (dbUsuarios && dbUsuarios[u]) {
+        return alert("Erro: Esse nome de usuário já está em uso!");
+    }
+
+    // 3. TRAVA 2: Regra de Ouro do Coordenador Único
+    if (n === 'Coordenador') {
+        // Faz uma varredura em todos os usuários do banco
+        const temCoordenador = Object.values(dbUsuarios || {}).some(user => 
+            user.setor === s && user.nivel === 'Coordenador'
+        );
+
+        // Se a varredura achar alguém, bloqueia o cadastro na hora
+        if (temCoordenador) {
+            const nomeSetor = s.split(' -')[0]; // Pega só a sigla (Ex: FGB-AJ)
+            return alert(`ACESSO NEGADO: O setor ${nomeSetor} já possui um Coordenador registrado. Novos cadastros para este setor devem ser apenas de Operador.`);
+        }
+    }
+
+    // 4. Salva no banco de dados com segurança
+    db.ref('usuarios/' + u).set({ 
+        usuario: u, 
+        senha: p, 
+        palavraChave: k, 
+        setor: s, 
+        nivel: n,
+        tema: 'light' // Já deixamos um tema padrão garantido
+    }).then(() => { 
+        alert("Usuário cadastrado com sucesso!"); 
+        alternarTela('login-screen'); 
+        
+        // Limpa os campos após sucesso
+        document.getElementById('reg-user').value = '';
+        document.getElementById('reg-pass').value = '';
+        document.getElementById('reg-keyword').value = '';
+    }).catch(erro => {
+        alert("Falha de conexão com o banco de dados.");
+    });
 }
 
 function alterarSenha() {
