@@ -602,46 +602,58 @@ body.dark-mode #btn-modal-tema { color: #121212; }
 
 .config-item span { font-weight: bold; font-size: 0.9rem; color: var(--primary); }
 
-
-
-/* --- CONFIGURAÇÃO MENU (CELULAR) --- */
-.sidebar {
-    position: fixed; 
-    left: -240px; /* Escondida por padrão no celular */
-    top: 0; 
-    width: 240px; 
+/* --- SIDEBAR MASTER --- */
+#sidebar-menu {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Escondido por padrão no celular */
+    width: 260px !important; /* LARGURA FIXA PARA NÃO QUEBRAR IGUAL NA IMAGEM */
     height: 100vh;
-    background: var(--card-bg); 
-    border-right: 1px solid rgba(255,255,255,0.1);
-    display: flex; 
-    flex-direction: column; 
-    z-index: 9999 !important; /* Fica na frente de tudo no celular */
-    transition: 0.3s ease-in-out;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    background-color: #1a1a1a; /* Fundo escuro sólido */
+    color: white;
+    z-index: 99999 !important; /* NA FRENTE DE TUDO */
+    transition: all 0.3s ease;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Classe de ativação para o Celular */
-.sidebar.active {
+/* Quando estiver ativo no celular */
+#sidebar-menu.active {
     left: 0 !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.8);
 }
 
-/* --- CONFIGURAÇÃO PARA PC (Telas maiores que 1024px) --- */
-@media (min-width: 1024px) {
-    .sidebar {
-        left: 0 !important; /* Sempre aberta no seu Acer */
-        box-shadow: none; /* Remove a sombra de "sobreposição" no PC */
-        position: sticky; /* Se preferir que ela role com a página, ou use 'fixed' */
+/* --- VERSÃO DESKTOP (Seu Acer Aspire 3) --- */
+@media (min-width: 1025px) {
+    #sidebar-menu {
+        left: 0 !important; /* Sempre visível */
+        position: fixed;
     }
 
-    /* Ajuste o conteúdo principal para não ficar "atrás" da sidebar no PC */
-    main, .container-principal {
-        margin-left: 240px; /* Empurra o conteúdo para a direita no PC */
+    /* Empurra o site para a direita para o menu não cobrir nada */
+    body {
+        padding-left: 260px; /* Mesma largura da sidebar */
     }
 
-    /* Esconde o botão hambúrguer no PC (opcional) */
-    .btn-hamburguer {
+    /* Esconde o botão hambúrguer no PC para não confundir */
+    #btn-menu-mobile {
         display: none !important;
     }
+}
+
+/* --- AJUSTE DOS ITENS DENTRO DO MENU --- */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-header img {
+    width: 40px;
+    height: auto;
 }
 
 /* LISTA DE HISTÓRICO */

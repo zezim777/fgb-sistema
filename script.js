@@ -447,11 +447,22 @@ function fecharModalSugestao() { document.getElementById('modal-sugestao').style
 
 // --- FUNÇÃO PARA ABRIR/FECHAR MENU LATERAL NO CELULAR ---
 function toggleSidebar(event) {
-    if (event) event.stopPropagation(); // IMPEDE que o clique "vaze" para o document e feche o menu na hora
+    // 1. Impede que o clique recarregue a página ou feche o menu na mesma hora
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     
     const sidebar = document.getElementById('sidebar-menu');
+    
     if (sidebar) {
+        // 2. Liga/Desliga a classe .active que faz o menu deslizar
         sidebar.classList.toggle('active');
+        
+        // 3. Log para te ajudar no F12 do seu Acer
+        console.log("Status da Sidebar:", sidebar.classList.contains('active') ? "ABERTA" : "FECHADA");
+    } else {
+        console.error("Erro crítico: O elemento 'sidebar-menu' não foi encontrado no HTML!");
     }
 }
 
@@ -460,10 +471,12 @@ document.addEventListener('click', (e) => {
     const sidebar = document.getElementById('sidebar-menu');
     const btn = document.getElementById('btn-menu-mobile');
 
-    // Se o menu estiver ativo e o clique NÃO for dentro dele e NÃO for no botão...
+    // Se o menu estiver aberto e o clique não for nele nem no botão de abrir, a gente fecha
     if (sidebar && sidebar.classList.contains('active')) {
-        if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
+        // Verifica se o clique foi fora da sidebar e fora do botão hambúrguer
+        if (!sidebar.contains(e.target) && (btn && !btn.contains(e.target))) {
             sidebar.classList.remove('active');
+            console.log("Sidebar fechada por clique externo.");
         }
     }
 });
