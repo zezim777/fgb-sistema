@@ -53,6 +53,7 @@ function registrarAtividade(mensagem) {
     if (!u) return;
     const id = Date.now();
     const dataHora = new Date().toLocaleString('pt-BR');
+    // Salva na pasta individual de cada usuário
     db.ref(`historico/${u}/${id}`).set({ msg: mensagem, data: dataHora });
 }
 
@@ -61,25 +62,25 @@ function carregarHistorico() {
     const listaDiv = document.getElementById('historico-lista');
     if(!listaDiv) return;
 
+    // Fica 'vigiando' o banco e atualiza a sidebar sozinho
     db.ref(`historico/${u}`).limitToLast(5).on('value', snap => {
         listaDiv.innerHTML = '';
         const dados = snap.val();
         
-        // Se não tiver nada, mostra a mensagem de vazio
         if(!dados) { 
-            listaDiv.innerHTML = '<span class="empty-hist">Nenhuma ação recente...</span>'; 
+            listaDiv.innerHTML = '<p class="empty-hist">Nenhuma ação recente...</p>'; 
             return; 
         }
 
-        // Renderiza usando as classes do CSS novo (.historico-item)
         Object.values(dados).reverse().forEach(h => {
-            // Pega a hora (ex: 14:30)
-            const horaFormatada = h.data.split(' ')[1].substring(0, 5); 
+            // Garante que a hora apareça no formato 00:00
+            const partes = h.data.split(' ');
+            const hora = partes[1] ? partes[1].substring(0, 5) : "--:--"; 
             
             listaDiv.innerHTML += `
                 <div class="historico-item">
                     ${h.msg}
-                    <span>Hoje às ${horaFormatada}</span>
+                    <span>Hoje às ${hora}</span>
                 </div>`;
         });
     });
