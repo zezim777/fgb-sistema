@@ -29,39 +29,155 @@ body {
 .hidden { display: none !important; }
 
 /* =========================================================
-   2. TELAS DE LOGIN E CADASTRO
+   2. TELAS DE LOGIN E CADASTRO (FIX DEFINITIVO)
 ========================================================= */
-/* Mantém o login centralizado quando o sistema não está ativo */
+
+/* 1. ESCONDE TUDO O QUE NÃO É LOGIN QUANDO DESLOGADO */
+body:not(:has(#main-system[style*="display: block"])) #sidebar-menu,
+body:not(:has(#main-system[style*="display: block"])) header,
+body:not(:has(#main-system[style*="display: block"])) main,
+body:not(:has(#main-system[style*="display: block"])) section,
+body:not(:has(#main-system[style*="display: block"])) .btn-flutuante,
+body:not(:has(#main-system[style*="display: block"])) .search-container,
+body:not(:has(#main-system[style*="display: block"])) .form-cadastro,
+body:not(:has(#main-system[style*="display: block"])) h3, 
+body:not(:has(#main-system[style*="display: block"])) .lixeira-section,
+body:not(:has(#main-system[style*="display: block"])) #lista-ativos {
+    display: none !important;
+}
+
+/* 2. CENTRALIZAÇÃO DO CORPO */
 body:not(:has(#main-system[style*="display: block"])) {
     display: flex !important;
+    flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    flex-direction: column;
+    min-height: 100vh !important;
+    background-color: #f4f7f6 !important;
+    margin: 0 !important;
+    overflow: hidden !important; /* ISSO AQUI: Impede de rolar para ver o que está embaixo */
 }
 
+/* 3. O CARD (A caixa branca que envolve cada tela) */
 .auth-card { 
-    background: var(--card-bg); padding: 30px; border-radius: 12px; 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 380px; 
-    text-align: center; position: relative; z-index: 100; box-sizing: border-box; 
+    background: #ffffff !important; 
+    padding: 30px !important; 
+    border-radius: 12px !important; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; 
+    width: 90% !important; 
+    max-width: 380px !important; 
+    text-align: center !important; 
+    margin: 20px auto !important; /* Dá espaço entre os cards se mais de um aparecer */
+    box-sizing: border-box !important;
 }
 
-.input-wrapper { position: relative; width: 100%; margin: 8px 0; }
-.input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #7f8c8d; z-index: 2; pointer-events: none; }
+/* 4. GARANTE QUE AS TELAS FIQUEM ESCONDIDAS (Evita o efeito "um embaixo do outro") */
+/* O seu JS deve usar a classe .hidden para esconder as telas que não estão em uso */
+.auth-card.hidden {
+    display: none !important;
+}
 
-.auth-card input, .auth-card select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
-.input-wrapper input { padding-left: 40px !important; margin: 0 !important; }
+/* 5. ESTILO DOS INPUTS E ÍCONES INTEGRADOS (ITENS 1, 2 E 3) */
+.input-wrapper { 
+    position: relative !important; 
+    width: 100%; 
+    margin: 15px 0 !important; 
+    display: flex;
+    align-items: center;
+}
 
-.auth-card button.btn-principal { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-.btn-link, .btn-link-small { background: none; border: none; text-decoration: underline; cursor: pointer; display: inline-block; width: 100%; }
-.btn-link { color: var(--primary); font-size: 0.9rem; margin-top: 20px; }
-.btn-link-small { color: #7f8c8d; font-size: 0.8rem; margin-top: 10px; }
+/* Ajuste Geral dos Inputs: Abre espaço para ícones (40px esquerda) e botão (60px direita) */
+.auth-card input {
+    width: 100% !important;
+    padding: 12px 60px 12px 40px !important; 
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    font-size: 0.95rem !important;
+    height: 45px !important; /* Altura fixa para alinhar ícones internos */
+}
 
-.login-footer { margin-top: 25px; font-size: 0.75rem; color: #95a5a6; border-top: 1px solid #eee; padding-top: 15px; }
-body.dark-mode .login-footer { border-top-color: #444; color: #7f8c8d; }
-.assinatura-lws { font-weight: bold; color: var(--primary); display: block; margin-top: 5px; font-size: 0.8rem; }
+/* ÍCONES (Item 1 e 2 - Canto Esquerdo Interno) */
+.input-icon, .input-wrapper i {
+    position: absolute !important;
+    left: 12px !important;
+    z-index: 10 !important;
+    color: #7f8c8d !important;
+    pointer-events: none;
+}
 
-/* Ajustes de Inputs Modo Noturno */
-body.dark-mode input, body.dark-mode textarea, body.dark-mode .auth-card select { background: #2c3e50; color: #ecf0f1; border-color: #444; }
+/* BOTÃO VER (Item 3 - Canto Direito Interno) */
+.toggle-pass {
+    position: absolute !important;
+    right: 8px !important;
+    background: #ffffff !important;
+    border: 0px solid #ccc !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 0.65rem !important;
+    font-weight: bold !important;
+    z-index: 10 !important;
+    text-transform: uppercase;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card button.btn-principal {
+    width: 100% !important;
+    padding: 12px !important;
+    background: #27ae60 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    margin-top: 10px !important;
+}
+
+/* 6. LINKS DO RODAPÉ (PARTE 1 - UM EMBAIXO DO OUTRO) */
+.btn-link, .btn-link-small {
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    display: table !important; /* Força a quebra de linha (um embaixo do outro) */
+    margin: 18px auto 0 auto !important; /* Centraliza e dá distância do botão verde */
+    color: #2c3e50 !important;
+    text-decoration: underline !important; 
+    font-weight: 500 !important;
+    transition: 0.2s;
+}
+
+.btn-link-small {
+    font-size: 0.75rem !important; 
+    margin-top: 10px !important; /* Espaço entre o link de cima e este */
+    opacity: 0.8;
+}
+
+.btn-link:hover, .btn-link-small:hover {
+    color: #000 !important;
+}
+
+/* 7. ASSINATURA (PARTE 2 - BEM PEQUENA) */
+.login-footer {
+    margin-top: 25px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid #eee !important;
+    font-size: 0.62rem !important; 
+    color: #95a5a6 !important;
+    text-align: center !important;
+}
+
+.assinatura-lws {
+    font-weight: bold !important;
+    color: #2c3e50 !important;
+    display: block !important;
+    margin-top: 4px !important;
+    font-size: 0.68rem !important;
+    text-transform: uppercase;
+}
 
 /* =========================================================
    3. MENU LATERAL (SIDEBAR) - MOBILE FIRST
@@ -109,37 +225,60 @@ body.dark-mode input, body.dark-mode textarea, body.dark-mode .auth-card select 
     display: none;
     width: 100%;
     padding: 20px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
     transition: 0.3s;
 }
 
 @media (min-width: 1025px) {
-    #sidebar-menu { left: 0 !important; position: fixed; box-shadow: none; }
+    #sidebar-menu { 
+        left: 0 !important; 
+        position: fixed; 
+        box-shadow: none; 
+        width: 260px !important;
+    }
     
-    /* Área de Processos (Red Zone) que se ajusta automaticamente */
+    /* Área de Processos que se ajusta automaticamente */
     #main-system, main, .container {
         margin-left: 260px !important; 
         width: calc(100% - 260px) !important; 
         padding: 20px !important;
-        box-sizing: border-box;
+        box-sizing: border-box !important; /* CRÍTICO: Alinha o conteúdo à direita */
         display: block !important;
     }
 
-    /* Ocupa a linha inteira */
-    .search-container, .form-container, #lista-ativos, header, .processo-card {
+    /* TODOS os elementos agora seguem a mesma regra de largura para ficarem alinhados */
+    header, 
+    .search-container, 
+    .form-cadastro, 
+    .form-container, 
+    #lista-ativos, 
+    .processo-card {
         width: 100% !important; 
         max-width: 100% !important; 
         margin-left: 0 !important;
         margin-right: 0 !important;
+        box-sizing: border-box !important; /* CRÍTICO: Faz o Header e a Busca pararem de "vazar" */
     }
     
     .mobile-menu-icon { display: none !important; }
 }
 
 /* =========================================================
-   5. HEADER, ÍCONES E CABEÇALHO 
+   5. HEADER, MODAIS E ELEMENTOS FLUTUANTES 
 ========================================================= */
-header { background-color: #2c3e50 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 15px !important; border-radius: 8px !important; color: white !important; min-height: 60px !important; margin-bottom: 20px !important; }
+header { 
+    background-color: #2c3e50 !important; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: space-between !important; 
+    padding: 10px 15px !important; 
+    border-radius: 8px !important; 
+    color: white !important; 
+    min-height: 60px !important; 
+    margin-bottom: 20px !important; 
+    position: relative; /* CRÍTICO: Para o menu do perfil não fugir */
+}
+
 header > div:first-child { display: flex !important; align-items: center !important; gap: 15px !important; }
 
 .mobile-menu-icon { display: none; font-size: 1.8rem; cursor: pointer; color: white !important; }
@@ -149,48 +288,134 @@ header > div:first-child { display: flex !important; align-items: center !import
     display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     cursor: pointer; transition: 0.3s; border: 2px solid transparent; color: white;
 }
-.admin-icon { background: rgba(243, 156, 18, 0.2); }
 
-/* Dropdowns */
+/* --- DROPDOWNS (MENU DO PERFIL) --- */
+.user-menu-container { position: relative !important; }
+
 .user-dropdown, .notif-dropdown {
-    position: absolute; top: 48px; background: var(--card-bg); color: var(--primary);
-    border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); opacity: 0; visibility: hidden;
-    transform: translateY(-15px); transition: all 0.3s; text-align: left; z-index: 200;
+    position: absolute !important; 
+    top: 48px !important; 
+    background: #1e1e1e !important; /* Cor escura para o FGB Cloud */
+    color: #fff !important;
+    border-radius: 8px; 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5) !important; 
+    opacity: 0; 
+    visibility: hidden;
+    transform: translateY(-15px); 
+    transition: all 0.3s; 
+    text-align: left; 
+    z-index: 9999; /* Garante que fique na frente de tudo */
 }
-.user-dropdown { right: 0; width: 170px; }
-.notif-dropdown { left: 0; width: 280px; max-height: 300px; overflow-y: auto; }
-body.dark-mode .user-dropdown, body.dark-mode .notif-dropdown { background: #1e1e1e; border: 1px solid #333; }
 
-.dropdown-item { padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: 0.2s; }
-body.dark-mode .dropdown-item { border-bottom-color: #333; color: #ecf0f1; }
+.user-dropdown { right: 0; width: 200px; display: flex; flex-direction: column; }
+.notif-dropdown { left: 0; width: 280px; max-height: 300px; overflow-y: auto; }
+
+/* MOSTRA O MENU QUANDO PASSAR O MOUSE (Ou via clique se o JS usar .active) */
+.user-menu-container:hover .user-dropdown, 
+.user-menu-container.active .user-dropdown,
+.notification-container:hover .notif-dropdown { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0); 
+}
+
+.dropdown-item { padding: 12px 15px; font-size: 0.85rem; font-weight: bold; cursor: pointer; border-bottom: 1px solid #333; transition: 0.2s; color: #fff !important; }
+.dropdown-item:hover { background: rgba(255,255,255,0.1); color: var(--accent) !important; }
+
+/* --- MODAL DE SUGESTÕES (PARA NÃO VAZAR NA TELA) --- */
+.modal-overlay, #modal-sugestoes, .modal-sugestao {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    z-index: 100000 !important; /* Na frente até da sidebar */
+    display: none; /* ESCONDE O FORMULÁRIO ATÉ VOCÊ CLICAR */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Mostra o modal de sugestão quando o botão for clicado */
+.modal-overlay.active, #modal-sugestoes.active {
+    display: flex !important;
+}
 
 .notification-container, .user-menu-container { position: relative !important; display: flex !important; align-items: center !important; }
-.user-menu-container:hover .user-dropdown, .notification-container:hover .notif-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
 
 /* =========================================================
    6. CARDS DE PROCESSOS E BARRA DE BUSCA
 ========================================================= */
-.search-container { background: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; }
-.search-container input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; outline: none; }
-.btn-search { background: #2c3e50; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; }
+.search-container { 
+    background: var(--card-bg); 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 20px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    display: flex; 
+    gap: 10px; 
+    align-items: center;
+    box-sizing: border-box !important; /* CRÍTICO: Alinha com o resto do site */
+}
+
+.search-container input { 
+    flex: 1; 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 6px; 
+    font-size: 1rem; 
+    box-sizing: border-box; 
+    outline: none; 
+}
+
+.btn-search { 
+    background: #2c3e50; 
+    color: white; 
+    border: none; 
+    padding: 10px 18px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 1.2rem; 
+}
 body.dark-mode .btn-search { background: var(--accent); }
 
-#lista-ativos, #lista-lixeira { display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box; }
+#lista-ativos, #lista-lixeira { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    width: 100%; 
+    box-sizing: border-box; 
+}
 
 .processo-card { 
-    background: var(--card-bg); border-left: 8px solid #f39c12; border-radius: 8px; 
-    padding: 15px; margin-bottom: 5px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-    width: 100% !important; box-sizing: border-box; 
+    background: var(--card-bg); 
+    border-left: 8px solid #f39c12; 
+    border-radius: 8px; 
+    padding: 15px; 
+    margin-bottom: 15px; /* Aumentado para dar respiro entre os cards */
+    position: relative; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    width: 100% !important; 
+    box-sizing: border-box !important; /* CRÍTICO: Alinhamento perfeito */
 }
+
 .objeto { font-size: 1.1rem; margin: 8px 0; color: var(--primary); font-weight: 600; }
 .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; }
 
 /* Botão Excluir Invisível */
 .btn-excluir { 
-    position: absolute !important; top: 10px !important; right: 10px !important; 
-    background: transparent !important; border: 1px solid transparent !important; 
-    color: #e74c3c !important; cursor: pointer !important; padding: 5px 12px !important; 
-    font-size: 0.7rem !important; font-weight: bold !important; z-index: 5 !important; transition: 0.3s;
+    position: absolute !important; 
+    top: 10px !important; 
+    right: 10px !important; 
+    background: transparent !important; 
+    border: 1px solid transparent !important; 
+    color: #e74c3c !important; 
+    cursor: pointer !important; 
+    padding: 5px 12px !important; 
+    font-size: 0.7rem !important; 
+    font-weight: bold !important; 
+    z-index: 5 !important; 
+    transition: 0.3s;
 }
 .btn-excluir:hover { background: rgba(231, 76, 60, 0.1) !important; border-radius: 4px; }
 body.dark-mode .btn-excluir { background: var(--card-bg) !important; }
