@@ -210,8 +210,26 @@ function moverParaLixeira(id, estado) { db.ref('processos/' + id).update({ exclu
 function transferirProcesso(id, n) { if(n && confirm("Delegar?")) db.ref('processos/' + id).update({ dono: n }).then(() => registrarAtividade(`Delegou para ${n}`)); }
 
 function filtrarProcessos() {
-    const t = document.getElementById('input-pesquisa').value.toLowerCase();
-    document.querySelectorAll('.processo-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(t) ? 'block' : 'none');
+    // 1. Pega o valor do input (id="input-pesquisa")
+    const input = document.getElementById('input-pesquisa');
+    if (!input) return; // Segurança caso o ID mude
+
+    const termo = input.value.toLowerCase().trim();
+    
+    // 2. Busca todos os cards (confirmamos no seu print que a classe é .processo-card)
+    const cards = document.querySelectorAll('.processo-card');
+
+    cards.forEach(card => {
+        // Pega o texto de dentro do card
+        const textoCard = card.innerText.toLowerCase();
+
+        // 3. Aplica o filtro com !important para vencer qualquer conflito de CSS
+        if (textoCard.includes(termo)) {
+            card.style.setProperty('display', 'block', 'important');
+        } else {
+            card.style.setProperty('display', 'none', 'important');
+        }
+    });
 }
 
 // --- 7. MOTOR DE RENDERIZAÇÃO E DASHBOARD ---
