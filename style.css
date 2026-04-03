@@ -221,3 +221,79 @@ body.dark-mode .detalhes { background: #2c3e50; border-color: #444; }
     #input-pesquisa { height: 45px !important; }
     .btn-search { width: 55px !important; height: 45px !important; }
 }
+
+/* =========================================================
+   9. RECUPERAÇÃO: FORMULÁRIO DE CADASTRO E BOTÃO VERDE
+========================================================= */
+.form-cadastro { 
+    background: var(--card-bg); 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 30px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    transition: 0.3s; 
+}
+
+@media (min-width: 600px) { 
+    .form-cadastro { display: grid; grid-template-columns: 1fr 1fr; } 
+    .full-width { grid-column: span 2; } 
+}
+
+.form-cadastro input, .form-cadastro button { 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 6px; 
+    font-size: 1rem; 
+    box-sizing: border-box; 
+}
+
+.form-cadastro button { 
+    background: var(--accent); /* Devolve a cor verde do botão */
+    color: white; 
+    font-weight: bold; 
+    cursor: pointer; 
+    border: none; 
+    width: 100%; 
+    margin-top: 0; 
+}
+
+/* =========================================================
+   10. RECUPERAÇÃO: SELECTS E INPUTS TRANSPARENTES NOS CARDS
+========================================================= */
+select { 
+    border: none; 
+    background: none; 
+    font-weight: bold; 
+    color: inherit; 
+    cursor: pointer; 
+    outline: none; 
+    font-family: inherit; 
+    font-size: 0.85rem; 
+    width: 100%; 
+    max-width: 100%; 
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap; 
+}
+
+body.dark-mode select { 
+    background-color: var(--bg); 
+    color: var(--primary); 
+    padding: 5px; 
+    border-radius: 5px; 
+}
+
+input.input-card { 
+    border: none; 
+    background: none; 
+    font-weight: bold; 
+    color: inherit; 
+    outline: none; 
+    font-family: inherit; 
+    font-size: 0.85rem; 
+    width: 100%; 
+    box-sizing: border-box; 
+}
