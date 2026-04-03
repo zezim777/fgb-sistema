@@ -60,12 +60,27 @@ function carregarHistorico() {
     const u = localStorage.getItem('fgb_user');
     const listaDiv = document.getElementById('historico-lista');
     if(!listaDiv) return;
+
     db.ref(`historico/${u}`).limitToLast(5).on('value', snap => {
         listaDiv.innerHTML = '';
         const dados = snap.val();
-        if(!dados) { listaDiv.innerHTML = '<p class="empty-hist">Nenhuma ação recente...</p>'; return; }
+        
+        // Se não tiver nada, mostra a mensagem de vazio
+        if(!dados) { 
+            listaDiv.innerHTML = '<span class="empty-hist">Nenhuma ação recente...</span>'; 
+            return; 
+        }
+
+        // Renderiza usando as classes do CSS novo (.historico-item)
         Object.values(dados).reverse().forEach(h => {
-            listaDiv.innerHTML += `<div class="hist-card">${h.msg}<span class="hist-time">🕒 ${h.data.split(' ')[1]}</span></div>`;
+            // Pega a hora (ex: 14:30)
+            const horaFormatada = h.data.split(' ')[1].substring(0, 5); 
+            
+            listaDiv.innerHTML += `
+                <div class="historico-item">
+                    ${h.msg}
+                    <span>Hoje às ${horaFormatada}</span>
+                </div>`;
         });
     });
 }
@@ -198,16 +213,63 @@ function mascaraMoeda(campo) {
 }
 
 function adicionarProcesso() {
-    const emp = document.getElementById('input-empresa').value, obj = document.getElementById('input-objeto').value, dat = document.getElementById('input-data').value, u = localStorage.getItem('fgb_user');
+    const emp = document.getElementById('input-empresa').value;
+    const obj = document.getElementById('input-objeto').value;
+    const dat = document.getElementById('input-data').value;
+    const u = localStorage.getItem('fgb_user');
+
     if (!emp || !obj || dat.length < 10) return alert("Preencha tudo!");
+
     const id = Date.now();
-    db.ref('processos/' + id).set({ id: id, dono: u, setorOrigem: dbUsuarios[u].setor, empresa: emp, objeto: obj, data: dat, fase: "", setor: dbUsuarios[u].setor, valor: "", excluido: false })
-    .then(() => { registrarAtividade(`Criou processo: ${emp.substring(0,10)}...`); document.getElementById('input-empresa').value=''; document.getElementById('input-objeto').value=''; document.getElementById('input-data').value=''; });
+
+    db.ref('processos/' + id).set({ 
+        id: id, 
+        dono: u, 
+        setorOrigem: dbUsuarios[u].setor, 
+        empresa: emp, 
+        objeto: obj, 
+        data: dat, 
+        fase: "", 
+        setor: dbUsuarios[u].setor, 
+        valor: "", 
+        excluido: false 
+    })
+    .then(() => { 
+        // REGISTRA NO HISTÓRICO DA SIDEBAR
+        registrarAtividade(`🆕 Criou processo: ${emp}`); 
+
+        // LIMPA OS CAMPOS DO FORMULÁRIO
+        document.getElementById('input-empresa').value = ''; 
+        document.getElementById('input-objeto').value = ''; 
+        document.getElementById('input-data').value = ''; 
+        
+        console.log("Processo salvo com sucesso!");
+    })
+    .catch((error) => {
+        console.error("Erro ao salvar:", error);
+    });
 }
 
-function atualizarCampo(id, campo, valor) { db.ref('processos/' + id).update({ [campo]: valor }).then(() => registrarAtividade(`Atualizou ${campo}`)); }
-function moverParaLixeira(id, estado) { db.ref('processos/' + id).update({ excluido: estado }).then(() => registrarAtividade(estado ? "Excluiu item" : "Restaurou item")); }
-function transferirProcesso(id, n) { if(n && confirm("Delegar?")) db.ref('processos/' + id).update({ dono: n }).then(() => registrarAtividade(`Delegou para ${n}`)); }
+function atualizarCampo(id, campo, valor) { 
+    db.ref('processos/' + id).update({ [campo]: valor })
+    .then(() => registrarAtividade(`📝 Editou ${campo} do processo`)); 
+}
+
+function moverParaLixeira(id, estado) { 
+    db.ref('processos/' + id).update({ excluido: estado })
+    .then(() => {
+        // Se o estado for true, ele mostra "Moveu para Lixeira", se for false, mostra "Restaurou"
+        const msg = estado ? "🗑️ Moveu para Lixeira" : "♻️ Restaurou processo";
+        registrarAtividade(msg); 
+    }); 
+}
+
+function transferirProcesso(id, n) { 
+    if(n && confirm("Delegar?")) {
+        db.ref('processos/' + id).update({ dono: n })
+        .then(() => registrarAtividade(`👤 Delegou para ${n.toUpperCase()}`)); 
+    }
+}
 
 function filtrarProcessos() {
     // 1. Pega o valor do input (id="input-pesquisa")
