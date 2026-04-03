@@ -449,8 +449,8 @@ body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color:
     top: 10px !important; 
     right: 10px !important; 
     width: auto !important; /* ISSO GARANTE QUE ELE NÃO ESTIQUE */
-    background: #fff5f5 !important; 
-    border: 1px solid #ffcccc !important; 
+    background: #1E1E1E !important; 
+    border: 1px solid #1E1E1E !important; 
     color: #e74c3c !important; /* Cor vermelha padrão */
     cursor: pointer !important; 
     padding: 5px 12px !important; 
