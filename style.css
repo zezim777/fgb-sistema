@@ -611,14 +611,13 @@ body.dark-mode #btn-modal-tema { color: #121212; }
     height: 100vh;
     background-color: #1a1a1a; 
     color: white;
-    z-index: 99999 !important; /* Na frente de tudo */
+    z-index: 99999 !important; 
     transition: all 0.3s ease;
     border-right: 1px solid #333;
     display: flex;
     flex-direction: column;
 }
 
-/* Quando ativo (Celular ou acionamento via JS) */
 #sidebar-menu.active {
     left: 0 !important;
     box-shadow: 10px 0 30px rgba(0,0,0,0.8);
@@ -629,44 +628,36 @@ body.dark-mode #btn-modal-tema { color: #121212; }
     #sidebar-menu {
         left: 0 !important;
         position: fixed;
-        box-shadow: none; 
+        width: 260px !important;
     }
 
-    /* Resetamos o body para o fundo escuro ficar uniforme */
     body {
-        padding: 0 !important;
         margin: 0 !important;
+        padding: 0 !important;
+        display: block !important; /* Volta ao normal para não espremer o conteúdo */
     }
 
-    /* AQUI ESTÁ A MÁGICA:
-       Ajustamos o container que guarda a busca e os cards.
-       Substitua '.container' ou 'main' pelo nome da sua div principal se for diferente.
-    */
+    /* ESSA É A ÁREA VERMELHA: Ocupa tudo o que sobra da tela */
     main, .container, .main-content {
-        margin-left: 260px !important; /* Cola o conteúdo na lateral do menu */
-        width: calc(100% - 260px) !important; /* Ocupa o resto exato da tela */
-        min-height: 100vh;
-        padding: 20px 40px !important; /* Espaço interno para o título não grudar no topo */
-        box-sizing: border-box; /* Garante que o padding não "estoure" a largura */
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start; /* Alinha o título e os cards à esquerda */
+        margin-left: 260px !important; 
+        width: calc(100% - 260px) !important; 
+        padding: 20px !important;
+        box-sizing: border-box;
+        display: block !important;
     }
 
-    /* Garante que a lista de processos e a busca usem o espaço disponível */
-    #lista-ativos, .search-container {
-        width: 100%;
-        max-width: 1100px; /* Evita que o card estique demais em telas muito largas */
+    /* AUTOAJUSTE TOTAL: Faz a busca e os cards preencherem a largura disponível */
+    .search-container, 
+    .form-container, 
+    #lista-ativos, 
+    header, 
+    .processo-card {
+        width: 100% !important; 
+        max-width: 100% !important; 
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box;
     }
-}
-
-/* --- ITENS INTERNOS (Mantemos como estava) --- */
-.sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid #333;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 /* LISTA DE HISTÓRICO */
