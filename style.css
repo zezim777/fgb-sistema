@@ -448,10 +448,11 @@ body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color:
     position: absolute !important; 
     top: 10px !important; 
     right: 10px !important; 
-    width: auto !important; /* ISSO GARANTE QUE ELE NÃO ESTIQUE */
-    background: #1E1E1E !important; 
-    border: 1px solid #1E1E1E !important; 
-    color: #e74c3c !important; /* Cor vermelha padrão */
+    width: auto !important; 
+    /* MUDANÇA AQUI: Removemos o fundo fixo escuro */
+    background: transparent !important; 
+    border: 1px solid transparent !important; 
+    color: #e74c3c !important; /* Mantém o vermelho do texto */
     cursor: pointer !important; 
     padding: 5px 12px !important; 
     font-size: 0.7rem !important; 
@@ -459,16 +460,22 @@ body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color:
     z-index: 5 !important; 
     display: flex !important;
     align-items: center !important;
-    white-space: nowrap !important; /* Impede o texto de quebrar linha */
+    white-space: nowrap !important;
+    transition: 0.3s;
 }
 
-/* IMPORTANTE: O card onde o processo aparece precisa ter essa regra */
-.processo-item, .card-processo { 
-    position: relative !important; 
-    padding-top: 40px !important; /* Abre espaço para o botão no topo */
+/* Efeito ao passar o mouse para dar um feedback visual */
+.btn-excluir:hover {
+    background: rgba(231, 76, 60, 0.1) !important; /* Fundo vermelhinho suave */
+    border-radius: 4px;
 }
 
-body.dark-mode .btn-excluir { background: rgba(231, 76, 60, 0.1); border-color: var(--danger); }
+/* Ajuste específico para o MODO ESCURO */
+body.dark-mode .btn-excluir { 
+    /* No modo escuro, se quiser destacar, pode usar o fundo do card */
+    background: var(--card-bg, #1e1e1e) !important; 
+    border-color: rgba(231, 76, 60, 0.3) !important; 
+}
 
 .empresa { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; margin-right: 90px; }
 
