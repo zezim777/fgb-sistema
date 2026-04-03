@@ -627,27 +627,40 @@ body.dark-mode #btn-modal-tema { color: #121212; }
 /* --- VERSÃO DESKTOP (Seu Acer Aspire 3) --- */
 @media (min-width: 1025px) {
     #sidebar-menu {
-        left: 0 !important; /* Sempre visível na esquerda */
+        left: 0 !important;
         position: fixed;
-        /* Removemos a sombra no PC para parecer parte do layout */
         box-shadow: none; 
     }
 
-    /* REMOVEMOS O PADDING DO BODY PARA NÃO CRIAR O VÃO ESCURO */
+    /* Resetamos o body para o fundo escuro ficar uniforme */
     body {
-        padding-left: 0 !important; 
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* DICA: Se o menu cobrir o conteúdo no PC, 
-       adicione margem apenas no seu container principal, assim:
+    /* AQUI ESTÁ A MÁGICA:
+       Ajustamos o container que guarda a busca e os cards.
+       Substitua '.container' ou 'main' pelo nome da sua div principal se for diferente.
     */
-    .main-content, .container, #lista-ativos {
-        margin-left: 260px !important; 
-        width: calc(100% - 260px) !important;
+    main, .container, .main-content {
+        margin-left: 260px !important; /* Cola o conteúdo na lateral do menu */
+        width: calc(100% - 260px) !important; /* Ocupa o resto exato da tela */
+        min-height: 100vh;
+        padding: 20px 40px !important; /* Espaço interno para o título não grudar no topo */
+        box-sizing: border-box; /* Garante que o padding não "estoure" a largura */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Alinha o título e os cards à esquerda */
+    }
+
+    /* Garante que a lista de processos e a busca usem o espaço disponível */
+    #lista-ativos, .search-container {
+        width: 100%;
+        max-width: 1100px; /* Evita que o card estique demais em telas muito largas */
     }
 }
 
-/* --- ITENS INTERNOS --- */
+/* --- ITENS INTERNOS (Mantemos como estava) --- */
 .sidebar-header {
     padding: 20px;
     border-bottom: 1px solid #333;
