@@ -606,19 +606,19 @@ body.dark-mode #btn-modal-tema { color: #121212; }
 #sidebar-menu {
     position: fixed;
     top: 0;
-    left: -280px; /* Escondido por padrão no celular */
-    width: 260px !important; /* LARGURA FIXA PARA NÃO QUEBRAR IGUAL NA IMAGEM */
+    left: -280px; /* Escondido no celular */
+    width: 260px !important; 
     height: 100vh;
-    background-color: #1a1a1a; /* Fundo escuro sólido */
+    background-color: #1a1a1a; 
     color: white;
-    z-index: 99999 !important; /* NA FRENTE DE TUDO */
+    z-index: 99999 !important; /* Na frente de tudo */
     transition: all 0.3s ease;
     border-right: 1px solid #333;
     display: flex;
     flex-direction: column;
 }
 
-/* Quando estiver ativo no celular */
+/* Quando ativo (Celular ou acionamento via JS) */
 #sidebar-menu.active {
     left: 0 !important;
     box-shadow: 10px 0 30px rgba(0,0,0,0.8);
@@ -627,33 +627,33 @@ body.dark-mode #btn-modal-tema { color: #121212; }
 /* --- VERSÃO DESKTOP (Seu Acer Aspire 3) --- */
 @media (min-width: 1025px) {
     #sidebar-menu {
-        left: 0 !important; /* Sempre visível */
+        left: 0 !important; /* Sempre visível na esquerda */
         position: fixed;
+        /* Removemos a sombra no PC para parecer parte do layout */
+        box-shadow: none; 
     }
 
-    /* Empurra o site para a direita para o menu não cobrir nada */
+    /* REMOVEMOS O PADDING DO BODY PARA NÃO CRIAR O VÃO ESCURO */
     body {
-        padding-left: 260px; /* Mesma largura da sidebar */
+        padding-left: 0 !important; 
     }
 
-    /* Esconde o botão hambúrguer no PC para não confundir */
-    #btn-menu-mobile {
-        display: none !important;
+    /* DICA: Se o menu cobrir o conteúdo no PC, 
+       adicione margem apenas no seu container principal, assim:
+    */
+    .main-content, .container, #lista-ativos {
+        margin-left: 260px !important; 
+        width: calc(100% - 260px) !important;
     }
 }
 
-/* --- AJUSTE DOS ITENS DENTRO DO MENU --- */
+/* --- ITENS INTERNOS --- */
 .sidebar-header {
     padding: 20px;
     border-bottom: 1px solid #333;
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.sidebar-header img {
-    width: 40px;
-    height: auto;
 }
 
 /* LISTA DE HISTÓRICO */
