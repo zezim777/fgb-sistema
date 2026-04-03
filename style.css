@@ -444,7 +444,29 @@ body.dark-mode input::placeholder, body.dark-mode textarea::placeholder { color:
     }
 }
 
-.btn-excluir { position: absolute; top: 10px; right: 10px; background: #fff5f5; border: 1px solid #ffcccc; color: var(--danger); cursor: pointer; padding: 5px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; z-index: 2; }
+.btn-excluir { 
+    position: absolute !important; 
+    top: 10px !important; 
+    right: 10px !important; 
+    width: auto !important; /* ISSO GARANTE QUE ELE NÃO ESTIQUE */
+    background: #fff5f5 !important; 
+    border: 1px solid #ffcccc !important; 
+    color: #e74c3c !important; /* Cor vermelha padrão */
+    cursor: pointer !important; 
+    padding: 5px 12px !important; 
+    font-size: 0.7rem !important; 
+    font-weight: bold !important; 
+    z-index: 5 !important; 
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important; /* Impede o texto de quebrar linha */
+}
+
+/* IMPORTANTE: O card onde o processo aparece precisa ter essa regra */
+.processo-item, .card-processo { 
+    position: relative !important; 
+    padding-top: 40px !important; /* Abre espaço para o botão no topo */
+}
 
 body.dark-mode .btn-excluir { background: rgba(231, 76, 60, 0.1); border-color: var(--danger); }
 
