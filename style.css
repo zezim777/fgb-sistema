@@ -604,49 +604,45 @@ body.dark-mode #btn-modal-tema { color: #121212; }
 
 
 
-/* --- MENU LATERAL (SIDEBAR) --- */
-
-:root { --sidebar-width: 240px; }
-
-
-
+/* --- CONFIGURAÇÃO MENU (CELULAR) --- */
 .sidebar {
-
-    position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh;
-
-    background: var(--card-bg); border-right: 1px solid #ddd;
-
-    display: flex; flex-direction: column; z-index: 1000; transition: 0.3s;
-
+    position: fixed; 
+    left: -240px; /* Escondida por padrão no celular */
+    top: 0; 
+    width: 240px; 
+    height: 100vh;
+    background: var(--card-bg); 
+    border-right: 1px solid rgba(255,255,255,0.1);
+    display: flex; 
+    flex-direction: column; 
+    z-index: 9999 !important; /* Fica na frente de tudo no celular */
+    transition: 0.3s ease-in-out;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
 
-
-
-.sidebar-header { padding: 20px; display: flex; align-items: center; gap: 10px; font-weight: bold; border-bottom: 1px solid #eee; }
-
-.sidebar-content { flex: 1; overflow-y: auto; padding: 15px; }
-
-
-
-.sidebar-item {
-
-    padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s;
-
-    display: flex; align-items: center; gap: 10px; font-size: 0.9rem; margin-bottom: 5px;
-
+/* Classe de ativação para o Celular */
+.sidebar.active {
+    left: 0 !important;
 }
 
-.sidebar-item:hover { background: rgba(0,0,0,0.05); color: var(--accent); }
+/* --- CONFIGURAÇÃO PARA PC (Telas maiores que 1024px) --- */
+@media (min-width: 1024px) {
+    .sidebar {
+        left: 0 !important; /* Sempre aberta no seu Acer */
+        box-shadow: none; /* Remove a sombra de "sobreposição" no PC */
+        position: sticky; /* Se preferir que ela role com a página, ou use 'fixed' */
+    }
 
-body.dark-mode .sidebar-item:hover { background: rgba(255,255,255,0.1); }
+    /* Ajuste o conteúdo principal para não ficar "atrás" da sidebar no PC */
+    main, .container-principal {
+        margin-left: 240px; /* Empurra o conteúdo para a direita no PC */
+    }
 
-
-
-.sidebar-divider { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
-
-.sidebar-title { font-size: 0.7rem; font-weight: bold; color: #95a5a6; margin-bottom: 10px; letter-spacing: 1px; }
-
-
+    /* Esconde o botão hambúrguer no PC (opcional) */
+    .btn-hamburguer {
+        display: none !important;
+    }
+}
 
 /* LISTA DE HISTÓRICO */
 
