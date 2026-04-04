@@ -558,3 +558,85 @@ input.input-card {
     width: 100%; 
     box-sizing: border-box; 
 }
+
+/* --- NOVOS ESTILOS PARA MODAIS (PERFIL, CONFIG, TRANSMISSÃO, SUGESTÃO) --- */
+
+/* Camada de fundo que centraliza o modal */
+.modal-wrapper {
+    display: none; /* O JS muda para flex ao abrir */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro atrás */
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* A caixa do modal em si */
+.modal-content {
+    background-color: #1a1a1a; /* Cinza escuro combinando com o menu lateral */
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #333; /* Borda sutil para dar profundidade */
+}
+
+/* Estilização dos textos internos */
+.modal-content h3, .modal-content h2 {
+    color: #2ecc71; /* Verde de realce que você já usa */
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.modal-content p {
+    margin: 10px 0;
+    color: #bbb;
+    font-size: 0.9rem;
+}
+
+/* Estilo dos inputs dentro dos modais */
+.modal-content input, .modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #fff;
+    font-family: inherit;
+}
+
+/* Botões internos do modal */
+.modal-content button {
+    padding: 10px 20px;
+    margin: 10px 5px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+/* Botão principal (Verde) */
+.btn-save-modal {
+    background-color: #2ecc71;
+    color: white;
+}
+
+/* Botão de fechar (Cinza) */
+.btn-close-modal {
+    background-color: #555;
+    color: white;
+}
+
+.btn-close-modal:hover {
+    background-color: #777;
+}
