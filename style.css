@@ -640,3 +640,26 @@ input.input-card {
 .btn-close-modal:hover {
     background-color: #777;
 }
+
+/* --- ANIMAÇÃO DE FUNDO PARA A TELA DE LOGIN --- */
+#login-screen {
+    /* Gradiente com cores que lembram água/oceano profundo */
+    background: linear-gradient(270deg, #1a2a3a, #2c3e50, #16a085, #2980b9);
+    background-size: 800% 800%;
+    
+    /* Ativa a animação: nome, tempo (20s), suave (ease), infinita */
+    animation: movimentoAgua 20s ease infinite;
+}
+
+/* A "receita" do movimento */
+@keyframes movimentoAgua {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Efeito ao passar o mouse (Hover) para intensificar o brilho */
+#login-screen:hover {
+    filter: brightness(1.1);
+    transition: filter 0.5s ease;
+}
