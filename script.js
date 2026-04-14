@@ -72,15 +72,22 @@ function carregarHistorico() {
             return; 
         }
 
+        // Pega a data atual para comparação
+        const hoje = new Date().toLocaleDateString('pt-BR');
+
         Object.values(dados).reverse().forEach(h => {
             // Garante que a hora apareça no formato 00:00
             const partes = h.data.split(' ');
+            const dataAcao = partes[0];
             const hora = partes[1] ? partes[1].substring(0, 5) : "--:--"; 
             
+            // Define se mostra "Hoje" ou a "Data" (Ex: 14/04)
+            const prefixo = (dataAcao === hoje) ? "Hoje" : dataAcao.substring(0, 5);
+
             listaDiv.innerHTML += `
                 <div class="historico-item">
                     ${h.msg}
-                    <span>Hoje às ${hora}</span>
+                    <span>${prefixo} às ${hora}</span>
                 </div>`;
         });
     });
