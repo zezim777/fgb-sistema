@@ -550,3 +550,58 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// --- FUNÇÃO DE NAVEGAÇÃO: ALTERNAR ENTRE PROCESSOS E LIXEIRA ---
+function alternarLixeira() {
+    // 1. Mapeia os elementos da tela principal
+    const ativos = document.getElementById('lista-ativos');
+    const tituloAtivos = document.getElementById('titulo-ativos');
+    const formCadastro = document.querySelector('.form-cadastro');
+    const searchContainer = document.querySelector('.search-container');
+    const dashboard = document.getElementById('dash-setor');
+    const btnReport = document.getElementById('btn-report');
+    
+    // 2. Mapeia a seção da lixeira (ID que adicionamos no HTML)
+    const lixeira = document.getElementById('secao-lixeira-fgb');
+
+    if (!lixeira) return console.error("Elemento da lixeira não encontrado!");
+
+    // 3. LÓGICA DE TROCA (Toggle)
+    if (lixeira.style.display === 'none') {
+        // --- ENTRANDO NA LIXEIRA ---
+        lixeira.style.display = 'block';
+        
+        // Esconde todo o resto para dar efeito de "Nova Tela"
+        if(ativos) ativos.style.display = 'none';
+        if(tituloAtivos) tituloAtivos.style.display = 'none';
+        if(formCadastro) formCadastro.style.display = 'none';
+        if(searchContainer) searchContainer.style.display = 'none';
+        if(dashboard) dashboard.classList.add('hidden');
+        if(btnReport) btnReport.classList.add('hidden');
+
+        registrarAtividade("📂 Abriu a Lixeira");
+    } else {
+        // --- VOLTANDO PARA O INÍCIO ---
+        lixeira.style.display = 'none';
+        
+        // Mostra tudo novamente
+        if(ativos) ativos.style.display = 'block';
+        if(tituloAtivos) tituloAtivos.style.display = 'block';
+        if(formCadastro) formCadastro.style.display = 'grid'; // Grid para manter layout desktop
+        if(searchContainer) searchContainer.style.display = 'flex';
+        
+        // Reativa o dashboard apenas se for Coordenador (seguindo sua regra)
+        const u = localStorage.getItem('fgb_user');
+        if (dbUsuarios[u] && dbUsuarios[u].nivel === 'Coordenador') {
+            if(dashboard) dashboard.classList.remove('hidden');
+            if(btnReport) btnReport.classList.remove('hidden');
+        }
+    }
+
+    // 4. Fecha a sidebar automaticamente (essencial para mobile)
+    const sidebar = document.getElementById('sidebar-menu');
+    if(sidebar) sidebar.classList.remove('active');
+
+    // 5. Sobe a tela para o topo
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
