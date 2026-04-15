@@ -640,3 +640,50 @@ input.input-card {
 .btn-close-modal:hover {
     background-color: #777;
 }
+
+/* =========================================================
+   11. SEÇÃO DA LIXEIRA (TELA DEDICADA V14.1)
+========================================================= */
+
+/* Garante que a lixeira se comporte como uma nova página dedicada */
+#secao-lixeira-fgb {
+    min-height: 70vh; /* Ocupa boa parte da altura para sensação de nova tela */
+    padding: 25px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px dashed var(--danger); /* Identificação visual de área de descarte */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    
+    /* Surgimento suave ao alternar no menu lateral */
+    animation: fadeInLWS 0.5s ease-in-out;
+}
+
+#secao-lixeira-fgb h3 {
+    color: var(--danger);
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+@keyframes fadeInLWS {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+#btn-limpar-lixeira {
+    transition: all 0.3s ease;
+}
+
+#btn-limpar-lixeira:hover {
+    background-color: var(--danger) !important;
+    color: white !important;
+    transform: scale(1.01);
+}
