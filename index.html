@@ -110,8 +110,8 @@
                     <span class="icon">🏠</span> Início / Subir
                 </div>
                 
-                <div class="sidebar-item" onclick="document.querySelector('.lixeira-section').scrollIntoView({behavior: 'smooth'})">
-                    <span class="icon">⬇️</span> Ir para Base
+                <div class="sidebar-item" onclick="alternarLixeira()">
+                    <span class="icon">🗑️</span> Lixeira do Setor
                 </div>
 
                 <hr class="sidebar-divider">
@@ -208,10 +208,10 @@
             <button onclick="adicionarProcesso()" class="full-width">ADICIONAR À MINHA LISTA</button>
         </div>
 
-        <h3>📦 Processos em Andamento</h3>
+        <h3 id="titulo-ativos">📦 Processos em Andamento</h3>
         <div id="lista-ativos">Carregando dados...</div>
 
-        <div class="lixeira-section">
+        <div class="lixeira-section" id="secao-lixeira-fgb" style="display: none;">
             <h3>🗑️ Lixeira</h3>
             <div id="lista-lixeira"></div>
             <button id="btn-limpar-lixeira" class="hidden" onclick="limparLixeiraPermanente()" style="color: var(--danger); padding: 12px; border: 1px solid var(--danger); background: transparent; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: 0.3s;">Esvaziar Lixeira do Setor (Definitivo)</button>
