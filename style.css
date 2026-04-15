@@ -641,48 +641,38 @@ input.input-card {
     background-color: #777;
 }
 
-/* --- ANIMAÇÃO DE FUNDO ESTILO ÁGUA --- */
-
-body {
-
-    /* Cores que remetem à água e à identidade da FGB (azul e verde água) */
-
+/* --- ANIMAÇÃO DE FUNDO EXCLUSIVA DA TELA DE LOGIN --- */
+#login-screen:not(.hidden) {
+    /* Define o fundo animado apenas quando a tela de login estiver visível */
     background: linear-gradient(45deg, #e0eafc, #cfdef3, #a8e6cf, #dcedc1);
-
     background-size: 400% 400%;
-
     animation: movimentoAgua 15s ease infinite;
 
-    margin: 0;
-
+    /* Garante que a div ocupe a tela toda para mostrar o fundo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
-
+    
+    /* Centralização robusta */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
 }
 
-
-
-/* Definição do movimento suave */
-
+/* Definição do movimento suave (Mantido original) */
 @keyframes movimentoAgua {
-
     0% { background-position: 0% 50%; }
-
     50% { background-position: 100% 50%; }
-
     100% { background-position: 0% 50%; }
-
 }
 
-
-
-/* Efeito sutil no Card de Login ao passar o mouse */
-
+/* Efeito no Card (Mantido original) */
 .auth-card:hover {
-
     transform: translateY(-5px);
-
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-
     transition: all 0.5s ease;
-
 }
