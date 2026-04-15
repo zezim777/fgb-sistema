@@ -641,22 +641,22 @@ input.input-card {
     background-color: #777;
 }
 
-/* --- ANIMAÇÃO DE FUNDO EXCLUSIVA DA TELA DE LOGIN --- */
+/* --- ANIMAÇÃO DE FUNDO ESTILO ÁGUA (SOMENTE LOGIN) --- */
 #login-screen {
-    /* Faz a tela de login ocupar todo o fundo */
+    /* Faz a div de login ocupar a tela inteira com o fundo animado */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
     
-    /* CENTRALIZAÇÃO TOTAL DO CARD */
+    /* Garante que o card de login fique no centro exato */
     display: flex !important;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    /* Gradiente estilo água */
+    /* Cores que remetem à água */
     background: linear-gradient(45deg, #e0eafc, #cfdef3, #a8e6cf, #dcedc1);
     background-size: 400% 400%;
     animation: movimentoAgua 15s ease infinite;
@@ -664,13 +664,14 @@ input.input-card {
     z-index: 9999;
 }
 
-/* O restante (keyframes e hover) pode continuar igual */
+/* Definição do movimento suave (Mantido original) */
 @keyframes movimentoAgua {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
+/* Efeito sutil no Card de Login ao passar o mouse (Mantido original) */
 .auth-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
